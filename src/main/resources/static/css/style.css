@@ -544,10 +544,11 @@ textarea.input {
 }
 
 .cart-dropdown {
+    margin-top:20px;
   position: absolute;
-  width: 300px;
+  width: 46px;
   background: #FFF;
-  padding: 15px;
+
   -webkit-box-shadow: 0px 0px 0px 2px #E4E7ED;
   box-shadow: 0px 0px 0px 2px #E4E7ED;
   z-index: 99;
@@ -592,12 +593,12 @@ textarea.input {
 
 .cart-dropdown .cart-btns>a {
   display: inline-block;
-  width: calc(50% - 0px);
-  padding: 12px;
-  background-color: #D10024;
-  color: #FFF;
+  width:100%;
+  padding: 6px;
+  background-color: #000;
+  color: #fff;
   text-align: center;
-  font-weight: 700;
+  font-weight: 400;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
 }
@@ -2188,5 +2189,14 @@ textarea.input {
   .store-pagination {
     float: none;
     margin-top: 10px;
+  }
+  .left-div {
+    float: left;
+    width: 50%;
+  }
+
+  .right-div {
+    float: right;
+    width: 50%;
   }
 }

@@ -40,7 +40,7 @@ public class AdminController {
     }
     @GetMapping("/home")
     public String adhome(){
-        return "admin_home";
+        return "user/userindex";
     }
     @GetMapping("/management")
     public String viewData(Model model){
