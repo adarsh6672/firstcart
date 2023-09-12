@@ -1,0 +1,25 @@
+
+
+.error-message {
+  display: block;
+  font-size: 1em;
+}
+
+
+.error-message {
+  margin-top: 0.2em;
+}
+
+
+.required-color {
+  color: #ff4747;
+}
+.error {
+  border-color: #ff4747;
+}
+.valid {
+  border-color: #37a137;
+}
+.hide {
+  display: none;
+}

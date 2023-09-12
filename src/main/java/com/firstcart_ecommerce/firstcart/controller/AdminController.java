@@ -83,7 +83,10 @@ public class AdminController {
         return "redirect:/admin/management";
     }
 
-
+    @GetMapping("/adminpanel")
+    public String adminpanel(){
+        return "admin/adu";
+    }
 
 }
 

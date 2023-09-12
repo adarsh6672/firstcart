@@ -4,18 +4,19 @@
 <head>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="/css/val.css">
     <meta charset="UTF-8">
     <title>register</title>
 </head>
 <body>
+<script src="/js/validation.js"></script>
 <section class=" vh-100" style="background: rgb(2,0,36);
 background: linear-gradient(63deg, rgba(2,0,36,1) 0%, rgba(0,0,0,1) 35%, rgba(255,0,0,1) 100%);">
     <div class="mask d-flex align-items-center h-100  gradient-custom">
         <div class="container h-100 ">
             <div class="row d-flex justify-content-evenly align-items-center h-100">
                 <div class="header-logo pt-5 " style="max-width: 50%; max-height: 50%;">
-                    <a href="#" class="logo">
+                    <a th:href="@{/}" class="logo">
                         <img style="max-width: 350px; max-height: 350px;" src="/img/FirstCart.gif" alt="">
                     </a>
                 </div>
@@ -28,40 +29,44 @@ background: linear-gradient(63deg, rgba(2,0,36,1) 0%, rgba(0,0,0,1) 35%, rgba(25
                                 <th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
                             </th:block>
 
-                            <form  id="myForm" action="" method="post" th:action="@{/saveuser}"  >
+                            <form  id="myForm" action=""  method="post" th:action="@{/saveuser}"  >
 
-                                <div class="form-outline mb-4">
-                                    <input type="text" id="name" name="name"  required class="form-control form-control-lg" />
+                                <div class="form-outline mb-3">
+                                    <input type="text" id="name" name="name"   class="form-control form-control-lg" />
                                     <label class="form-label" for="name">Your Name</label>
                                 </div>
 
 
-                                <div class="form-outline mb-4">
-
-                                    <input type="email" id="email"name="email"  required class="form-control form-control-lg" />
+                                <div class="form-outline mb-3">
+                                    <input type="email" id="email"name="email"   class="form-control form-control-lg" />
                                     <label class="form-label"  for="Email">Your Email</label>
                                 </div>
 
-                                <div class="form-outline mb-4">
-                                    <input type="tel" id="Phone"name="phone" required  pattern="[0-9]{10}" class="form-control form-control-lg" />
+                                <div class="form-outline mb-3">
+                                    <input type="tel" id="phone"name="phone" required   class="form-control form-control-lg" />
                                     <label class="form-label"  >Your Phone</label>
 
                                 </div>
 
-                                <div class="form-outline mb-4">
-                                    <input type="password" id="password"name="password" class="form-control form-control-lg" />
+                                <div class="form-outline mb-3">
+                                    <input type="password" id="password" name="password" class="form-control form-control-lg" />
                                     <label class="form-label"  for="Password">Password</label>
+                                </div>
+
+                                <div class="form-outline mb-3">
+                                    <input type="password" id="confirm" name="conf" class="form-control form-control-lg" />
+                                    <label class="form-label"  for="confirm">Re-enter Password</label>
                                 </div>
 
 
 
                                 <div class="d-flex justify-content-center">
-                                    <button type="submit"
+                                    <button type="submit" id="submit-button" onclick="return validateForm()"
                                             class="btn btn-success btn-block btn-lg  text-white">Register</button>
                                 </div>
 
-                                <p class="text-center  mt-5 mb-0">Have already an account? <a href="/login"
-                                                                                                        class=" text-white-50 fw-bold"><u>Login here</u></a></p>
+
+                                <p class="text-center  mt-3 mb-0">Already a member of First Cart ? <a href="/login" class=" text-white-50 fw-bold"><u>Login here</u></a></p>
 
                             </form>
 

@@ -68,7 +68,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: #2B2D42;
+  color: black;
   font-weight: 500;
   -webkit-transition: 0.2s color;
   transition: 0.2s color;
@@ -618,12 +618,39 @@ textarea.input {
   padding-bottom: 15px;
 }
 
+.admin-button {
+  background-color: #d10e0e;
+  font-weight:bolder;
+  border: none;
+  color: white;
+  padding: 8px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  margin: 18px 8px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.prolog-btn{
+  background-color: white;
+  border: none;
+  color: black;
+  padding: 8px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  width:106px;
+  cursor: pointer;
+
+}
 /*=========================================================
 	03 -> Navigation
 ===========================================================*/
 
 #navigation {
-  background: #FFF;
+  background: #fff;
   border-bottom: 2px solid #E4E7ED;
   border-top: 3px solid #D10024;
 }

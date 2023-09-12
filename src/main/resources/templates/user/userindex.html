@@ -73,12 +73,11 @@
 						<!-- ACCOUNT -->
 
 						<div class="col-md-5 clearfix">
+
+								<a th:href="@{/admin/adminpanel}"style="text-decoration:none;" >	<button type="button" th:action="@{/admin/adminpanel}" class="btn admin-button" sec:authorize="hasRole('ADMIN')">Admin Panel</button></a>
+
 							<div class="header-ctn">
-								<div>
 
-										<button type="button" th:action="@{/admin/adu}" class="btn btn-primary" sec:authorize="hasRole('ADMIN')">Admin Panel</button>
-
-								</div>
 
 								<!-- Wishlist -->
 								<div>
@@ -111,10 +110,10 @@
 									<div class="cart-dropdown">
 
 
-										<div class="cart-btns text-white">
-											<a class="btn btn-primary" href="#">Profile</a>
+										<div>
+											<a class="prolog-btn" href="#">Profile</a>
 											<form th:action="@{/logout}" method="post" role="search">
-												<button class="btn btn-danger" type="submit">LogOut</button>
+												<button class="prolog-btn" type="submit"><a>LogOut</a></button>
 											</form>
 										</div>
 									</div>
