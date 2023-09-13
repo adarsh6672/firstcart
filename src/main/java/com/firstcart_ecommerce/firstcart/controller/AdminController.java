@@ -85,7 +85,7 @@ public class AdminController {
 
     @GetMapping("/adminpanel")
     public String adminpanel(){
-        return "admin/adu";
+        return "admin/index";
     }
 
 }
