@@ -42,10 +42,11 @@ public class AdminController {
     public String adhome(){
         return "user/userindex";
     }
-    @GetMapping("/management")
+    @GetMapping("/manage")
     public String viewData(Model model){
+
         model.addAttribute("userdata",userService.getAllUsers());
-        return "management";
+        return "admin/users";
 
     }
     @GetMapping("/userform")
@@ -58,13 +59,20 @@ public class AdminController {
 
         return "redirect:management";
     }
-        @GetMapping("/updateForm/{id}")
-        public String updateForm(@PathVariable (value ="id")int id ,Model model){
-            Optional<User> user=userRepo.findById(id);
-            User usr=user.get();
-            model.addAttribute("users" , usr);
-            return "updationform";
+        @PostMapping("/blockuser/{id}")
+        public String blockUsr(@PathVariable (value ="id")int id ){
+            userService.blockUser(id);
+
+            return "redirect:/admin/manage";
         }
+
+        @PostMapping("/unblockuser/{id}")
+        public String unblockUsr(@PathVariable (value ="id")int id ){
+            userService.unblockUser(id);
+
+            return "redirect:/admin/manage";
+        }
+
 
         @GetMapping("/updationform")
         public String updateuser(){
@@ -80,7 +88,7 @@ public class AdminController {
     @GetMapping("/deleteuser/{id}")
     public String deleteUser(@PathVariable (value = "id")int id){
         userRepo.deleteById(id);
-        return "redirect:/admin/management";
+        return "redirect:/admin/usermanage";
     }
 
     @GetMapping("/adminpanel")

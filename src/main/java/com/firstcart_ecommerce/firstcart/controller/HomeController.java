@@ -4,16 +4,23 @@ package com.firstcart_ecommerce.firstcart.controller;
 import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.UserServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class HomeController {
@@ -55,7 +62,11 @@ public class HomeController {
     @GetMapping("/login")
     @Secured({"ROLE_ADMIN", "ROLE_USER"}) // Define the roles that can access this endpoint
     public String login() {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+
+
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
             return "login"; // If not authenticated, show the login page.
         }// Check user roles and redirect accordingly.

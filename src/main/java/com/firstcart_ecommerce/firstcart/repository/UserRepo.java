@@ -11,4 +11,6 @@ public interface UserRepo extends JpaRepository<User,Integer> {
     @Query(value = "SELECT * FROM user p WHERE "+
             "p.name LIKE CONCAT('%',:query,'%' )",nativeQuery = true)
     List<User> searchUser(String query);
+
+    List<User> findByRoleNot(String role);
 }

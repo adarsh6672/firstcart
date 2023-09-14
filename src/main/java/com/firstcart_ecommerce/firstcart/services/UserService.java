@@ -10,4 +10,13 @@ public interface UserService {
     public void removeSessionMessage();
     List<User> getAllUsers();
 
+    User getUserById(int id);
+
+    void blockUser(int id);
+
+    void unblockUser(int id);
+
+    List<User> searchUser(String query);
+
+
 }
