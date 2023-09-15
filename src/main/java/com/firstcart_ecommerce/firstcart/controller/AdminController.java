@@ -1,10 +1,13 @@
 package com.firstcart_ecommerce.firstcart.controller;
 
 
+import com.firstcart_ecommerce.firstcart.model.Category;
 import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
+import com.firstcart_ecommerce.firstcart.services.CategoryService;
 import com.firstcart_ecommerce.firstcart.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +21,8 @@ import java.util.Optional;
 public class AdminController {
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private CategoryService categoryService;
 
     @Autowired
     private UserRepo userRepo;
@@ -49,16 +53,13 @@ public class AdminController {
         return "admin/users";
 
     }
-    @GetMapping("/userform")
-    public String userForm(){
-        return "newregistration";
-    }
-    @PostMapping("/savenewuser")
-    public String saveUser(@ModelAttribute User nuser){
-        userService.saveUser(nuser);
 
-        return "redirect:management";
+    @GetMapping("/adminpanel")
+    public String adminpanel(){
+        return "admin/adminpanel";
     }
+    /*users crud operations*/
+
         @PostMapping("/blockuser/{id}")
         public String blockUsr(@PathVariable (value ="id")int id ){
             userService.blockUser(id);
@@ -74,27 +75,40 @@ public class AdminController {
         }
 
 
-        @GetMapping("/updationform")
-        public String updateuser(){
-        return "updationform";
-        }
 
-    @PostMapping("/updateuser")
-    public String updateUser(@ModelAttribute User users){
-
-
-        return "redirect:management";
-    }
     @GetMapping("/deleteuser/{id}")
     public String deleteUser(@PathVariable (value = "id")int id){
         userRepo.deleteById(id);
         return "redirect:/admin/usermanage";
     }
+/*user crud operation end*/
 
-    @GetMapping("/adminpanel")
-    public String adminpanel(){
-        return "admin/index";
+/*
+ category crud operation start
+*/
+
+    @GetMapping("/category")
+    public String categories(Model model){
+        model.addAttribute("category",categoryService.getAllCategory());
+        return "admin/categories";
     }
 
+
+    @GetMapping("/category/add")
+    public String addCat(Model model){
+        model.addAttribute("category" ,new Category());
+        return "admin/addcategory";
+    }
+
+    @PostMapping("/category/add")
+    public String postCat(@ModelAttribute("category")Category category){
+        categoryService.addCategory(category);
+        return "redirect:category/add";
+    }
+
+    @GetMapping("/testing")
+    public String tester(){
+        return "admin/test";
+    }
 }
 

@@ -94,7 +94,13 @@ public class HomeController {
     }
 
 
+    @Autowired
+    private HttpServletRequest request;
 
+    @ModelAttribute("request")
+    public HttpServletRequest getRequest() {
+        return request;
+    }
 
 
 
