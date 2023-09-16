@@ -97,14 +97,18 @@ public class AdminController {
     @GetMapping("/category/add")
     public String addCat(Model model){
         model.addAttribute("category" ,new Category());
-        return "admin/addcategory";
+        return "admin/add_Parentcat";
     }
 
-    @PostMapping("/category/add")
+    @PostMapping("/category/adding")
     public String postCat(@ModelAttribute("category")Category category){
         categoryService.addCategory(category);
-        return "redirect:category/add";
+        return "redirect:/admin/category";
     }
+
+
+
+
 
     @GetMapping("/testing")
     public String tester(){

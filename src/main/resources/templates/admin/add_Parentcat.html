@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head th:replace="fragments/html_head :: html_head">
+
+<body>
+<div th:replace="fragments/html_nav :: html_nav"></div>
+
+<div class="content container">
+<form id="form2"  th:action="@{/admin/category/adding}"  method="post" action="">
+
+    <div class="form-outline mb-4">
+        <label class="form-label"  for="regName"> CATEGORY NAME</label>
+        <input type="text" id="regname" name="name" class="form-control form-control-lg" />
+
+    </div>
+
+
+
+    <div class="d-flex justify-content-center">
+        <button type="submit"
+                class="btn btn-success btn-block btn-lg  text-white">ADD</button>
+    </div>
+
+
+</form>
+</div>
+
+<div th:replace="fragments/html_footer :: html_footer"></div>
+<div th:replace="fragments/js_links :: js_links"></div>
+</body>
+</html>
