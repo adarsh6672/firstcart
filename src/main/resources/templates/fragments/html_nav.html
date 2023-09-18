@@ -26,14 +26,14 @@
                 </div>
             </div>
             <div class="navbar-nav w-100">
-                <a th:href="@{/admin/adminpanel}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                <a th:href="@{/admin/adminpanel}" class="nav-item nav-link" th:classappend="${servletPath == '/admin/adminpanel' ? 'active':''}"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                 <a th:href="@{/admin/manage}" class="nav-item nav-link" th:classappend="${servletPath == '/admin/manage' ? 'active':''}" ><i class="fa fa-users me-2"></i>Users</a>
 
                 <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" th:classappend="${servletPath == '/admin/category' ? 'active':''}"  data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Category</a>
+                    <a href="#" class="nav-link dropdown-toggle" th:classappend="${servletPath == '/admin/categories' ? 'active':''}" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Category</a>
                     <div class="dropdown-menu bg-transparent border-0">
-                        <a th:href="@{/admin/category}" class="dropdown-item">Show Categories</a>
-                        <a href="typography.html" class="dropdown-item">Add Sub Category</a>
+                        <a th:href="@{/admin/categories}" class="dropdown-item">Show Categories</a>
+                        <a th:href="@{/admin/subcategories/new}" class="dropdown-item">Add Sub Category</a>
                         <a th:href="@{/admin/category/add}" class="dropdown-item">Add Parant Category</a>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                     <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                         <a href="#" class="dropdown-item">My Profile</a>
                         <a href="#" class="dropdown-item">Settings</a>
-                        <a href="#" class="dropdown-item">Log Out</a>
+                        <a th:href="@{/logout}" class="dropdown-item">Log Out</a>
                     </div>
                 </div>
 

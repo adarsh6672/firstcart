@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head th:replace="fragments/html_head :: html_head">
+
+<body>
+<div th:replace="fragments/html_nav :: html_nav"></div>
+
+<div class="content container">
+    <h2>Create New Subcategory</h2>
+    <form th:action="@{/admin/addsubcategory}"  method="post">
+        <div class="form-outline mb-4">
+        <label class="form-label text-white" for="name">Sub Category Name:</label>
+        <input type="text" id="name" class="form-control form-control-lg bg-white" name="name" required>
+        </div>
+        <div class="form-outline mb-4">
+        <label class="form-label text-white" for="category">Category:</label>
+        <select id="category" name="category_id" class="form-control form-control-lg bg-white">
+
+            <option th:each="category : ${categories}"  th:value="${category.id}" th:text="${category.name}"></option>
+        </select>
+        </div>
+        <div class="d-flex justify-content-center">
+            <button type="submit"
+                    class="btn btn-success btn-block btn-lg  text-white">ADD</button>
+        </div>
+    </form>
+</div>
+
+<div th:replace="fragments/html_footer :: html_footer"></div>
+<div th:replace="fragments/js_links :: js_links"></div>
+</body>
+</html>

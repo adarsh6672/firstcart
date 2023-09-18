@@ -1,8 +1,11 @@
 package com.firstcart_ecommerce.firstcart.controller;
 
 
+import com.firstcart_ecommerce.firstcart.dto.CategorySubCategoryDTO;
 import com.firstcart_ecommerce.firstcart.model.Category;
+import com.firstcart_ecommerce.firstcart.model.SubCategory;
 import com.firstcart_ecommerce.firstcart.model.User;
+import com.firstcart_ecommerce.firstcart.repository.SubCategoryRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.CategoryService;
 import com.firstcart_ecommerce.firstcart.services.UserService;
@@ -24,10 +27,13 @@ public class AdminController {
     @Autowired
     private CategoryService categoryService;
 
+
+
     @Autowired
     private UserRepo userRepo;
 
-
+    @Autowired
+    private SubCategoryRepo subCategoryRepo;
 
 
 
@@ -113,6 +119,30 @@ public class AdminController {
     @GetMapping("/testing")
     public String tester(){
         return "admin/test";
+    }
+
+
+    @GetMapping("/categories")
+    public String listCategories(Model model) {
+        List<CategorySubCategoryDTO> categorySubCategoryDTOList = subCategoryRepo.getCategorySubCategoryJoin();
+        model.addAttribute("categorySubCategoryDTOList", categorySubCategoryDTOList);
+
+        return "admin/category-list"; // Thymeleaf view name
+    }
+
+
+    @GetMapping("/subcategories/new")
+    public String showNewSubcategoryForm(Model model) {
+        List<Category> categories = categoryService.getAllCategory();
+        model.addAttribute("categories", categories);
+        return "admin/add_subcat";
+    }
+
+    @PostMapping("/addsubcategory")
+    public String addSubcategory(@ModelAttribute("subcategory") SubCategory subcategory){
+
+        subCategoryRepo.save(subcategory);
+        return "redirect:/admin/subcategories/new";
     }
 }
 

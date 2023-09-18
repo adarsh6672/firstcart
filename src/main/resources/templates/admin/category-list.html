@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/html_head :: html_head">
+
+<body>
+<div th:replace="fragments/html_nav :: html_nav"></div>
+            <!--list of users-->
+            <div class="content container">
+            <div class="">
+                <h1>CATEGORIES AND SUBCATEGORIES</h1>
+                <form th:action="@{/admin/searchuser}" method="get">
+                    <div class="input-group mb-3">
+                        <input type="search" name="query" class="form-control rounded" style="background:white;" th:placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                        <button type="submit" class="btn btn-primary">search</button>
+                    </div>
+                </form>
+            </div>
+            <div class=" my-2">
+
+                <table class="table table-bordered border-primary table-striped table-responsive-md">
+                    <thead>
+                    <tr>
+                        <th>Category ID</th>
+                        <th>Category Name</th>
+                        <th>Sub-Category ID</th>
+                        <th>Sub-Category Name</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="dto : ${categorySubCategoryDTOList}">
+                        <td th:text="${dto.categoryId}"></td>
+                        <td th:text="${dto.categoryName}"></td>
+                        <td th:text="${dto.subCategoryId}"></td>
+                        <td th:text="${dto.subCategoryName}"></td>
+                        <td><div class="d-flex">
+                            <div>
+                                <form action=""  method="post">
+                                    <button type="submit"   class="btn btn-success">Edit</button>
+                                </form></div>
+                            <div>
+                                <form action=""  method="post">
+                                    <button type="submit"   class="btn btn-danger">Delete</button>
+                                </form></div>
+                        </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+
+            </div>
+            </div>
+            <!-- Sale & Revenue Start -->
+
+
+            <!-- Footer Start -->
+<div th:replace="fragments/html_footer :: html_footer"></div>
+
+<!-- Footer End -->
+
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+<div th:replace="fragments/js_links :: js_links"></div>
+</body>
+
+</html>

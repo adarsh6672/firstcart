@@ -78,7 +78,7 @@
 
 .content {
     margin-left: 250px;
-    min-height: 100vh;
+    min-height: 82vh;
     background: var(--dark);
     transition: 0.5s;
 }
