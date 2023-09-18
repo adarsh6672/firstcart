@@ -5,6 +5,7 @@ import com.firstcart_ecommerce.firstcart.dto.CategorySubCategoryDTO;
 import com.firstcart_ecommerce.firstcart.model.Category;
 import com.firstcart_ecommerce.firstcart.model.SubCategory;
 import com.firstcart_ecommerce.firstcart.model.User;
+import com.firstcart_ecommerce.firstcart.repository.CategoryRepo;
 import com.firstcart_ecommerce.firstcart.repository.SubCategoryRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.CategoryService;
@@ -27,7 +28,8 @@ public class AdminController {
     @Autowired
     private CategoryService categoryService;
 
-
+    @Autowired
+    private CategoryRepo categoryRepo;
 
     @Autowired
     private UserRepo userRepo;
@@ -132,17 +134,24 @@ public class AdminController {
 
 
     @GetMapping("/subcategories/new")
-    public String showNewSubcategoryForm(Model model) {
-        List<Category> categories = categoryService.getAllCategory();
-        model.addAttribute("categories", categories);
+        public String showAddForm(Model model) {
+            model.addAttribute("subcategory", new SubCategory());
+            model.addAttribute("categories", categoryService.getAllCategory());
         return "admin/add_subcat";
     }
 
     @PostMapping("/addsubcategory")
-    public String addSubcategory(@ModelAttribute("subcategory") SubCategory subcategory){
-
+    public String addSubcategory(@ModelAttribute SubCategory subcategory,
+                                 @RequestParam("category_id") int categoryId) {
+        Category category = categoryRepo.findById(categoryId).orElseThrow();
+        subcategory.setCategory(category);
         subCategoryRepo.save(subcategory);
         return "redirect:/admin/subcategories/new";
+    }
+    @PostMapping("/category/delete/{id}")
+    public String deleteCat(@PathVariable (value = "id")int id) {
+        subCategoryRepo.deleteById(id);
+        return "redirect:/admin/categories";
     }
 }
 

@@ -37,11 +37,13 @@
 
                         <td>
                             <form th:action="@{'/admin/blockuser/'+${users.id}}" th:if="${!users.blocked}" method="post">
-                                <button type="submit"   class="btn btn-success">Block</button>
+                                <button type="submit" th:data-confirm-block="|Are you sure you want to block ${users.name}?|"
+                                        onclick="if (!confirm(this.getAttribute('data-confirm-block'))) return false"   class="btn btn-success">Block</button>
                             </form>
 
                             <form th:action="@{'/admin/unblockuser/'+${users.id}}" th:if="${users.blocked}" method="post">
-                                <button type="submit"   class="btn btn-danger">UnBlock</button>
+                                <button type="submit" th:data-confirm-unblock="|Are you sure you want to unblock ${users.name}?|"
+                                        onclick="if (!confirm(this.getAttribute('data-confirm-unblock'))) return false"  class="btn btn-danger">UnBlock</button>
                             </form>
 
                         </td>
