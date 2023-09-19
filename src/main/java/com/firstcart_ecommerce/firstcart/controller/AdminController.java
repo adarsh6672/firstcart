@@ -2,6 +2,7 @@ package com.firstcart_ecommerce.firstcart.controller;
 
 
 import com.firstcart_ecommerce.firstcart.dto.CategorySubCategoryDTO;
+import com.firstcart_ecommerce.firstcart.dto.ProductDTO;
 import com.firstcart_ecommerce.firstcart.model.Category;
 import com.firstcart_ecommerce.firstcart.model.SubCategory;
 import com.firstcart_ecommerce.firstcart.model.User;
@@ -9,6 +10,7 @@ import com.firstcart_ecommerce.firstcart.repository.CategoryRepo;
 import com.firstcart_ecommerce.firstcart.repository.SubCategoryRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.CategoryService;
+import com.firstcart_ecommerce.firstcart.services.SubCategoryService;
 import com.firstcart_ecommerce.firstcart.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
@@ -27,6 +29,9 @@ public class AdminController {
     private UserService userService;
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private SubCategoryService subCategoryService;
 
     @Autowired
     private CategoryRepo categoryRepo;
@@ -152,6 +157,15 @@ public class AdminController {
     public String deleteCat(@PathVariable (value = "id")int id) {
         subCategoryRepo.deleteById(id);
         return "redirect:/admin/categories";
+    }
+
+    @GetMapping("/product/add")
+    public String addproduct(Model model){
+        model.addAttribute("categories",subCategoryService.getAllSubCategories());
+        model.addAttribute("productDTO", new ProductDTO());
+        model.addAttribute("newCategory", new SubCategory());
+
+        return "admin/add_product";
     }
 }
 

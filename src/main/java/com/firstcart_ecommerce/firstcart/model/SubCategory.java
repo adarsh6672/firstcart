@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 public class SubCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "sub_cat_id")
     private int id;
 
     private String name;
