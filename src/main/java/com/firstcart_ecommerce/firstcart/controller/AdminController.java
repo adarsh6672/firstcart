@@ -5,6 +5,7 @@ import com.firstcart_ecommerce.firstcart.dto.CategorySubCategoryDTO;
 import com.firstcart_ecommerce.firstcart.dto.ProductDTO;
 import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.CategoryRepo;
+import com.firstcart_ecommerce.firstcart.repository.ProductImageRepo;
 import com.firstcart_ecommerce.firstcart.repository.SubCategoryRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.*;
@@ -49,6 +50,9 @@ public class AdminController {
 
     @Autowired
     S3Service s3Service;
+
+    @Autowired
+    ProductImageRepo productImageRepo;
 
 
 
@@ -223,6 +227,21 @@ public class AdminController {
         product.setImages(images);
         productService.addProduct(product);
         return "redirect:/admin/product/add";
+    }
+
+
+    @GetMapping("/products")
+    public String getProducts(Model model){
+        model.addAttribute("products", productService.getAllProduct());
+        model.addAttribute("pageTitle", "Products | Admin");
+        return "admin/products";
+    }
+
+    @ModelAttribute("imageUrl")
+    public String getUrl(String imageName) {
+        String url=s3Service.getImageUrl(imageName);
+        System.out.println(url);
+        return url;
     }
 }
 

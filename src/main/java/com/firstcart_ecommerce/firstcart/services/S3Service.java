@@ -3,6 +3,8 @@ package com.firstcart_ecommerce.firstcart.services;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import com.firstcart_ecommerce.firstcart.model.ProductImage;
+import com.firstcart_ecommerce.firstcart.repository.ProductImageRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ public class S3Service {
 
     @Value("${bucketName}")
     private String bucketName;
+
+    private ProductImageRepo productImageRepo;
 
     private final AmazonS3 s3;
 
@@ -52,6 +56,14 @@ public class S3Service {
     public String deleteFile(String filename){
         s3.deleteObject(bucketName,filename);
         return "file deleted";
+    }
+
+    public List<ProductImage> getAllImages() {
+        return productImageRepo.findAll();
+    }
+
+    public String getImageUrl(String fileName) {
+        return s3.getUrl(bucketName, fileName).toString();
     }
 
     public List<String> listAllFiles(){
