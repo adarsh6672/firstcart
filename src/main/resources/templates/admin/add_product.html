@@ -12,7 +12,7 @@
             <h5 class="card-title fw-semibold mb-4">Add a new Product</h5>
             <div class="card">
                 <div class="card-body" style="background:black;!important">
-                    <form th:action="@{/admin/products/add}" method="post" th:object="${productDTO}" enctype="multipart/form-data">
+                    <form th:action="@{/admin/product/add}" method="post" th:object="${productDTO}" enctype="multipart/form-data">
                         <input type="hidden" name="id"  th:field="*{id}">
                         <div class="mb-3">
                             <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></span>
@@ -23,7 +23,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="category">Category</label>
-                            <select class="form-control" th:field="*{categoryId}" id="category" name="category">
+                            <select class="form-control" th:field="*{subCategoryId}" id="category" name="category">
                                 <option th:each="category :${categories}"
                                         th:value="${category.id}"
                                         th:text="${category.name}">

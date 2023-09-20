@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubCategoryService {
@@ -13,5 +14,8 @@ public class SubCategoryService {
     SubCategoryRepo subCategoryRepo;
     public List<SubCategory> getAllSubCategories(){
       return subCategoryRepo.findAll();
+    }
+    public Optional<SubCategory> getSubCategoryById(int id){
+        return subCategoryRepo.findById(id);
     }
 }

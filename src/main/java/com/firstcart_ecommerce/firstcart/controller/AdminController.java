@@ -3,22 +3,24 @@ package com.firstcart_ecommerce.firstcart.controller;
 
 import com.firstcart_ecommerce.firstcart.dto.CategorySubCategoryDTO;
 import com.firstcart_ecommerce.firstcart.dto.ProductDTO;
-import com.firstcart_ecommerce.firstcart.model.Category;
-import com.firstcart_ecommerce.firstcart.model.SubCategory;
-import com.firstcart_ecommerce.firstcart.model.User;
+import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.CategoryRepo;
 import com.firstcart_ecommerce.firstcart.repository.SubCategoryRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
-import com.firstcart_ecommerce.firstcart.services.CategoryService;
-import com.firstcart_ecommerce.firstcart.services.SubCategoryService;
-import com.firstcart_ecommerce.firstcart.services.UserService;
+import com.firstcart_ecommerce.firstcart.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +43,12 @@ public class AdminController {
 
     @Autowired
     private SubCategoryRepo subCategoryRepo;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    S3Service s3Service;
 
 
 
@@ -166,6 +174,55 @@ public class AdminController {
         model.addAttribute("newCategory", new SubCategory());
 
         return "admin/add_product";
+    }
+
+    @PostMapping("/product/add")
+    public String addProductIn(@ModelAttribute("productDTO") ProductDTO productDTO,
+                               @RequestParam("productImages") List<MultipartFile> files,
+                               @RequestParam("imgNames") List<String> imgNames,
+                                Model model)throws IOException {
+        Product product=new Product();
+        product.setName(productDTO.getName());
+        product.setSubCategory(subCategoryService.getSubCategoryById(productDTO.getSubCategoryId()).get());
+        product.setPrice(productDTO.getPrice());
+        product.setStockQuantity(productDTO.getStockQuantity());
+        product.setDescription(productDTO.getDescription());
+
+        if(productService.isProductNameExists(product.getName())){
+            model.addAttribute("error", "Product name already exists");
+            return "admin/add_product";
+        }
+        List<ProductImage> images = new ArrayList<>();
+
+        for (int i = 0; i < files.size(); i++) {
+            MultipartFile file = files.get(i);
+            String imageUUID;
+
+            if (!file.isEmpty()) {
+                imageUUID = file.getOriginalFilename();
+                s3Service.saveFile(file);
+
+
+            } else {
+                if (i < imgNames.size()) {
+                    imageUUID = imgNames.get(i);
+                } else {
+                    imageUUID = "img/logo.png";
+                }
+            }
+
+            ProductImage image = new ProductImage();
+            image.setImageName(imageUUID);
+            images.add(image);
+        }
+
+        /*for (ProductImage image : images) {
+            Long imageId = productService.saveImageAndGetId(image.getImageName());
+        }*/
+
+        product.setImages(images);
+        productService.addProduct(product);
+        return "redirect:/admin/product/add";
     }
 }
 

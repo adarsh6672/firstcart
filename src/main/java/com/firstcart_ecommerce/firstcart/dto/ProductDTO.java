@@ -9,10 +9,9 @@ import java.util.List;
 public class ProductDTO {
     private Long id;
     private String name;
-    private int categoryId;
+    private int subCategoryId;
     private double price;
     private int stockQuantity;
-    private double weight;
     private String description;
     private List<String> imageNames;
     private List<MultipartFile> images;
