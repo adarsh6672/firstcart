@@ -24,6 +24,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -192,10 +193,7 @@ public class AdminController {
         product.setStockQuantity(productDTO.getStockQuantity());
         product.setDescription(productDTO.getDescription());
 
-        if(productService.isProductNameExists(product.getName())){
-            model.addAttribute("error", "Product name already exists");
-            return "admin/add_product";
-        }
+
         List<ProductImage> images = new ArrayList<>();
 
         for (int i = 0; i < files.size(); i++) {
@@ -226,7 +224,7 @@ public class AdminController {
 
         product.setImages(images);
         productService.addProduct(product);
-        return "redirect:/admin/product/add";
+        return "redirect:/admin/products";
     }
 
 
@@ -234,14 +232,102 @@ public class AdminController {
     public String getProducts(Model model){
         model.addAttribute("products", productService.getAllProduct());
         model.addAttribute("pageTitle", "Products | Admin");
+
+
         return "admin/products";
     }
-
     @ModelAttribute("imageUrl")
-    public String getUrl(String imageName) {
-        String url=s3Service.getImageUrl(imageName);
-        System.out.println(url);
-        return url;
+    public String getUrl(String filename) {
+        return s3Service.getImageUrl(filename);
+
+    }
+    @GetMapping("/products/details/{productId}")
+    public String getProductDetails(@PathVariable Long productId, Model model) {
+        Optional<Product> product = productService.getProductById(productId);
+        if (product.isPresent()) {
+            model.addAttribute("product", product.get());
+            model.addAttribute("pageTitle", "Product Details | Admin");
+            return "admin/productdetails";
+        } else {
+            return "404";
+        }
+    }
+
+    @GetMapping("/product/delete/{id}")
+    public String deleteProduct(@PathVariable long id){
+            productService.removeProductById(id);
+            return "redirect:/admin/products";
+
+    }
+
+
+    @GetMapping("/product/update/{id}")
+    public String updateProduct(@PathVariable long id, Model model){
+        Product product = productService.getProductById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(id);
+        productDTO.setName(product.getName());
+        SubCategory subCategory = product.getSubCategory();
+        if (subCategory != null) {
+            productDTO.setSubCategoryId(subCategory.getId());
+        }
+        productDTO.setPrice(product.getPrice());
+        productDTO.setStockQuantity(product.getStockQuantity());
+        productDTO.setDescription(product.getDescription());
+        productDTO.setImageNames(product.getImages().stream().map(ProductImage::getImageName).collect(Collectors.toList()));
+
+        model.addAttribute("categories", subCategoryService.getAllSubCategories());
+        model.addAttribute("productDTO", productDTO);
+        model.addAttribute("pageTitle", "Update Product | Admin");
+
+        return "admin/update_product";
+    }
+
+    @PostMapping("/product/update")
+    public String updateProductIn(@ModelAttribute("productDTO") ProductDTO productDTO,
+                               @RequestParam("productImages") List<MultipartFile> files,
+                               @RequestParam("imgNames") List<String> imgNames,
+                               Model model)throws IOException {
+        Product product=new Product();
+        product.setId(productDTO.getId());
+        product.setName(productDTO.getName());
+        product.setSubCategory(subCategoryService.getSubCategoryById(productDTO.getSubCategoryId()).get());
+        product.setPrice(productDTO.getPrice());
+        product.setStockQuantity(productDTO.getStockQuantity());
+        product.setDescription(productDTO.getDescription());
+
+
+        List<ProductImage> images = new ArrayList<>();
+
+        for (int i = 0; i < files.size(); i++) {
+            MultipartFile file = files.get(i);
+            String imageUUID;
+
+            if (!file.isEmpty()) {
+                imageUUID = file.getOriginalFilename();
+                s3Service.saveFile(file);
+
+
+            } else {
+                if (i < imgNames.size()) {
+                    imageUUID = imgNames.get(i);
+                } else {
+                    imageUUID = "img/logo.png";
+                }
+            }
+
+            ProductImage image = new ProductImage();
+            image.setImageName(imageUUID);
+            images.add(image);
+        }
+
+        /*for (ProductImage image : images) {
+            Long imageId = productService.saveImageAndGetId(image.getImageName());
+        }*/
+
+        product.setImages(images);
+        productService.addProduct(product);
+        return "redirect:/admin/products";
     }
 }
 

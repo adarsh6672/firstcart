@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head th:replace="fragments/html_head :: html_head">
+
+<body style="color:white;!important">
+<div th:replace="fragments/html_nav :: html_nav"></div>
+<div class="content container">
+
+
+    <div class="col-lg-8">
+        <div class="">
+            <div class="">
+                <h6 style="color:#ff3030;!important" class="fw-medium mb-1 mt-3">Product ID</h6>
+                <div class="d-flex align-items-center justify-content-between pb-7">
+                    <p th:text="${product.id}" class="mb-0">#123456</p>
+                </div>
+                <h6 style="color:#ff3030;!important" class="fw-medium mb-1 mt-3">Product Name</h6>
+                <div class="d-flex align-items-center justify-content-between pb-7">
+                    <p th:text="${product.name}" class="mb-0">#123456</p>
+                </div>
+                <h6 style="color:#ff3030;!important" class="fw-medium mb-1 mt-3">Product Description</h6>
+                <div class="d-flex align-items-center justify-content-between pb-7">
+                    <p th:text="${product.description}" class="mb-0">#123456</p>
+                </div>
+                <h6 style="color:#ff3030;!important"class="fw-medium mb-1 mt-3">Product Category</h6>
+                <div class="d-flex align-items-center justify-content-between pb-7">
+                    <p th:text="${product.subCategory.category.name}" class="mb-0">#123456</p>
+                </div>
+                <h6 style="color:#ff3030;!important"class="fw-medium mb-1 mt-3">Sub Category</h6>
+                <div class="d-flex align-items-center justify-content-between pb-7">
+                    <p th:text="${product.subCategory.name}" class="mb-0">#123456</p>
+                </div>
+                <h6 style="color:#ff3030;!important"class="fw-medium mb-1 mt-3">Product Images</h6>
+                <div th:each="image : ${product.images}">
+                    <img src="" height="100px" width="100px" th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/'+image.imageName}">
+                </div>
+                <h6 style="color:#ff3030;!important"class="fw-medium mb-1 mt-3">Product Price</h6>
+                <div class="d-flex align-items-center justify-content-between pb-7">
+                    <p th:text="${product.price}" class="mb-0">#123456</p>
+                </div>
+
+                <h6 style="color:#ff3030;!important"class="fw-medium mb-1 mt-3">Product Qantity</h6>
+                <div class="d-flex align-items-center justify-content-between pb-7">
+                    <p th:text="${product.stockQuantity}" class="mb-0">#123456</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <a class="btn btn-primary mt-4" th:href="@{/admin/products}">Back to All Products</a>
+</div>
+
+<div th:replace="fragments/html_footer :: html_footer"></div>
+<div th:replace="fragments/js_links :: js_links"></div>
+</body>
+</html>

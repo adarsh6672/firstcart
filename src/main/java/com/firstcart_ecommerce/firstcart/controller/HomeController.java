@@ -3,6 +3,7 @@ package com.firstcart_ecommerce.firstcart.controller;
 
 import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
+import com.firstcart_ecommerce.firstcart.services.S3Service;
 import com.firstcart_ecommerce.firstcart.services.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -28,6 +29,9 @@ public class HomeController {
     private UserServiceImpl userservice;
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    S3Service s3Service;
 
 
     @GetMapping("/")
@@ -101,6 +105,9 @@ public class HomeController {
     public HttpServletRequest getRequest() {
         return request;
     }
+
+
+
 
 
 

@@ -9,11 +9,11 @@
 <div class="container-fluid content">
     <div class="container ">
         <div class="card-body">
-            <h5 class="card-title fw-semibold mb-4">Add a new Product</h5>
+            <h5 class="card-title fw-semibold mb-4">Update Product</h5>
             <div class="card">
                 <div class="card-body" style="background:black;!important">
-                    <form th:action="@{/admin/product/add}" method="post" th:object="${productDTO}" enctype="multipart/form-data">
-
+                    <form th:action="@{/admin/product/update}" method="Post" th:object="${productDTO}" enctype="multipart/form-data">
+                        <input type="hidden" name="id"  th:field="*{id}">
                         <div class="mb-3">
                             <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></span>
                             <span th:if="${error}" th:text="${error}" class="error text-danger"></span>
@@ -64,7 +64,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
                     </form>
                 </div>
             </div>

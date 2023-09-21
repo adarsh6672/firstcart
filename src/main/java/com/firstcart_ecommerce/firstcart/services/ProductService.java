@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -21,9 +22,16 @@ public class ProductService {
         return productRepo.existsByName(productName);
     }
 
+    public boolean isProductIdExist(Long id){
+
+        return productRepo.existsById(id);}
+
     public void saveProduct(Product product){
         productRepo.save(product);
     }
+
+
+
 
     public void addProduct(Product product) {
         for (ProductImage image : product.getImages()) {
@@ -31,6 +39,8 @@ public class ProductService {
         }
         productRepo.save(product);
     }
+
+
 
     public Long saveImageAndGetId(String imageName) {
         ProductImage image = new ProductImage();
@@ -42,5 +52,13 @@ public class ProductService {
 
     public List<Product> getAllProduct(){
         return productRepo.findAll();
+    }
+
+    public Optional<Product> getProductById(Long id){
+        return productRepo.findById(id);
+    }
+
+    public void removeProductById(Long id){
+        productRepo.deleteById(id);
     }
 }
