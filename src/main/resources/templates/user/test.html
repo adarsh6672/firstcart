@@ -30,7 +30,7 @@
                     <div class="form-group">
                         <div class="row" id="imagePreviews" th:each="image : ${product.images}" >
                             <!-- Iterate over image names and display images -->
-                            <div class="thumbnail"  onclick="changeMainImage(this)">
+                            <div class="thumbnail" th:data-image="${image.imageName}"  onclick="changeMainImage(this)">
                                 <img class="img-fluid small-image" height="60px" width="60px" th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/'+image.imageName}" alt="">
                             </div>
                         </div>
@@ -263,7 +263,7 @@
     function changeMainImage(thumbnail) {
         var mainImage = document.getElementById('mainImage');
         var imageName = thumbnail.getAttribute('data-image');
-        mainImage.src = '/productImages/' + imageName;
+        mainImage.src = 'https://firstcart-s3.s3.eu-north-1.amazonaws.com/' + imageName;
         // Reinitialize Elevate Zoom on the main image
         $('.zoom').elevateZoom();
     }

@@ -6,6 +6,7 @@ import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
