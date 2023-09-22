@@ -50,10 +50,10 @@ public class AdminController {
     private ProductService productService;
 
     @Autowired
-    S3Service s3Service;
+    private S3Service s3Service;
 
     @Autowired
-    ProductImageRepo productImageRepo;
+    private ProductImageRepo productImageRepo;
 
 
 
@@ -69,7 +69,9 @@ public class AdminController {
         return "admin_profile";
     }
     @GetMapping("/home")
-    public String adhome(){
+    public String home(Model model){
+        List<Product> products=productService.getAllProduct();
+        model.addAttribute("products",products);
         return "user/userindex";
     }
     @GetMapping("/manage")

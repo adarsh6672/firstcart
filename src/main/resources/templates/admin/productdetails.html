@@ -32,7 +32,7 @@
                 </div>
                 <h6 style="color:#ff3030;!important"class="fw-medium mb-1 mt-3">Product Images</h6>
                 <div th:each="image : ${product.images}">
-                    <img src="" height="100px" width="100px" th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/'+image.imageName}">
+                    <img src="" height="200px" width="200px" th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/'+image.imageName}">
                 </div>
                 <h6 style="color:#ff3030;!important"class="fw-medium mb-1 mt-3">Product Price</h6>
                 <div class="d-flex align-items-center justify-content-between pb-7">

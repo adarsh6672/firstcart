@@ -1,8 +1,10 @@
 package com.firstcart_ecommerce.firstcart.controller;
 
 
+import com.firstcart_ecommerce.firstcart.model.Product;
 import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
+import com.firstcart_ecommerce.firstcart.services.ProductService;
 import com.firstcart_ecommerce.firstcart.services.S3Service;
 import com.firstcart_ecommerce.firstcart.services.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 public class HomeController {
     @Autowired
@@ -31,12 +35,15 @@ public class HomeController {
     private UserRepo userRepo;
 
     @Autowired
-    S3Service s3Service;
+    private ProductService productService;
+
 
 
     @GetMapping("/")
     @Secured({"ROLE_ADMIN", "ROLE_USER"}) // Define the roles that can access this endpoint
-    public String log() {
+    public String log(Model model) {
+        List<Product> products2=productService.getAllProduct();
+        model.addAttribute("products",products2);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
             return "index"; // If not authenticated, show the login page.

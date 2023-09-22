@@ -44,7 +44,7 @@ public class SecurityConfig  {
         http.csrf().disable().authorizeHttpRequests()
                 .requestMatchers("img/**","fonts/**","/static/**","/js/**","css/**","/","/register","/login","/saveuser").permitAll()
                 .requestMatchers("/user/**").hasRole("USER")
-                .requestMatchers("/admin/**").hasRole("ADMIN").and()
+                .requestMatchers("/admin/**","/user/**").hasRole("ADMIN").and()
                 .formLogin().loginPage("/login").loginProcessingUrl("/login")
                 .successHandler(successHandler)
                 .failureUrl("/login?error")

@@ -1,0 +1,102 @@
+<header th:fragment="cart_header">
+    <!-- TOP HEADER -->
+    <
+    <!-- /TOP HEADER -->
+
+    <!-- MAIN HEADER -->
+    <div id="header">
+        <!-- container -->
+        <div class="container">
+            <!-- row -->
+            <div class="row">
+                <!-- LOGO -->
+                <div class="col-md-3">
+                    <div class="header-logo">
+                        <a href="#" class="logo">
+                            <img style="max-width: 250px; max-height: 150px;" src="/img/logo2.png" alt="">
+                        </a>
+                    </div>
+                </div>
+                <!-- /LOGO -->
+
+                <!-- SEARCH BAR -->
+                <div class="col-md-4">
+                    <div class="header-search">
+                        <form>
+
+                            <input class="input" placeholder="Search here">
+                            <button class="search-btn">Search</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- /SEARCH BAR -->
+
+                <!-- ACCOUNT -->
+
+                <div class="col-md-5 clearfix">
+
+                    <a th:href="@{/admin/adminpanel}"style="text-decoration:none;" >	<button type="button" th:action="@{/admin/adminpanel}" class="btn admin-button" sec:authorize="hasRole('ADMIN')">Admin Panel</button></a>
+
+                    <div class="header-ctn">
+
+
+                        <!-- Wishlist -->
+                        <div>
+                            <a href="#">
+                                <i class="fa fa-heart-o"></i>
+                                <span>Your Wishlist</span>
+                                <div class="qty">2</div>
+                            </a>
+                        </div>
+                        <!-- /Wishlist -->
+
+                        <!-- Cart -->
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span>Your Cart</span>
+                                <div class="qty">3</div>
+                            </a>
+                        </div>
+
+
+                        <!-- /Cart -->
+
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                <i class="fa fa-user-o"></i>
+                                <span>Your Account</span>
+
+                            </a>
+                            <div class="cart-dropdown">
+
+
+                                <div>
+                                    <a class="prolog-btn" href="#">Profile</a>
+                                    <form th:action="@{/logout}" method="post" role="search">
+                                        <button class="prolog-btn" type="submit"><a>LogOut</a></button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Menu Toogle -->
+                        <div class="menu-toggle">
+                            <a href="#">
+                                <i class="fa fa-bars"></i>
+                                <span>Menu</span>
+                            </a>
+                        </div>
+                        <!-- /Menu Toogle -->
+                    </div>
+                </div>
+                <!-- /ACCOUNT -->
+            </div>
+            <!-- row -->
+        </div>
+        <!-- container -->
+    </div>
+    <!-- /MAIN HEADER -->
+</header>
+

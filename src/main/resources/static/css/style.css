@@ -902,6 +902,8 @@ textarea.input {
 
 .product .product-img>img {
   width: 100%;
+  min-height:250px;
+  max-height:250px;
 }
 
 .product .product-img .product-label {
