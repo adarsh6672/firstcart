@@ -41,12 +41,6 @@ public class UserController {
         return "user/blank";
     }
 
-/*
-    @GetMapping("/home")
-    public String home(){
-        return "user/userindex";
-    }
-*/
 
     @GetMapping("/home")
     public String home(Model model){
@@ -61,7 +55,7 @@ public class UserController {
         if (product.isPresent()) {
             model.addAttribute("product", product.get());
             model.addAttribute("pageTitle", "Product Details | Admin");
-            return "user/test";
+            return "user/product_open";
         } else {
             return "productNotFound";
         }

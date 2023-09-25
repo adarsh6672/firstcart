@@ -6,6 +6,7 @@ import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.ProductService;
 import com.firstcart_ecommerce.firstcart.services.S3Service;
+import com.firstcart_ecommerce.firstcart.services.UserService;
 import com.firstcart_ecommerce.firstcart.services.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -30,7 +31,7 @@ import java.util.List;
 @Controller
 public class HomeController {
     @Autowired
-    private UserServiceImpl userservice;
+    private UserService userservice;
     @Autowired
     private UserRepo userRepo;
 

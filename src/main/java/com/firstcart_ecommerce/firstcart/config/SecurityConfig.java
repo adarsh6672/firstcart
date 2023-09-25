@@ -43,8 +43,8 @@ public class SecurityConfig  {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeHttpRequests()
                 .requestMatchers("img/**","fonts/**","/static/**","/js/**","css/**","/","/register","/login","/saveuser").permitAll()
-                .requestMatchers("/user/**").hasRole("USER")
-                .requestMatchers("/admin/**","/user/**").hasRole("ADMIN").and()
+                .requestMatchers("/user/**").hasAnyRole("USER","ADMIN")
+                .requestMatchers("/admin/**").hasRole("ADMIN").and()
                 .formLogin().loginPage("/login").loginProcessingUrl("/login")
                 .successHandler(successHandler)
                 .failureUrl("/login?error")

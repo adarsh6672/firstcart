@@ -4,7 +4,7 @@
 
 <body style="color:white;!important">
 <div th:replace="fragments/html_nav :: html_nav"></div>
-<div class="container content">
+<div class="container content" style="background-color:white;!important">
 <a th:href="@{/admin/product/add}" style="margin: 20px 0" class="btn btn-primary">Add Product</a>
 
 <!--        Categories Table Starts         -->
@@ -45,7 +45,10 @@
 
 
             <td><a href="" th:href="@{/admin/product/update/{id}(id=${product.id})}" class="btn btn-warning">Edit</a></td>
-            <td><a href="" th:href="@{/admin/product/delete/{id}(id=${product.id})}" class="btn btn-danger">Delete</a></td>
+
+            <td><a href="" th:href="@{/admin/product/delete/{id}(id=${product.id})}" class="btn btn-danger"
+                   type="submit" th:data-confirm-delete="|Are you sure you want to delete ${product.name}?|"
+                   onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false">Delete</a></td>
 
         </tr>
 
