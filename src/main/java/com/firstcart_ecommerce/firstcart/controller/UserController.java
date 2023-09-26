@@ -37,8 +37,27 @@ public class UserController {
 
     }
     @GetMapping("/profile")
-    public String profile(){
-        return "user/blank";
+    public String profileview(Principal p, Model m){
+        if(p != null) {
+            String email = p.getName();
+            User user = userRepo.findByEmail(email);
+            m.addAttribute("user", user);
+        }
+        return "user/pro";
+    }
+    @GetMapping("/profile/edit")
+    public String editProfile(Principal p, Model m){
+        String email = p.getName();
+        User user = userRepo.findByEmail(email);
+        m.addAttribute("user", user);
+        return "user/Edit_Details";
+    }
+    @GetMapping("/profile/address")
+    public String editaddress(Principal p, Model m){
+        String email = p.getName();
+        User user = userRepo.findByEmail(email);
+        m.addAttribute("user", user);
+        return "user/add_address";
     }
 
 
@@ -60,6 +79,8 @@ public class UserController {
             return "productNotFound";
         }
     }
+
+
 
 
 

@@ -1,6 +1,6 @@
 <header th:fragment="cart_header">
     <!-- TOP HEADER -->
-    <
+
     <!-- /TOP HEADER -->
 
     <!-- MAIN HEADER -->
@@ -72,7 +72,7 @@
 
 
                                 <div>
-                                    <a class="prolog-btn" href="#">Profile</a>
+                                    <a th:href="@{/user/profile}" class="prolog-btn" >Profile</a>
                                     <form th:action="@{/logout}" method="post" role="search">
                                         <button class="prolog-btn" type="submit"><a>LogOut</a></button>
                                     </form>
