@@ -1,0 +1,48 @@
+<div class="col-lg-4" th:fragment="cart_profile">
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            <img th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/jbl_1.jpg'}" alt="avatar"
+                 width="72" height="72" class="rounded-circle">
+            <br>
+            <h5 class="my-3 mt-2" th:text="${user.name}">John Smith</h5>
+            <p class="text-muted mb-4" th:text="${user.phone}"></p>
+            <div class="d-flex justify-content-center mb-2">
+                <button type="button" class="btn btn-outline-primary ms-1">Edit Profile Picture</button>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4 mb-lg-0">
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush rounded-3">
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3"
+                    th:classappend="${servletPath == '/user/profile' ? 'active':''}">
+                    <i class="fas fa-globe fa-lg text-warning"></i>
+                    <a th:href="@{/user/profile}" class="mb-0 ">Profile</a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3"
+                    th:classappend="${servletPath == '/user/profile/edit' ? 'active':''}">
+                    <i class="fas fa-globe fa-lg text-warning"></i>
+                    <a th:href="@{/user/profile/edit}" class="mb-0 ">Edit Details</a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3"
+                    th:classappend="${servletPath == '/user/profile/address' ? 'active':''}">
+                    <i class="fab fa-github fa-lg" style="color: #333333;"></i>
+                    <a th:href="@{/user/profile/address}" class="mb-0">Add/Edit Address</a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3"
+                    th:classappend="${servletPath == '/user/profile/password' ? 'active':''}">
+                    <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
+                    <a th:href="@{/user/profile/password}" class="mb-0">Change Password</a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                    <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
+                    <a href="" class="mb-0">Previous Orders</a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                    <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
+                    <a href="" class="mb-0">Saved Payment Methods</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

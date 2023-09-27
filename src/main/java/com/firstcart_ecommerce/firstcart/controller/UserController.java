@@ -59,6 +59,13 @@ public class UserController {
         m.addAttribute("user", user);
         return "user/add_address";
     }
+    @GetMapping("/profile/password")
+    public String changepassword(Principal p, Model m){
+        String email = p.getName();
+        User user = userRepo.findByEmail(email);
+        m.addAttribute("user", user);
+        return "user/change_password";
+    }
 
 
     @GetMapping("/home")
