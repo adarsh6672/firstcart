@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface UserService {
     public User saveUser(User user);
+
+    public User updatePassword(User user);
+
     public void removeSessionMessage();
     List<User> getAllUsers();
 

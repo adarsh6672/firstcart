@@ -5,14 +5,14 @@ import com.firstcart_ecommerce.firstcart.model.Product;
 import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.ProductService;
+import com.firstcart_ecommerce.firstcart.services.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -24,6 +24,11 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ProductService productService;
@@ -52,6 +57,20 @@ public class UserController {
         m.addAttribute("user", user);
         return "user/Edit_Details";
     }
+    @PostMapping("/saveuser")
+    public String saveUser(@ModelAttribute User user, HttpSession session){
+
+        User u=userRepo.save(user);
+
+        if(u!=null){
+            System.out.println("successfuly saved");
+            session.setAttribute("msg","UPDATION SUCCESSFUL..!");
+        }else {
+            System.out.println("something went wrong");
+            session.setAttribute("msg","UPDATION FAILED.! SOMETHING WENT WRONG");
+        }
+        return "redirect:/user/profile";
+    }
     @GetMapping("/profile/address")
     public String editaddress(Principal p, Model m){
         String email = p.getName();
@@ -65,6 +84,22 @@ public class UserController {
         User user = userRepo.findByEmail(email);
         m.addAttribute("user", user);
         return "user/change_password";
+    }
+    @PostMapping("/profile/updatepassword")
+    public String updatePassword(@ModelAttribute User user,HttpSession session,@RequestParam String oldPassword,@RequestParam String newPassword){
+
+        if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            String encodedPassword = passwordEncoder.encode(newPassword);
+            user.setPassword(encodedPassword);
+            userRepo.save(user);
+            session.setAttribute("msg","PASSWORD UPDATED SUCCESSFULLY....!");
+            return "redirect:/user/profile";
+        } else {
+            session.setAttribute("msg","CURRENT PASSWORD IS INCORRECT...TRY AGAIN...!");
+            return "redirect:/user/profile/password";
+        }
+
+        /*return "redirect:/user/profile";*/
     }
 
 

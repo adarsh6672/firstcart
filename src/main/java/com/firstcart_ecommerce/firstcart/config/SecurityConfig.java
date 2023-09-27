@@ -22,6 +22,10 @@ public class SecurityConfig  {
 
 
 
+
+
+
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -49,7 +53,8 @@ public class SecurityConfig  {
                 .successHandler(successHandler)
                 .failureUrl("/login?error")
                 .and()
-                .logout().permitAll()
+                .logout()
+                .permitAll()
                 .logoutSuccessUrl("/login?logout")
                 .deleteCookies("JSESSIONID");
 

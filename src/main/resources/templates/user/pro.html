@@ -14,6 +14,10 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="row">
+                            <th:block th:if="${session.msg}">
+                                <p class="text-center text-success" style="font-size: 18px;">[[${session.msg}]]</p>
+                                <th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
+                            </th:block>
                             <div class="col-sm-3">
                                 <p class="mb-0">Full Name</p>
                             </div>
@@ -71,5 +75,6 @@
     </div>
 </section>
 <div th:replace="fragments/cart_footer :: cart_footer"></div>
+<div th:replace="fragments/cart_js :: cart_js"></div>
 </body>
 </html>

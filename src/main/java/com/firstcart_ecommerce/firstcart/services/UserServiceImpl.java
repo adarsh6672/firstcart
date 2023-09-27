@@ -30,6 +30,8 @@ public class UserServiceImpl implements UserService{
         return newuser;
     }
 
+
+
     @Override
     public void removeSessionMessage() {
       HttpSession session=((ServletRequestAttributes)(RequestContextHolder.getRequestAttributes())).getRequest().getSession();
@@ -80,6 +82,13 @@ public class UserServiceImpl implements UserService{
     public List<User> searchUser(String query) {
         List<User> us= userRepo.searchUser(query);
         return us;
+    }
+    @Override
+    public User updatePassword(User user) {
+        String password=passwordEncoder.encode(user.getPassword());
+        user.setPassword(password);
+        User newuser = userRepo.save(user);
+        return newuser;
     }
 
 
