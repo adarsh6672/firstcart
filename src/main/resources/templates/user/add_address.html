@@ -15,17 +15,15 @@
             <div class="col-lg-8">
                 <div class="row mt-3">
                     <form id="editform">
-                        <div class="col-md-12"><label class="labels">Address Line 1</label><input type="text" class="form-control" placeholder="enter address line 1" value=""></div>
-                        <div class="col-md-12"><label class="labels">Address Line 2</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
-                        <div class="col-md-12"><label class="labels">Postcode</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
-                        <div class="col-md-12"><label class="labels">State</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
-                        <div class="col-md-12"><label class="labels">Country</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
-                        <div class="col-md-12"><label class="labels">Area</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
-
+                        <div class="col-md-6"><label class="labels">Address Line 1</label><textarea class="form-control" rows="3"  name="add1" id="add1"></textarea></div>
+                        <div class="col-md-6"><label class="labels">Address Line 2</label><textarea class="form-control" rows="3"  name="add1" id="add2"></textarea></div>
+                        <div class="col-md-6"><label class="labels">Postcode</label><input type="text" id="zip" class="form-control" placeholder="enter Post Code" value=""></div>
+                        <div class="col-md-6"><label class="labels">City</label><input type="text" id="city" class="form-control" placeholder="City" value=""></div>
+                        <div class="col-md-6"><label class="labels">State</label><input type="text" id="state" class="form-control" placeholder="State" value=""></div>
+                        <div class="col-md-6"><label class="labels">Country</label><input type="text" id="country" class="form-control" placeholder="Country" value=""></div>
                         <div class="d-flex justify-content-center  col-md-2 "style="margin-top:5px;">
-                        <button type="submit"
-                                class="btn btn-success  text-white">UPDATE</button>
-                    </div>
+                            <button type="submit" class="btn btn-success  text-white">UPDATE</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -33,5 +31,24 @@
     </div>
 </section>
 <div th:replace="fragments/cart_footer :: cart_footer"></div>
+<script>
+    $(document).ready(function() {
+    $("#zip").keyup(function() {
+        var el = $(this);
+            $.ajax({
+                url: "https://postalpincode.in/api/pincode/560068",
+                cache: false,
+                dataType: "json",
+                type: "GET",
+                data: "zip=" + el.val(),
+                success: function(result, success) {
+                    $("#city").val(result.city);
+                    $("#state").val(result.state);
+                }
+            });
+
+    });
+});
+</script>
 </body>
 </html>
