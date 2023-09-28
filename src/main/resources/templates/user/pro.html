@@ -48,8 +48,16 @@
                             <div class="col-sm-3">
                                 <p class="mb-0">Address</p>
                             </div>
-                            <div class="col-sm-9">
-                                <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                            <div class="col-sm-9" th:if="${not #lists.isEmpty(user.addresses)}">
+                                <span th:text="${user.addresses[0].houseNo}">,</span>
+                                <span th:text="${user.addresses[0].street}"></span><br>
+                                <span th:text="${user.addresses[0].city}">   </span>
+                                <span th:text="${user.addresses[0].pinCode}"></span><br>
+                                <span th:text="${user.addresses[0].state}">   </span>
+                                <span th:text="${user.addresses[0].country}"></span><br>
+                            </div>
+                            <div class="col-sm-9" th:if="${#lists.isEmpty(user.addresses)}">
+                                <p>Address Not Avilable</p>
                             </div>
                         </div>
                     </div>

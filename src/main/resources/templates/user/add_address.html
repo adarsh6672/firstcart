@@ -14,15 +14,20 @@
 
             <div class="col-lg-8">
                 <div class="row mt-3">
-                    <form id="editform">
-                        <div class="col-md-6"><label class="labels">HousNo/Building No</label><input type="text" id="no" class="form-control" placeholder="enter Post Code" value=""></div>
-                        <div class="col-md-6"><label class="labels">Street</label><input type="text" id="street" class="form-control" placeholder="enter Post Code" value=""></div>
-                        <div class="col-md-6"><label class="labels">Postcode</label><input type="text" id="zip" class="form-control" placeholder="enter Post Code" value=""></div>
-                        <div class="col-md-6"><label class="labels">City</label><input type="text" id="city" class="form-control" placeholder="City" value=""></div>
-                        <div class="col-md-6"><label class="labels">State</label><input type="text" id="state" class="form-control" placeholder="State" value=""></div>
-                        <div class="col-md-6"><label class="labels">Country</label><input type="text" id="country" class="form-control" placeholder="Country" value=""></div>
+                    <form id="editform" th:action="@{/user/profile/add-address}" method="post">
+                        <div class="col-md-6"><label class="labels">Full Name</label><input type="text" name="fullName" id="fullName" class="form-control" placeholder="enter Post Code" value=""></div>
+                        <div class="col-md-6"><label class="labels">Mobile Number</label><input type="text" name="mobile" id="mob" class="form-control" placeholder="enter Post Code" value=""></div>
+                        <div class="col-md-6"><label class="labels">HousNo/Building No</label><input type="text" name="houseNo" id="no" class="form-control" placeholder="enter Post Code" value=""></div>
+                        <div class="col-md-6"><label class="labels">Street</label><input type="text" id="street" name="street" class="form-control" placeholder="enter Post Code" value=""></div>
+                        <div class="col-md-6"><label class="labels">Postcode</label><input type="text" id="zip" name="pinCode" class="form-control" placeholder="enter Post Code" value=""></div>
+                        <div class="col-md-6"><label class="labels">City</label><input type="text" id="city" name="city" class="form-control" placeholder="City" value=""></div>
+                        <div class="col-md-6"><label class="labels">State</label><input type="text" name="state" id="state" class="form-control" placeholder="State" value=""></div>
+                        <div class="col-md-6"><label class="labels">Country</label><input type="text" name="country" id="country" class="form-control" placeholder="Country" value=""></div>
+                        <div class="mb-3">
+                            <label for="state" class="form-label">Default Address: <input type="checkbox" name="defaultAddress" /></label>
+                        </div>
                         <div class="d-flex justify-content-center  col-md-2 "style="margin-top:5px;">
-                            <button type="submit" class="btn btn-success  text-white">UPDATE</button>
+                            <button type="submit" class="btn btn-success  text-white">ADD</button>
                         </div>
                     </form>
                 </div>

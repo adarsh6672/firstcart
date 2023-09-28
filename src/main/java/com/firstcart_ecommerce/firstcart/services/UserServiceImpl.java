@@ -1,8 +1,10 @@
 package com.firstcart_ecommerce.firstcart.services;
 
 
+import com.firstcart_ecommerce.firstcart.model.Address;
 import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,6 +92,28 @@ public class UserServiceImpl implements UserService{
         user.setPassword(password);
         User newuser = userRepo.save(user);
         return newuser;
+    }
+    List<Address> addresses = new ArrayList<>();
+    @Override
+    public void addAddressToUser(String email, Address address) {
+        User user = userRepo.findByEmail(email);
+        if (user != null) {
+            if(address.isDefaultAddress()){
+                Address oldDefaultAddress = user.getAddresses().stream()
+                        .filter(Address::isDefaultAddress)
+                        .findFirst()
+                        .orElseThrow(() -> new EntityNotFoundException("Default address not found"));
+
+                oldDefaultAddress.setDefaultAddress(false);
+            } else if (addresses.isEmpty()) {
+                address.setDefaultAddress(true);
+            }
+                
+
+            address.setUser(user);
+            user.getAddresses().add(address);
+            userRepo.save(user);
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package com.firstcart_ecommerce.firstcart.controller;
 
 
+import com.firstcart_ecommerce.firstcart.model.Address;
 import com.firstcart_ecommerce.firstcart.model.Product;
 import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
@@ -76,7 +77,21 @@ public class UserController {
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         m.addAttribute("user", user);
+        return "user/addressestest";
+    }
+    @GetMapping("/profile/address/add")
+    public String addAddress(Principal p, Model m){
+        String email = p.getName();
+        User user = userRepo.findByEmail(email);
+        m.addAttribute("user", user);
         return "user/add_address";
+    }
+
+    @PostMapping("profile/add-address")
+    public String addAddress(@ModelAttribute Address address, Principal principal) {
+        userService.addAddressToUser(principal.getName(), address);
+        return "redirect:/user/profile";
+
     }
     @GetMapping("/profile/password")
     public String changepassword(Principal p, Model m){
