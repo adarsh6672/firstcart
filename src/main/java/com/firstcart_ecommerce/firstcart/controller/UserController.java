@@ -8,6 +8,7 @@ import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.AddressRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.AddressService;
+import com.firstcart_ecommerce.firstcart.services.CartService;
 import com.firstcart_ecommerce.firstcart.services.ProductService;
 import com.firstcart_ecommerce.firstcart.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,6 +36,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CartService cartService;
 
     @Autowired
     private AddressRepo addressRepo;
@@ -178,10 +182,14 @@ public class UserController {
     @GetMapping("/viewproduct/{productId}")
     public String viewProduct(Model model, @PathVariable Long productId, Principal principal) {
         Optional<Product> product = productService.getProductById(productId);
+        User u=userRepo.findByEmail(principal.getName());
+        boolean isInCart = cartService.isInCart(productId,u);
         if (product.isPresent()) {
+            model.addAttribute("isInCart",isInCart);
             model.addAttribute("product", product.get());
             model.addAttribute("pageTitle", "Product Details | Admin");
-            return "user/mod";
+
+            return "user/product_open";
         } else {
             return "productNotFound";
         }

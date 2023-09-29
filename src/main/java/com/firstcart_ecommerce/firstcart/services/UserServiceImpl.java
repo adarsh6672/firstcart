@@ -24,6 +24,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private ProductService productService;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
@@ -143,7 +146,13 @@ public class UserServiceImpl implements UserService{
     public Cart getUserCart(User user) {
         return getOrCreateUserCart(user);
     }
-
+    @Override
+    public void removeFromUserCart(User user, Long productId) {
+        Cart cart = getOrCreateUserCart(user);
+        Optional<Product> product = productService.getProductById(productId);
+        product.ifPresent(cart.getProducts()::remove);
+        cartRepo.save(cart);
+    }
 
 
 

@@ -48,9 +48,11 @@
                                 <button class="btn btn-white border-secondary bg-white btn-md mb-2">
                                     <i class="fa fa-sync"></i>
                                 </button>
-                                <button class="btn btn-white border-secondary bg-white btn-md mb-2">
+                                <a class="btn btn-white border-secondary bg-white btn-md mb-2" th:href="@{/user/cart/delete/{id}(id=${item.id})}"
+                                   th:data-confirm-block="|Are you sure you want to block ${item.name}?|"
+                                   onclick="if (!confirm(this.getAttribute('data-confirm-block'))) return false">
                                     <i class="fa fa-trash"></i>
-                                </button>
+                                </a>
                             </div>
                         </td>
                     </tr>

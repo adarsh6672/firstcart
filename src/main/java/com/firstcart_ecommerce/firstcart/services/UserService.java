@@ -32,4 +32,6 @@ public interface UserService {
     void addToUserCart(User user, Product product);
 
     Cart getUserCart(User user);
+
+    void removeFromUserCart(User user, Long productId);
 }

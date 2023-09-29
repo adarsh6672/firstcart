@@ -31,12 +31,17 @@ public class Cart {
         for (Product product : products) {
             totalAmount += product.getPrice();
         }
+        this.totalAmount = totalAmount;
+
         return totalAmount;
     }
 
     public void setTotalCartAmount( double totalAmount){
         this.totalAmount = totalAmount;
 
+    }
+
+    public Cart() {
     }
 
 
