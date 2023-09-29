@@ -2,7 +2,10 @@ package com.firstcart_ecommerce.firstcart.services;
 
 
 import com.firstcart_ecommerce.firstcart.model.Address;
+import com.firstcart_ecommerce.firstcart.model.Cart;
+import com.firstcart_ecommerce.firstcart.model.Product;
 import com.firstcart_ecommerce.firstcart.model.User;
+import com.firstcart_ecommerce.firstcart.repository.CartRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
@@ -23,6 +26,9 @@ public class UserServiceImpl implements UserService{
     private UserRepo userRepo;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CartRepo cartRepo;
     @Override
     public User saveUser(User user) {
         String password=passwordEncoder.encode(user.getPassword());
@@ -93,9 +99,10 @@ public class UserServiceImpl implements UserService{
         User newuser = userRepo.save(user);
         return newuser;
     }
-    List<Address> addresses = new ArrayList<>();
+
     @Override
     public void addAddressToUser(String email, Address address) {
+        List<Address> addresses = new ArrayList<>();
         User user = userRepo.findByEmail(email);
         if (user != null) {
             if(address.isDefaultAddress()){
@@ -105,7 +112,7 @@ public class UserServiceImpl implements UserService{
                         .orElseThrow(() -> new EntityNotFoundException("Default address not found"));
 
                 oldDefaultAddress.setDefaultAddress(false);
-            } else if (addresses.isEmpty()) {
+            } else if (user.getAddresses().isEmpty()) {
                 address.setDefaultAddress(true);
             }
                 
@@ -115,6 +122,29 @@ public class UserServiceImpl implements UserService{
             userRepo.save(user);
         }
     }
+    @Override
+    public Cart getOrCreateUserCart(User user) {
+        Cart cart = cartRepo.findByUser(user);
+        if (cart == null) {
+            cart = new Cart();
+            cart.setUser(user);
+            cartRepo.save(cart);
+        }
+        return cart;
+    }
+
+    @Override
+    public void addToUserCart(User user, Product product) {
+        Cart cart = getOrCreateUserCart(user);
+        cart.getProducts().add(product);
+        cartRepo.save(cart);
+    }
+    @Override
+    public Cart getUserCart(User user) {
+        return getOrCreateUserCart(user);
+    }
+
+
 
 
 }

@@ -2,6 +2,8 @@ package com.firstcart_ecommerce.firstcart.services;
 
 
 import com.firstcart_ecommerce.firstcart.model.Address;
+import com.firstcart_ecommerce.firstcart.model.Cart;
+import com.firstcart_ecommerce.firstcart.model.Product;
 import com.firstcart_ecommerce.firstcart.model.User;
 
 import java.util.List;
@@ -25,4 +27,9 @@ public interface UserService {
     void addAddressToUser(String email, Address address);
 
 
+    Cart getOrCreateUserCart(User user);
+
+    void addToUserCart(User user, Product product);
+
+    Cart getUserCart(User user);
 }

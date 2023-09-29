@@ -1,8 +1,8 @@
 <div class="col-lg-4" th:fragment="cart_profile">
     <div class="card mb-4">
         <div class="card-body text-center">
-            <img th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/jbl_1.jpg'}" alt="avatar"
-                 width="72" height="72" class="rounded-circle">
+            <img th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/propic/defaultprofilepic.jpg'}" alt="avatar"
+                 width="72" height="72" style="border-radius: 50%;">
             <br>
             <h5 class="my-3 mt-2" th:text="${user.name}">John Smith</h5>
             <p class="text-muted mb-4" th:text="${user.phone}"></p>

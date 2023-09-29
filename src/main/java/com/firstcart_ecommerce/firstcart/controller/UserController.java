@@ -2,11 +2,15 @@ package com.firstcart_ecommerce.firstcart.controller;
 
 
 import com.firstcart_ecommerce.firstcart.model.Address;
+import com.firstcart_ecommerce.firstcart.model.Cart;
 import com.firstcart_ecommerce.firstcart.model.Product;
 import com.firstcart_ecommerce.firstcart.model.User;
+import com.firstcart_ecommerce.firstcart.repository.AddressRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
+import com.firstcart_ecommerce.firstcart.services.AddressService;
 import com.firstcart_ecommerce.firstcart.services.ProductService;
 import com.firstcart_ecommerce.firstcart.services.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +37,12 @@ public class UserController {
     private UserService userService;
 
     @Autowired
+    private AddressRepo addressRepo;
+
+    @Autowired
+    private AddressService addressService;
+
+    @Autowired
     private ProductService productService;
     @ModelAttribute
     public void profile(Principal p, Model m){
@@ -39,9 +50,13 @@ public class UserController {
             String email = p.getName();
             User user = userRepo.findByEmail(email);
             m.addAttribute("user", user);
+            Cart userCart = userService.getUserCart(user);
+            m.addAttribute("cartProductCount", userCart.getProducts().size());
         }
 
     }
+
+
     @GetMapping("/profile")
     public String profileview(Principal p, Model m){
         if(p != null) {
@@ -90,8 +105,43 @@ public class UserController {
     @PostMapping("profile/add-address")
     public String addAddress(@ModelAttribute Address address, Principal principal) {
         userService.addAddressToUser(principal.getName(), address);
-        return "redirect:/user/profile";
+        return "redirect:/user/profile/address";
 
+    }
+    @GetMapping("/profile/address/update/{id}")
+    public String updateAddresses(@PathVariable (value = "id")Long id, Model m){
+        Address address = addressRepo.getById(id);
+        m.addAttribute("address",address);
+        return "user/address_update";
+    }
+    @PostMapping("profile/address/update")
+    public String updateAddress(@ModelAttribute Address address, Principal principal) throws IOException {
+        addressService.addAddressToUser(principal.getName(), address);
+        return "redirect:/user/profile/address";
+
+    }
+
+    @GetMapping("profile/address/delete/{id}")
+    public String deleteAddress(@PathVariable (value = "id")Long id,Principal p){
+        Address address= addressRepo.getById(id);
+        String email = p.getName();
+        User user = userRepo.findByEmail(email);
+        try {
+            if(address.isDefaultAddress()){
+                addressService.deleteAddressById(id);
+                Address firstAddress = user.getAddresses().stream().findFirst()
+                        .orElseThrow(() -> new EntityNotFoundException("address not found"));
+
+                firstAddress.setDefaultAddress(true);
+                addressRepo.save(firstAddress);
+
+            }else {
+                addressService.deleteAddressById(id);
+            }
+        }catch (EntityNotFoundException e){
+            return "redirect:/user/profile/address";
+        }
+        return "redirect:/user/profile/address";
     }
     @GetMapping("/profile/password")
     public String changepassword(Principal p, Model m){
@@ -131,11 +181,13 @@ public class UserController {
         if (product.isPresent()) {
             model.addAttribute("product", product.get());
             model.addAttribute("pageTitle", "Product Details | Admin");
-            return "user/product_open";
+            return "user/mod";
         } else {
             return "productNotFound";
         }
     }
+
+
 
 
 
