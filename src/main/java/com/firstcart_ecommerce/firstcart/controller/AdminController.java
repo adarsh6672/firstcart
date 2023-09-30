@@ -131,7 +131,7 @@ public class AdminController {
     @PostMapping("/category/adding")
     public String postCat(@ModelAttribute("category")Category category){
         categoryService.addCategory(category);
-        return "redirect:/admin/category";
+        return "redirect:/admin/categories";
     }
 
 
@@ -148,6 +148,10 @@ public class AdminController {
     public String listCategories(Model model) {
         List<CategorySubCategoryDTO> categorySubCategoryDTOList = subCategoryRepo.getCategorySubCategoryJoin();
         model.addAttribute("categorySubCategoryDTOList", categorySubCategoryDTOList);
+        model.addAttribute("categoey",new Category());
+        model.addAttribute("subcategory", new SubCategory());
+        model.addAttribute("categories", categoryService.getAllCategory());
+
 
         return "admin/category-list"; // Thymeleaf view name
     }
@@ -166,7 +170,7 @@ public class AdminController {
         Category category = categoryRepo.findById(categoryId).orElseThrow();
         subcategory.setCategory(category);
         subCategoryRepo.save(subcategory);
-        return "redirect:/admin/subcategories/new";
+        return "redirect:/admin/categories";
     }
     @PostMapping("/category/delete/{id}")
     public String deleteCat(@PathVariable (value = "id")int id) {

@@ -5,16 +5,17 @@
 <body>
 <div th:replace="fragments/html_nav :: html_nav"></div>
 
-<div class="content container">
+<div class="content container col-md-12">
     <h2>Create New Subcategory</h2>
+    <div class="col-md-6">
     <form action="" th:action="@{/admin/addsubcategory}"  method="post">
         <div class="form-outline mb-4">
-            <label class="form-label text-white" for="name">Sub Category Name:</label>
-            <input type="text" class=" form-control-lg bg-white" id="name" name="name" required>
+            <label class="form-label " for="name">Sub Category Name:</label>
+            <input type="text" class="form-control form-control-lg bg-white" id="name" name="name" required>
         </div>
 
         <div class="form-outline mb-4">
-            <label for="category" class="form-label text-white">Category:</label><br>
+            <label for="category" class="form-label ">Category:</label><br>
             <select class="form-control form-control-lg bg-white" id="category" name="category_id">
                 <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
             </select>
@@ -24,9 +25,55 @@
                     class="btn btn-success btn-block btn-lg  text-white">ADD SUB CATEGORY</button>
         </div>
     </form>
+    </div>
+    <div class="col-md-6">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Launch demo modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" th:action="@{/admin/addsubcategory}"  method="post">
+                        <div class="form-outline mb-4">
+                            <label class="form-label text-white" for="name">Sub Category Name:</label>
+                            <input type="text" class=" form-control-lg bg-white" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-outline mb-4">
+                            <label for="category" class="form-label text-white">Category:</label><br>
+                            <select class="form-control form-control-lg bg-white" id="category" name="category_id">
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button type="submit"
+                                    class="btn btn-success btn-block  text-white">ADD SUB CATEGORY</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 
 <div th:replace="fragments/html_footer :: html_footer"></div>
 <div th:replace="fragments/js_links :: js_links"></div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

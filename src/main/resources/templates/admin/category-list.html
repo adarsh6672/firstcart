@@ -13,7 +13,13 @@
                 <form th:action="@{/admin/searchuser}" method="get">
                     <div class="input-group mb-3">
                         <input type="search" name="query" class="form-control rounded" style="background:white;" th:placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-                        <button type="submit" class="btn btn-primary">search</button>
+                        <button type="submit" class="btn btn-primary ">search</button>
+                        <button type="button" class="btn btn-success ml-2" data-toggle="modal" data-target="#subCat">
+                            Add Main Category
+                        </button>
+                        <button type="button" class="btn btn-success ml-2" data-toggle="modal" data-target="#mainCat">
+                            Add Sub Category
+                        </button>
                     </div>
                 </form>
             </div>
@@ -52,9 +58,80 @@
                     </tr>
                     </tbody>
                 </table>
-                <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
-                <div th:replace="fragments/html_footer :: html_footer"></div>
 
+                <div th:replace="fragments/html_footer :: html_footer"></div>
+            </div>
+
+                <div class="modal fade" id="subCat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add Main Category</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="form2"  th:action="@{/admin/category/adding}"  method="post" action="">
+
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label text-white"  for="regName"> ENTER THE CATEGORY NAME:</label>
+                                        <input type="text" id="regname" name="name" class="form-control form-control-lg bg-white" />
+
+                                    </div>
+
+
+
+                                    <div class="d-flex justify-content-center">
+                                        <button type="submit"
+                                                class="btn btn-success btn-block   text-white">ADD</button>
+                                    </div>
+
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="mainCat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="ModalLabel">Add Sub Category</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="" th:action="@{/admin/addsubcategory}"  method="post">
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label " for="name">Sub Category Name:</label>
+                                        <input type="text" class="form-control form-control-lg bg-white" id="name" name="name" required>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <label for="category" class="form-label ">Category:</label><br>
+                                        <select class="form-control form-control-lg bg-white" id="category" name="category_id">
+                                            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="submit"
+                                                class="btn btn-success btn-block   text-white">ADD SUB CATEGORY</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
 
@@ -62,6 +139,9 @@
 
     <!-- JavaScript Libraries -->
 <div th:replace="fragments/js_links :: js_links"></div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 </body>
 
