@@ -24,12 +24,14 @@ public class Cart {
     @Column(name = "product_id")
     private List<Long> selectedProductIds = new ArrayList<>();
 
+    @Column(columnDefinition = "integer default 1")
+    private int quantity;
 
     private double totalAmount;
     public double getTotalCartAmount() {
         double totalAmount = 0.0;
         for (Product product : products) {
-            totalAmount += product.getPrice();
+            totalAmount += (product.getPrice()*quantity);
         }
         this.totalAmount = totalAmount;
 

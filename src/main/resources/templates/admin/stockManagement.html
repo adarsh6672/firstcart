@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/html_head :: html_head">
+
+<body style="background-color:white;!important">
+<div th:replace="fragments/html_nav :: html_nav"></div>
+            <!--list of users-->
+        <div class="content container" style="background-color:white;!important">
+            <div class="">
+                <h1>STOCK MANAGEMENT</h1>
+                <form th:action="@{/admin/searchproduct}" method="get">
+                    <div class="input-group mb-3">
+                        <input type="search" name="query" class="form-control rounded" style="background:white;" th:placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-search me-2"></i></button>
+                    </div>
+                </form>
+            </div>
+            <th:block th:if="${session.msg}">
+                <p class="text-center text-success" style="font-size: 18px;">[[${session.msg}]]</p>
+                <th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
+            </th:block>
+            <div >
+                <table class="table table-bordered border-primary table-striped table-responsive-md">
+                    <thead>
+                    <th>No</th>
+                    <th>PRODUCT ID</th>
+                    <th>PRODUCT</th>
+                    <th>CATEGORY</th>
+                    <th>STATUS</th>
+                    <th>QUANTITY</th>
+                    <th>UPDATE STOCK</th>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product , iStat : ${products}">
+                        <td th:text="${iStat.index + 1}"></td>
+                        <td th:text="${product.id}"></td>
+                        <td th:text="${product.name}"></td>
+                        <td th:text="${product.subCategory.name}"></td>
+
+                        <td>
+                            <div th:if="${product.stockQuantity > 100}" class="text-success fw-bolder">In Stock</div>
+                            <div th:if="${product.stockQuantity > 1 and product.stockQuantity < 100}" class="text-warning">Manage Stock</div>
+                            <div th:if="${product.stockQuantity < 1}" class="text-danger">Out Of Stock</div>
+                        </td>
+                        <td th:text="${product.stockQuantity}"></td>
+                        <td>
+                            <form id="form4"    method="post" action="">
+                                    <input type="number" id="stock"  name="newqty" class="" />
+                                    <button type="submit" th:formaction="@{/admin/stock/set/{id}(id=${product.id})}" class="btn btn-success  text-white">ADD</button>
+                                <button type="submit" th:formaction="@{/admin/stock/add/{id}(id=${product.id})}" class="btn btn-warning  text-white">SET</button>
+                            </form>
+
+                            <!--<a type="button" class="text-info ml-2" th:attr="data-productId=${product.id}, data-productName=${product.name}"
+                               data-toggle="modal" data-target="#setstock-${product.id}"><i class="fa fa-edit me-2"></i>
+                                Set Stock
+                            </a><br>
+                            <a type="button" class="text-success ml-2" data-toggle="modal" data-target="#addstock"><i class="fa fa-plus me-2"></i>
+                                Add Stock
+                            </a>-->
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        </div>
+
+<!--set stock-->
+<div th:replace="fragments/html_footer :: html_footer"></div>
+<div class="modal fade" id="setstock-${product.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabe">Set Stock</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form3"  th:action="@{/admin/stock/set}"  method="post" action="">
+                    <input type="hidden" id="productIdInput" name="productId"  >
+                    <input type="hidden" name="productName"  >
+                    <p id="productId"></p>
+                    <p id="productName"></p>
+                    <div class="form-outline mb-4">
+                        <label class="form-label text-white"  for=""> SET STOCK:</label>
+                        <input type="number" id="regnam"  name="stockQuantity" class="form-control form-control-lg bg-white" />
+
+                    </div>
+
+
+
+                    <div class="d-flex justify-content-center">
+                        <button type="submit"
+                                class="btn btn-success btn-block   text-white">SET</button>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--&lt;!&ndash;add stock&ndash;&gt;
+<div class="modal fade" id="addstock" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Stock</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form2"  th:action="@{/admin/stock/add/{id}(id=${product.id})}"  method="post" action="">
+                    <input type="hidden" name="id"  th:field="${product.id}">
+                    <div class="form-outline mb-4">
+                        <label class="form-label text-white"  for="regName"> ADD STOCK :</label>
+                        <input type="number" id="regname" name="stockQuantity" class="form-control form-control-lg bg-white" />
+
+                    </div>
+
+
+
+                    <div class="d-flex justify-content-center">
+                        <button type="submit"
+                                class="btn btn-success btn-block   text-white">ADD</button>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>-->
+
+    <!-- JavaScript Libraries -->
+<div th:replace="fragments/js_links :: js_links"></div>
+<script>
+    $('#setstock').on('show.bs.modal', function(e) {
+    var button = $(e.relatedTarget);
+    var productId = button.data('productid');
+    var productName = button.data('productname');
+    var modal = $(this);
+    modal.find('#productIdInput').val(productId);
+    modal.find('#productNameInput').val(productName);
+});
+
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

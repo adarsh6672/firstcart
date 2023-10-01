@@ -195,9 +195,12 @@ public class UserController {
         }
     }
 
-    @GetMapping("/test")
-    public String test(){
-        return "user/test";
+    @GetMapping("/checkout")
+    public String test(Principal p,Model m){
+        String email = p.getName();
+        User user = userRepo.findByEmail(email);
+        m.addAttribute("user", user);
+        return "user/checkout";
     }
 
 

@@ -5,6 +5,7 @@ import com.firstcart_ecommerce.firstcart.model.ProductImage;
 import com.firstcart_ecommerce.firstcart.repository.ProductImageRepo;
 import com.firstcart_ecommerce.firstcart.repository.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,19 +19,18 @@ public class ProductService {
     @Autowired
     ProductImageRepo productImageRepo;
 
-    public boolean isProductNameExists(String productName){
+    public boolean isProductNameExists(String productName) {
         return productRepo.existsByName(productName);
     }
 
-    public boolean isProductIdExist(Long id){
+    public boolean isProductIdExist(Long id) {
 
-        return productRepo.existsById(id);}
-
-    public void saveProduct(Product product){
-        productRepo.save(product);
+        return productRepo.existsById(id);
     }
 
-
+    public void saveProduct(Product product) {
+        productRepo.save(product);
+    }
 
 
     public void addProduct(Product product) {
@@ -41,7 +41,6 @@ public class ProductService {
     }
 
 
-
     public Long saveImageAndGetId(String imageName) {
         ProductImage image = new ProductImage();
         image.setImageName(imageName);
@@ -50,15 +49,20 @@ public class ProductService {
         return savedImage.getId();
     }
 
-    public List<Product> getAllProduct(){
+    public List<Product> getAllProduct() {
         return productRepo.findAll();
     }
 
-    public Optional<Product> getProductById(Long id){
+    public Optional<Product> getProductById(Long id) {
         return productRepo.findById(id);
     }
 
-    public void removeProductById(Long id){
+    public void removeProductById(Long id) {
         productRepo.deleteById(id);
+    }
+
+    public List<Product> getAllProductsSortedByQuantity() {
+        Sort sort = Sort.by(Sort.Direction.ASC, "stockQuantity");
+        return productRepo.findAll(sort);
     }
 }

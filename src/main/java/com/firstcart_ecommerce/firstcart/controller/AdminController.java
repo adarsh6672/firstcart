@@ -4,11 +4,9 @@ package com.firstcart_ecommerce.firstcart.controller;
 import com.firstcart_ecommerce.firstcart.dto.CategorySubCategoryDTO;
 import com.firstcart_ecommerce.firstcart.dto.ProductDTO;
 import com.firstcart_ecommerce.firstcart.model.*;
-import com.firstcart_ecommerce.firstcart.repository.CategoryRepo;
-import com.firstcart_ecommerce.firstcart.repository.ProductImageRepo;
-import com.firstcart_ecommerce.firstcart.repository.SubCategoryRepo;
-import com.firstcart_ecommerce.firstcart.repository.UserRepo;
+import com.firstcart_ecommerce.firstcart.repository.*;
 import com.firstcart_ecommerce.firstcart.services.*;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
@@ -31,6 +29,9 @@ import java.util.stream.Collectors;
 public class AdminController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    ProductRepo productRepo;
     @Autowired
     private CategoryService categoryService;
 
@@ -335,5 +336,46 @@ public class AdminController {
         productService.addProduct(product);
         return "redirect:/admin/products";
     }
+
+    @GetMapping("/stockmanagement")
+    public String getStock(Model m){
+        m.addAttribute("products" ,productService.getAllProductsSortedByQuantity());
+        return "admin/stockManagement";
+    }
+    @GetMapping("/searchproduct")
+    public String getprod(@RequestParam(value = "query", required = false) String query, Model model) {
+        List<Product> products;
+        if (query != null && !query.isEmpty()) {
+            products = productRepo.searchProduct(query);
+        } else {
+            products =productService.getAllProductsSortedByQuantity();
+        }
+        model.addAttribute("products", products);
+        return "admin/stockManagement";
+    }
+
+    @PostMapping("/stock/set/{id}")
+    public String setStock(@RequestParam("newqty") int qty,
+                           @PathVariable("id") Long id , HttpSession session) {
+        Product product= productRepo.getById(id);
+        int old=product.getStockQuantity();
+        int n=old+qty;
+        product.setStockQuantity(n);
+        productRepo.save(product);
+        session.setAttribute("msg","ADDED STOCK SUCCESSFULLY.......!");
+        return "redirect:/admin/stockmanagement";
+    }
+
+    @PostMapping("/stock/add/{id}")
+    public String addStock(@RequestParam("newqty") int qty,
+                           @PathVariable("id") Long id , HttpSession session) {
+        Product product= productRepo.getById(id);
+        product.setStockQuantity(qty);
+        productRepo.save(product);
+        session.setAttribute("msg","SET STOCK SUCCESSFULLY.......!");
+        return "redirect:/admin/stockmanagement";
+    }
+
+
 }
 
