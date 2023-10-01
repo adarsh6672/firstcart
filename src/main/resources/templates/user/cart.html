@@ -62,7 +62,7 @@
                     <h4>Subtotal:</h4>
                     <h1 th:text="'₹ ' + ${total}">99.00</h1>
 
-                        <a href="catalog.html" class="btn btn-success mb-4 btn-lg pl-5 pr-5">Checkout</a>
+                        <a th:href="@{/user/checkout}" class="btn btn-success mb-4 btn-lg pl-5 pr-5">Checkout</a>
 
                 </div>
             </div>

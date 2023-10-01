@@ -61,9 +61,9 @@
 						<!-- Billing Details -->
 						<div class="billing-details">
 							<div class="section-title">
-								<h3 class="title">Billing address</h3>
+								<h3 class="title">Shipping address</h3>
 							</div>
-							<table class="table border-none table-striped table-responsive-md">
+							<!--<table class="table border-none table-striped table-responsive-md">
 								<thead>
 								<tr>
 									<th></th>
@@ -91,60 +91,35 @@
 									</td>
 								</tr>
 								</tbody>
-							</table>
+							</table>-->
+							<div class="form-group">
+								<label for="savedAddresses">Select Address:</label>
+								<select id="savedAddresses" name="selectedAddressId" class="form-control">
+									<option value="">Select an Address</option>
+									<option th:each="address : ${user.addresses}"
+											th:value="${address.id}"
+											th:text="${address.fullName + ', ' + address.mobile + ', ' + address.houseNo + ', ' + address.street + ', ' + address.city + ', ' + address.state + ', ' + address.pinCode + ', ' + address.country}"
+											th:selected="${address.defaultAddress}"></option>
+								</select>
+							</div>
 							<div class="" th:if="${#lists.isEmpty(user.addresses)}">
 								<p>Address Not Avilable . Please Add Address</p>
 							</div>
 							<div class="form-group">
-								<a class="btn btn-success" th:href="@{/user/address}">Add/Select</a>
+								<a class="btn btn-success" th:href="@{/user/address}"></a>
 							</div>
 						</div>
 						<!-- /Billing Details -->
 
 						<!-- Shiping Details -->
 						<div class="shiping-details">
-							<div class="section-title">
-								<h3 class="title">Shiping address</h3>
-							</div>
-							<div class="input-checkbox">
-								<input type="checkbox" id="shiping-address">
-								<label for="shiping-address">
-									<span></span>
-									Ship to a diffrent address?
-								</label>
-								<div class="caption">
-									<div class="form-group">
-										<input class="input" type="text" name="first-name" placeholder="First Name">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="last-name" placeholder="Last Name">
-									</div>
-									<div class="form-group">
-										<input class="input" type="email" name="email" placeholder="Email">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="address" placeholder="Address">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="city" placeholder="City">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="country" placeholder="Country">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="zip-code" placeholder="ZIP Code">
-									</div>
-									<div class="form-group">
-										<input class="input" type="tel" name="tel" placeholder="Telephone">
-									</div>
-								</div>
-							</div>
+
 						</div>
 						<!-- /Shiping Details -->
 
 						<!-- Order notes -->
 						<div class="order-notes">
-							<textarea class="input" placeholder="Order Notes"></textarea>
+
 						</div>
 						<!-- /Order notes -->
 					</div>
