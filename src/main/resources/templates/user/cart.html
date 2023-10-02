@@ -13,6 +13,10 @@
                 <h3 class="display-5 mb-2 text-center">Shopping Cart</h3>
                 <p class="mb-5 text-center">
                     <i class="text-info font-weight-bold"></i><span th:text="${cartCount}">2</span> items in your cart</p>
+                <th:block th:if="${session.msg}">
+                    <p class="text-center text-danger" style="font-size: 18px;">[[${session.msg}]]</p>
+                    <th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
+                </th:block>
                 <table id="shoppingCart" class="table table-condensed table-responsive">
                     <thead>
                     <tr>
@@ -23,25 +27,27 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="item, iStat : ${cart}">
+                    <tr th:each="item, iStat : ${cartItems}">
                         <td data-th="Product" >
                             <div class="row" >
                                 <div class="col-md-5 text-left">
-                                    <a th:href="@{/user/viewproduct/{id}(id=${item.id})}">
-                                        <img th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/'+item.images[0].imageName}"
-                                             th:alt="${item.name}" class="card-img-top rounded-0" alt="..." src=""
+                                    <a th:href="@{/user/viewproduct/{id}(id=${item.product.id})}">
+                                        <img th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/'+item.product.images[0].imageName}"
+                                             th:alt="${item.product.name}" class="card-img-top rounded-0" alt="..." src=""
                                         style="width:200px;height:200px;">
                                     </a>
                                 </div>
                                 <div class="col-md-5 text-left mt-sm-2">
-                                    <h4 th:text="${item.name}">Product Name</h4>
+                                    <h4 th:text="${item.product.name}">Product Name</h4>
                                     <p class="font-weight-light">Brand Name</p>
                                 </div>
                             </div>
                         </td>
-                        <td th:text="'₹ ' + ${item.price}"></td>
+                        <td th:text="'₹ ' + ${item.product.price}"></td>
                         <td data-th="Quantity">
-                            <input type="number" class="form-control form-control-lg text-center" value="1">
+                            <a th:href="@{/user/cart/minusqty/{id}(id=${item.id})}" class="btn "><i class="fa fa-minus me-2"></i></a>
+                            <span th:text="${item.quantity}"></span>
+                            <a th:href="@{/user/cart/addqty/{id}(id=${item.id})}" class="btn "><i class="fa fa-plus me-2"></i></a>
                         </td>
                         <td class="actions" data-th="">
                             <div class="text-right">
@@ -49,7 +55,7 @@
                                     <i class="fa fa-sync"></i>
                                 </button>
                                 <a class="btn btn-white border-secondary bg-white btn-md mb-2" th:href="@{/user/cart/delete/{id}(id=${item.id})}"
-                                   th:data-confirm-block="|Are you sure you want to block ${item.name}?|"
+                                   th:data-confirm-block="|Are you sure you want to block ${item.product.name}?|"
                                    onclick="if (!confirm(this.getAttribute('data-confirm-block'))) return false">
                                     <i class="fa fa-trash"></i>
                                 </a>
@@ -70,7 +76,7 @@
         <div class="row mt-4 d-flex align-items-center">
 
 
-                <a href="catalog.html">
+                <a th:href="@{/user/home}">
                     <i class="fas fa-arrow-left mr-2"></i> Continue Shopping</a>
 
         </div>

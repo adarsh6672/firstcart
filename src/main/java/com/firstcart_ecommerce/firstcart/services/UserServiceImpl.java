@@ -1,10 +1,8 @@
 package com.firstcart_ecommerce.firstcart.services;
 
 
-import com.firstcart_ecommerce.firstcart.model.Address;
-import com.firstcart_ecommerce.firstcart.model.Cart;
-import com.firstcart_ecommerce.firstcart.model.Product;
-import com.firstcart_ecommerce.firstcart.model.User;
+import com.firstcart_ecommerce.firstcart.model.*;
+import com.firstcart_ecommerce.firstcart.repository.CartItemRepo;
 import com.firstcart_ecommerce.firstcart.repository.CartRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,6 +22,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private CartItemRepo cartItemRepo;
 
     @Autowired
     private ProductService productService;
@@ -139,7 +140,11 @@ public class UserServiceImpl implements UserService{
     @Override
     public void addToUserCart(User user, Product product) {
         Cart cart = getOrCreateUserCart(user);
-        cart.getProducts().add(product);
+        CartItem cartItem=new CartItem();
+        cartItem.setProduct(product);
+        cartItem.setCart(cart);
+        cartItemRepo.save(cartItem);
+        cart.getItems().add(cartItem);
         cartRepo.save(cart);
     }
     @Override
@@ -147,10 +152,11 @@ public class UserServiceImpl implements UserService{
         return getOrCreateUserCart(user);
     }
     @Override
-    public void removeFromUserCart(User user, Long productId) {
+    public void removeFromUserCart(User user, Long itemId) {
         Cart cart = getOrCreateUserCart(user);
-        Optional<Product> product = productService.getProductById(productId);
-        product.ifPresent(cart.getProducts()::remove);
+        Optional<CartItem> item = cartItemRepo.findById(itemId);
+        cartItemRepo.deleteById(itemId);
+        item.ifPresent(cart.getItems()::remove);
         cartRepo.save(cart);
     }
 

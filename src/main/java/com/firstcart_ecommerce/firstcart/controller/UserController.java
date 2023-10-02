@@ -6,6 +6,7 @@ import com.firstcart_ecommerce.firstcart.model.Cart;
 import com.firstcart_ecommerce.firstcart.model.Product;
 import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.repository.AddressRepo;
+import com.firstcart_ecommerce.firstcart.repository.CartRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.AddressService;
 import com.firstcart_ecommerce.firstcart.services.CartService;
@@ -44,6 +45,9 @@ public class UserController {
     private AddressRepo addressRepo;
 
     @Autowired
+    private CartRepo cartRepo;
+
+    @Autowired
     private AddressService addressService;
 
     @Autowired
@@ -55,7 +59,7 @@ public class UserController {
             User user = userRepo.findByEmail(email);
             m.addAttribute("user", user);
             Cart userCart = userService.getUserCart(user);
-            m.addAttribute("cartProductCount", userCart.getProducts().size());
+            m.addAttribute("cartProductCount", userCart.getItems().size());
         }
 
     }
@@ -183,7 +187,8 @@ public class UserController {
     public String viewProduct(Model model, @PathVariable Long productId, Principal principal) {
         Optional<Product> product = productService.getProductById(productId);
         User u=userRepo.findByEmail(principal.getName());
-        boolean isInCart = cartService.isInCart(productId,u);
+        Long cid=cartRepo.findByUser(u).getId();
+        boolean isInCart = cartService.isProductInCartItem(cid, productId);
         if (product.isPresent()) {
             model.addAttribute("isInCart",isInCart);
             model.addAttribute("product", product.get());

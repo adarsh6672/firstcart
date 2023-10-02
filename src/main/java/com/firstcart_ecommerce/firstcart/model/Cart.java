@@ -16,22 +16,21 @@ public class Cart {
     @ManyToOne
     private User user;
 
-    @ManyToMany
-    private List<Product> products = new ArrayList<>();
+    @ManyToMany(mappedBy = "cart")
+    private List<CartItem> items = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "user_cart_selected_products", joinColumns = @JoinColumn(name = "cart_id"))
-    @Column(name = "product_id")
+    @Column(name = "cart_item_id")
     private List<Long> selectedProductIds = new ArrayList<>();
 
-    @Column(columnDefinition = "integer default 1")
-    private int quantity;
+
 
     private double totalAmount;
     public double getTotalCartAmount() {
         double totalAmount = 0.0;
-        for (Product product : products) {
-            totalAmount += (product.getPrice()*quantity);
+        for (CartItem item : items) {
+            totalAmount += (item.getProduct().getPrice()*item.getQuantity());
         }
         this.totalAmount = totalAmount;
 
