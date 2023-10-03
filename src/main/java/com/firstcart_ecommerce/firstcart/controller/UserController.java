@@ -1,17 +1,13 @@
 package com.firstcart_ecommerce.firstcart.controller;
 
 
-import com.firstcart_ecommerce.firstcart.model.Address;
-import com.firstcart_ecommerce.firstcart.model.Cart;
-import com.firstcart_ecommerce.firstcart.model.Product;
-import com.firstcart_ecommerce.firstcart.model.User;
+import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.AddressRepo;
 import com.firstcart_ecommerce.firstcart.repository.CartRepo;
+import com.firstcart_ecommerce.firstcart.repository.OrderRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
-import com.firstcart_ecommerce.firstcart.services.AddressService;
-import com.firstcart_ecommerce.firstcart.services.CartService;
-import com.firstcart_ecommerce.firstcart.services.ProductService;
-import com.firstcart_ecommerce.firstcart.services.UserService;
+import com.firstcart_ecommerce.firstcart.services.*;
+import com.firstcart_ecommerce.firstcart.util.AddressConverter;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,6 +39,9 @@ public class UserController {
     private CartService cartService;
 
     @Autowired
+    private OrderRepo orderRepo;
+
+    @Autowired
     private AddressRepo addressRepo;
 
     @Autowired
@@ -49,6 +49,9 @@ public class UserController {
 
     @Autowired
     private AddressService addressService;
+
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private ProductService productService;
@@ -204,8 +207,30 @@ public class UserController {
     public String test(Principal p,Model m){
         String email = p.getName();
         User user = userRepo.findByEmail(email);
+        Cart userCart=userService.getUserCart(user);
+        m.addAttribute("cartitem",cartService.getCartItems(userCart.getId()));
         m.addAttribute("user", user);
+        m.addAttribute("total",userCart.getTotalAmount()+40);
+        m.addAttribute("deliveryCharge",40.0);
         return "user/checkout";
+    }
+
+    @PostMapping("/placeorder")
+    public String orderplace(@RequestParam ("paymentMethod") String paymentMethod,
+                                @RequestParam("selectedAddressId") Long selectedAddressId,
+                                Principal p){
+        Address selectedAddress=addressRepo.findById(selectedAddressId).orElse(null);
+        String Address= AddressConverter.convertAddressToString(selectedAddress);
+        User user = userRepo.findByEmail(p.getName());
+        Order order=new Order();
+        order.setOrderDateTime(LocalDateTime.now());
+        order.setTotalAmount(userService.getUserCart(user).getTotalAmount()+40);
+        order.setShippingAddressString(Address);
+        order.setPaymentMethod(paymentMethod);
+        orderService.placeOrder(user,order);
+        orderRepo.save(order);
+
+        return "redirect:/user/home";
     }
 
 
