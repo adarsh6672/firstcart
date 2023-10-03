@@ -1,9 +1,11 @@
 package com.firstcart_ecommerce.firstcart.model;
 
+import com.firstcart_ecommerce.firstcart.util.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,16 @@ public class Order {
     @Column(name = "order_date_time")
     private LocalDateTime orderDateTime;
 
+    public String getFormattedOrderDate() {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return orderDateTime.format(dateFormatter);
+    }
+
+    public String getFormattedOrderTime() {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        return orderDateTime.format(timeFormatter);
+    }
+
 
 
     @Column(name = "total_amount")
@@ -44,4 +56,8 @@ public class Order {
     public List<OrderItem> getItems() {
         return this.orderItems;
     }
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 }

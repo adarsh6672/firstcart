@@ -30,6 +30,11 @@
                             <button type="submit" class="btn btn-success  text-white">ADD</button>
                         </div>
                     </form>
+                    <div class="d-flex align-items-center gap-2" th:if="${fromCheckout}">
+                        <a th:href="@{/user/checkout(fromCheckout=true)}">
+                            <button class="btn btn-secondary fs-2">Back to Checkout</button>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

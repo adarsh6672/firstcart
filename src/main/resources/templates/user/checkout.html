@@ -30,6 +30,10 @@
 
 		<!-- SECTION -->
 		<div class="section">
+			<th:block th:if="${session.msg}">
+				<p class="text-center text-success" style="font-size: 18px;">[[${session.msg}]]</p>
+				<th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
+			</th:block>
 			<!-- container -->
 			<div class="container">
 				<!-- row -->
@@ -85,7 +89,7 @@
 								<p>Address Not Avilable . Please Add Address</p>
 							</div>
 							<div class="form-group">
-								<a class="btn btn-success" th:href="@{/profile/address}">Add</a>
+								<a class="btn btn-success" th:href="@{/user/profile/address/add(fromCheckout=true)}">Add New</a>
 							</div>
 						   </div>
 						<!-- /Billing Details -->

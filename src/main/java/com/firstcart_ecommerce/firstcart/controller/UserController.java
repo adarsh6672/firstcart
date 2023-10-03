@@ -8,6 +8,7 @@ import com.firstcart_ecommerce.firstcart.repository.OrderRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.*;
 import com.firstcart_ecommerce.firstcart.util.AddressConverter;
+import com.firstcart_ecommerce.firstcart.util.OrderStatus;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,10 +107,13 @@ public class UserController {
         return "user/addressestest";
     }
     @GetMapping("/profile/address/add")
-    public String addAddress(Principal p, Model m){
+    public String addAddress(Principal p, Model m,@RequestParam(value = "fromCheckout", required = false) boolean fromCheckout){
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         m.addAttribute("user", user);
+        if (fromCheckout) {
+            m.addAttribute("fromCheckout", true);
+        }
         return "user/add_address";
     }
 
@@ -126,9 +130,14 @@ public class UserController {
         return "user/address_update";
     }
     @PostMapping("profile/address/update")
-    public String updateAddress(@ModelAttribute Address address, Principal principal) throws IOException {
+    public String updateAddress(@ModelAttribute Address address, Principal principal,@RequestParam(value = "fromCheckout", required = false) boolean fromCheckout) throws IOException {
         addressService.addAddressToUser(principal.getName(), address);
-        return "redirect:/user/profile/address";
+
+        if (fromCheckout) {
+            return "redirect:/user/checkout";
+        } else {
+            return "redirect:/user/profile/address";
+        }
 
     }
 
@@ -218,7 +227,15 @@ public class UserController {
     @PostMapping("/placeorder")
     public String orderplace(@RequestParam ("paymentMethod") String paymentMethod,
                                 @RequestParam("selectedAddressId") Long selectedAddressId,
-                                Principal p){
+                                Principal p,HttpSession session){
+        if(paymentMethod==null){
+            session.setAttribute("msg","PLEASE SELECT PAYMENT METHOD");
+            return "redirect:/user/checkout";
+        }
+        if(selectedAddressId==null||selectedAddressId==0){
+            session.setAttribute("msg","PLEASE SELECT SHIPPING ADDRESS");
+            return "redirect:/user/checkout";
+        }
         Address selectedAddress=addressRepo.findById(selectedAddressId).orElse(null);
         String Address= AddressConverter.convertAddressToString(selectedAddress);
         User user = userRepo.findByEmail(p.getName());
@@ -227,6 +244,7 @@ public class UserController {
         order.setTotalAmount(userService.getUserCart(user).getTotalAmount()+40);
         order.setShippingAddressString(Address);
         order.setPaymentMethod(paymentMethod);
+        order.setStatus(OrderStatus.PENDING);
         orderService.placeOrder(user,order);
         orderRepo.save(order);
 
