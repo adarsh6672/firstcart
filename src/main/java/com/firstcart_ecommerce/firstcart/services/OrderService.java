@@ -1,10 +1,7 @@
 package com.firstcart_ecommerce.firstcart.services;
 
 import com.firstcart_ecommerce.firstcart.model.*;
-import com.firstcart_ecommerce.firstcart.repository.CartItemRepo;
-import com.firstcart_ecommerce.firstcart.repository.CartRepo;
-import com.firstcart_ecommerce.firstcart.repository.OrderItemRepo;
-import com.firstcart_ecommerce.firstcart.repository.OrderRepo;
+import com.firstcart_ecommerce.firstcart.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +12,9 @@ public class OrderService {
 
     @Autowired
     private OrderRepo orderRepo;
+
+    @Autowired
+    private ProductRepo productRepo;
 
     @Autowired
     private UserService userService;
@@ -34,19 +34,36 @@ public class OrderService {
     public Order placeOrder(User user,Order order) {
         order.setUser(user);
         Cart cart=userService.getUserCart(user);
+
         List<CartItem> cartItems = cartService.getCartItems(cart.getId());
         for (CartItem cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
+            Product product=cartItem.getProduct();
+            product.setStockQuantity(cartItem.getProduct().getStockQuantity()-cartItem.getQuantity());
+            productRepo.save(product);
             order.getItems().add(orderItem);
         }
+
+
         orderRepo.save(order);
+
         return order;
     }
 
+    public void deleteCartItems(User user){
+        Cart cart=cartRepo.findByUser(user);
+        List<CartItem>cartItems=cartService.getCartItems(cart.getId());
+        for(CartItem cartItem:cartItems){
+            cartItemRepo.delete(cartItem);
+        }
+
+
+    }
+
     public List<Order> orderItemFind(User user){
-        return orderRepo.findByUser(user);
+        return orderRepo.findByUserOrderByOrderDateTimeDesc(user);
     }
 }

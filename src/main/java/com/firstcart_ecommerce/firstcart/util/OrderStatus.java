@@ -1,7 +1,7 @@
 package com.firstcart_ecommerce.firstcart.util;
 
 public enum OrderStatus {
-    PENDING,
+    CONFIRMED,
     SHIPPED,
     OUT_FOR_DELIVERY,
     DELIVERED,

@@ -29,12 +29,12 @@ public class Order {
     private LocalDateTime orderDateTime;
 
     public String getFormattedOrderDate() {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         return orderDateTime.format(dateFormatter);
     }
 
     public String getFormattedOrderTime() {
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         return orderDateTime.format(timeFormatter);
     }
 

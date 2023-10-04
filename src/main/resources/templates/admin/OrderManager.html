@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head th:replace="fragments/html_head :: html_head">
+
+<body>
+<div th:replace="fragments/html_nav :: html_nav"></div>
+<div class="container content">
+    <div class="container mt-5">
+
+
+        <table class="table table-bordered border-primary table-striped table-responsive-md">
+            <thead>
+            <tr>
+                <th scope="col">Order ID</th>
+                <th scope="col">Created On</th>
+                <th scope="col">Product</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Total(Rs.)</th>
+                <th scope="col">Payment</th>
+                <th scope="col">Current Status</th>
+                <th scope="col">New Status</th>
+                <th scope="col">Updation</th>
+            </tr>
+            </thead>
+            <tbody>
+
+
+            <tr  th:each="order : ${orders}">
+                <td class="order-color" th:text="${order.id}">121 091</td>
+                <td>
+                    <span th:text="${order.getFormattedOrderDate()}"></span><br>
+                    <span th:text="${order.getFormattedOrderTime()}"></span>
+                </td>
+                <td>
+                    <div th:each="item : ${order.orderItems}">
+                    <span th:text="${item.quantity}"> X </span><span th:text="${item.product.name}"></span><br><br>
+                    </div>
+                </td>
+                <td th:text="${order.user.name}"></td>
+                <td th:text="${order.totalAmount}">$604.50</td>
+                <td th:text="${order.paymentMethod}"></td>
+                <td>
+                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).CONFIRMED}"  class="text-success font-weight-bolder">CONFIRMED</p>
+                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).SHIPPED}"  class="text-success font-weight-bolder">SHIPPED</p>
+                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).OUT_FOR_DELIVERY}"  class="text-success font-weight-bolder">OUT_FOR_DELIVERY</p>
+                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).DELIVERED}"  class="text-success font-weight-bolder">DELIVERED</p>
+                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).CANCELED}"  class="text-danger font-weight-bolder">CANCELED</p>
+                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).RETURN}"  class="text-warning font-weight-bolder">RETURN</p>
+                </td>
+                <form th:action="@{/admin/orders/updatestatus/{id}(id=${order.id})}" method="POST">
+                <td>
+                    <div class="dropdown">
+                        <select name="status" id="status">
+                            <option th:value="${order.status}">SELECT STATUS</option>
+                            <option th:each="status : ${T(com.firstcart_ecommerce.firstcart.util.OrderStatus).values()}" th:value="${status}" th:text="${status}"></option>
+                        </select>
+                    </div>
+                </td>
+
+                <td>
+                    <button type="submit" class="btn btn-warning btn-sm">Update Status</button>
+                </td>
+                </form>
+
+            </tr>
+
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+
+
+<div th:replace="fragments/html_footer :: html_footer"></div>
+<div th:replace="fragments/js_links :: js_links"></div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script>
+    function changeStatus(status, orderId) {
+    $.ajax({
+        url: '/orders/' + orderId + '/status',
+        type: 'PUT',
+        data: {
+            status: status
+        },
+        success: function(response) {
+            // The status was updated successfully
+            // You can update the UI here if necessary
+            alert('Status updated successfully');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            // An error occurred while updating the status
+            // You can handle the error here
+            alert('An error occurred: ' + textStatus);
+        }
+    });
+}
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

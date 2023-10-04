@@ -244,9 +244,11 @@ public class UserController {
         order.setTotalAmount(userService.getUserCart(user).getTotalAmount()+40);
         order.setShippingAddressString(Address);
         order.setPaymentMethod(paymentMethod);
-        order.setStatus(OrderStatus.PENDING);
+        order.setStatus(OrderStatus.CONFIRMED);
         orderService.placeOrder(user,order);
         orderRepo.save(order);
+        orderService.deleteCartItems(user);
+
 
         return "redirect:/user/orderconfirmed";
     }

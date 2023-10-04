@@ -6,6 +6,7 @@ import com.firstcart_ecommerce.firstcart.dto.ProductDTO;
 import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.*;
 import com.firstcart_ecommerce.firstcart.services.*;
+import com.firstcart_ecommerce.firstcart.util.OrderStatus;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
@@ -55,6 +56,9 @@ public class AdminController {
 
     @Autowired
     private ProductImageRepo productImageRepo;
+
+    @Autowired
+    private OrderRepo orderRepo;
 
 
 
@@ -374,6 +378,22 @@ public class AdminController {
         productRepo.save(product);
         session.setAttribute("msg","SET STOCK SUCCESSFULLY.......!");
         return "redirect:/admin/stockmanagement";
+    }
+
+    @GetMapping("orderManage")
+    public String orderManage(Model m){
+        List<Order> orders=orderRepo.findAllByOrderByOrderDateTimeDesc();
+        m.addAttribute("orders",orders);
+        return "admin/OrderManager";
+    }
+
+    @PostMapping("/orders/updatestatus/{id}")
+    public String updateStatus(@PathVariable("id") Long id,
+                               @RequestParam ("status")OrderStatus status){
+        Order order= orderRepo.getById(id);
+        order.setStatus(status);
+        orderRepo.save(order);
+        return "redirect:/admin/orderManage";
     }
 
 
