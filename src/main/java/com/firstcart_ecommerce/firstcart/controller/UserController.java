@@ -2,10 +2,7 @@ package com.firstcart_ecommerce.firstcart.controller;
 
 
 import com.firstcart_ecommerce.firstcart.model.*;
-import com.firstcart_ecommerce.firstcart.repository.AddressRepo;
-import com.firstcart_ecommerce.firstcart.repository.CartRepo;
-import com.firstcart_ecommerce.firstcart.repository.OrderRepo;
-import com.firstcart_ecommerce.firstcart.repository.UserRepo;
+import com.firstcart_ecommerce.firstcart.repository.*;
 import com.firstcart_ecommerce.firstcart.services.*;
 import com.firstcart_ecommerce.firstcart.util.AddressConverter;
 import com.firstcart_ecommerce.firstcart.util.OrderStatus;
@@ -53,6 +50,9 @@ public class UserController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderItemRepo orderItemRepo;
 
     @Autowired
     private ProductService productService;
@@ -248,8 +248,23 @@ public class UserController {
         orderService.placeOrder(user,order);
         orderRepo.save(order);
 
-        return "redirect:/user/home";
+        return "redirect:/user/orderconfirmed";
     }
+
+    @GetMapping("/orderconfirmed")
+    public String orderConfirm(){
+
+        return "user/ordersuccess";
+    }
+
+    @GetMapping("/orderlist")
+    public String orderList(Principal p,Model m){
+        User user=userRepo.findByEmail(p.getName());
+        List <Order> orders= orderService.orderItemFind(user);
+        m.addAttribute("orders",orders);
+        return "user/OrderList";
+    }
+
 
 
 

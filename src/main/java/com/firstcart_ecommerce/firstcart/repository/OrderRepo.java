@@ -1,8 +1,11 @@
 package com.firstcart_ecommerce.firstcart.repository;
 
 import com.firstcart_ecommerce.firstcart.model.Order;
+import com.firstcart_ecommerce.firstcart.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderRepo extends JpaRepository<Order , Long> {
+import java.util.List;
 
+public interface OrderRepo extends JpaRepository<Order , Long> {
+    List<Order> findByUser(User user);
 }

@@ -45,4 +45,8 @@ public class OrderService {
         orderRepo.save(order);
         return order;
     }
+
+    public List<Order> orderItemFind(User user){
+        return orderRepo.findByUser(user);
+    }
 }
