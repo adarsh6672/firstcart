@@ -1,0 +1,11 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Enter Phone Number</title>
+</head>
+<body>
+<form action="#" th:action="@{/sendOTP}" method="post">
+    <input type="text" th:name="phoneNumber" placeholder="Enter Phone Number">
+    <input type="submit" value="Send OTP">
+</form>
+</body>
+</html>

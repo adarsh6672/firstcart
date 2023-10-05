@@ -57,9 +57,10 @@ public class HomeController {
 
     @GetMapping("/register")
     @Secured({"ROLE_ADMIN", "ROLE_USER"}) // Define the roles that can access this endpoint
-    public String register() {
+    public String register(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            model.addAttribute("user",new User());
             return "register"; // If not authenticated, show the login page.
         } else if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
             return "redirect:/admin/home"; // Redirect admins to the admin home page.

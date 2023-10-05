@@ -29,27 +29,27 @@ background: linear-gradient(63deg, rgba(2,0,36,1) 0%, rgba(0,0,0,1) 35%, rgba(25
                                 <th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
                             </th:block>
 
-                            <form  id="myForm" action=""  method="post" th:action="@{/saveuser}"  >
+                            <form  id="myForm" action=""  method="post" th:action="@{/sendOTP}" th:object="${user}"  >
 
                                 <div class="form-outline mb-3">
-                                    <input type="text" id="name" name="name"   class="form-control form-control-lg" />
+                                    <input type="text" id="name" name="name" th:field="*{name}"  class="form-control form-control-lg" />
                                     <label class="form-label" for="name">Your Name</label>
                                 </div>
 
 
                                 <div class="form-outline mb-3">
-                                    <input type="email" id="email"name="email"   class="form-control form-control-lg" />
+                                    <input type="email" id="email"name="email" th:field="*{email}"  class="form-control form-control-lg" />
                                     <label class="form-label"  for="Email">Your Email</label>
                                 </div>
 
                                 <div class="form-outline mb-3">
-                                    <input type="tel" id="phone"name="phone" required   class="form-control form-control-lg" />
+                                    <input type="tel" id="phone"name="phone" required th:field="*{phone}"  class="form-control form-control-lg" />
                                     <label class="form-label"  >Your Phone</label>
 
                                 </div>
 
                                 <div class="form-outline mb-3">
-                                    <input type="password" id="password" name="password" class="form-control form-control-lg" />
+                                    <input type="password" id="password" name="password" th:field="*{password}" class="form-control form-control-lg" />
                                     <label class="form-label"  for="Password">Password</label>
                                 </div>
 

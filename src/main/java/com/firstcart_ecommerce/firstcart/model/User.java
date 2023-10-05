@@ -20,7 +20,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotBlank(message = "Name is required")
     private String name;
     @Email(message = "Invalid email address")
     private String email;
