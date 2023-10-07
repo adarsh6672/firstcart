@@ -41,8 +41,8 @@
 
                         <td>
                             <div th:if="${product.stockQuantity > 100}" class="text-success fw-bolder">In Stock</div>
-                            <div th:if="${product.stockQuantity > 1 and product.stockQuantity < 100}" class="text-warning">Manage Stock</div>
-                            <div th:if="${product.stockQuantity < 1}" class="text-danger">Out Of Stock</div>
+                            <div th:if="${product.stockQuantity > 10 and product.stockQuantity < 100}" class="text-warning">Maintain Stock</div>
+                            <div th:if="${product.stockQuantity < 11}" class="text-danger">Out Of Stock</div>
                         </td>
                         <td th:text="${product.stockQuantity}"></td>
                         <td>

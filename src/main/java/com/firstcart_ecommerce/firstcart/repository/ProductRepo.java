@@ -13,6 +13,8 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
 
     List<Product> findAll(Sort sort);
 
+    List<Product> findBySubCategoryId(int subCategoryId);
+
     @Query(value = "SELECT * FROM product p WHERE "+
             "p.name LIKE CONCAT('%',:query,'%' )",nativeQuery = true)
     List<Product> searchProduct(String query);

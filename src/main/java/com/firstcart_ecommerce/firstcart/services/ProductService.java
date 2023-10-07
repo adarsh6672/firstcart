@@ -65,4 +65,8 @@ public class ProductService {
         Sort sort = Sort.by(Sort.Direction.ASC, "stockQuantity");
         return productRepo.findAll(sort);
     }
+
+    public List<Product> getProductsByCategory(int categoryId) {
+        return productRepo.findBySubCategoryId(categoryId);
+    }
 }

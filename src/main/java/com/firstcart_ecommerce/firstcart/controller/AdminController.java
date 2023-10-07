@@ -177,9 +177,23 @@ public class AdminController {
         subCategoryRepo.save(subcategory);
         return "redirect:/admin/categories";
     }
-    @PostMapping("/category/delete/{id}")
+    @GetMapping("/category/delete/{id}")
     public String deleteCat(@PathVariable (value = "id")int id) {
         subCategoryRepo.deleteById(id);
+        return "redirect:/admin/categories";
+    }
+    @GetMapping("/category/unlist/{id}")
+    public String makeUnlist(@PathVariable ("id") int id){
+        SubCategory s=subCategoryRepo.getById(id);
+        s.setListed(false);
+        subCategoryRepo.save(s);
+        return "redirect:/admin/categories";
+    }
+    @GetMapping("/category/list/{id}")
+    public String makelist(@PathVariable ("id") int id){
+        SubCategory s=subCategoryRepo.getById(id);
+        s.setListed(true);
+        subCategoryRepo.save(s);
         return "redirect:/admin/categories";
     }
 

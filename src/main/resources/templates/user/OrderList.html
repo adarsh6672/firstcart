@@ -19,7 +19,7 @@
                         <th style="width:60%"></th>
                         <th style="width:12%"></th>
                         <th style="width:10%"></th>
-                        <th style="width:16%">Order Status</th>
+                        <th style="width:16%"></th>
 
                     </tr>
                     </thead>
@@ -47,6 +47,11 @@
                         <td th:text="'₹ ' +${item.product.price*item.quantity}">Product Price</td>
                         <td th:text="${item.quantity}">Quantity</td>
                         <td th:text="${order.status}" class="text-bold text-success">Order Status</td>
+                    </tr>
+                    <tr><td></td>
+                        <td></td>
+                        <td></td>
+                        <td th:text="'Total  ₹ ' +${order.totalAmount}" ></td>
                     </tr>
                     </tbody>
                 </table>

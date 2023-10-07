@@ -12,4 +12,5 @@ public class CategorySubCategoryDTO {
     private String categoryName;
     private Integer subCategoryId;
     private String subCategoryName;
+    private Boolean subCategoryIsListed;
 }

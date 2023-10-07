@@ -2,6 +2,7 @@ package com.firstcart_ecommerce.firstcart.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.validator.constraints.UniqueElements;
 
 @Entity
@@ -17,4 +18,8 @@ public class SubCategory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @Column(name = "is_listed")
+    @ColumnDefault(value = "true")
+    private boolean isListed;
 }

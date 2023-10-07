@@ -37,6 +37,9 @@ public class UserController {
     private CartService cartService;
 
     @Autowired
+    private ProductRepo productRepo;
+
+    @Autowired
     private OrderRepo orderRepo;
 
     @Autowired
@@ -265,6 +268,14 @@ public class UserController {
         List <Order> orders= orderService.orderItemFind(user);
         m.addAttribute("orders",orders);
         return "user/OrderList";
+    }
+
+    @GetMapping("/store/{categoryid}")
+    public String showStore(@PathVariable("categoryid")int catId,Model m){
+        List<Product>products=productService.getProductsByCategory(catId);
+        m.addAttribute("products",products);
+
+        return "user/store";
     }
 
 
