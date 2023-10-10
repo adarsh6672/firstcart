@@ -40,12 +40,12 @@
                 <td th:text="${order.totalAmount}">$604.50</td>
                 <td th:text="${order.paymentMethod}"></td>
                 <td>
-                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).CONFIRMED}"  class="text-success font-weight-bolder">CONFIRMED</p>
-                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).SHIPPED}"  class="text-success font-weight-bolder">SHIPPED</p>
-                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).OUT_FOR_DELIVERY}"  class="text-success font-weight-bolder">OUT_FOR_DELIVERY</p>
-                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).DELIVERED}"  class="text-success font-weight-bolder">DELIVERED</p>
-                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).CANCELED}"  class="text-danger font-weight-bolder">CANCELED</p>
-                    <p th:if="${order.status== T(com.firstcart_ecommerce.firstcart.util.OrderStatus).RETURN}"  class="text-warning font-weight-bolder">RETURN</p>
+                    <p th:if="${order.status.name() == 'CONFIRMED'}"  class="text-success font-weight-bolder">CONFIRMED</p>
+                    <p th:if="${order.status.name() == 'SHIPPED'}"  class="text-success font-weight-bolder">SHIPPED</p>
+                    <p th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"  class="text-success font-weight-bolder">OUT_FOR_DELIVERY</p>
+                    <p th:if="${order.status.name() == 'DELIVERED'}"  class="text-success font-weight-bolder">DELIVERED</p>
+                    <p th:if="${order.status.name() == 'CANCELED'}"  class="text-danger font-weight-bolder">CANCELED</p>
+                    <p th:if="${order.status.name() == 'RETURN'}"  class="text-warning font-weight-bolder">RETURN</p>
                 </td>
                 <form th:action="@{/admin/orders/updatestatus/{id}(id=${order.id})}" method="POST">
                 <td>

@@ -415,6 +415,10 @@ public class AdminController {
         orderRepo.save(order);
         return "redirect:/admin/orderManage";
     }
+    @PostMapping("/chek")
+    public String ve(){
+        return "/user/home";
+    }
 
 
 }

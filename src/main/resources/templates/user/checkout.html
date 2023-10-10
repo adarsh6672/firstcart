@@ -74,7 +74,7 @@
 								</tr>
 								</tbody>
 							</table>-->
-							<form id="orderform" th:action="@{/user/placeorder}" method="post">
+							<form id="checkoutForm" th:action="@{/user/placeorder}" method="post">
 							<div class="form-group">
 								<label for="savedAddresses">Select Address:</label>
 								<select id="savedAddresses" name="selectedAddressId" class="form-control">
@@ -91,7 +91,7 @@
 							<div class="form-group">
 								<a class="btn btn-success" th:href="@{/user/profile/address/add(fromCheckout=true)}">Add New</a>
 							</div>
-						   </div>
+						</div>
 						<!-- /Billing Details -->
 
 						<!-- Shiping Details -->
@@ -131,36 +131,34 @@
 							</div>
 							<div class="order-col">
 								<div><strong>TOTAL</strong></div>
-								<div><strong class="order-total" th:text="'₹ ' + ${total}">$2940.00</strong></div>
+								<div><span id="cartTotal"><strong>₹<span th:text="${total}"></span></strong></span></div>
+
 							</div>
 						</div>
 						<div class="payment-method">
 							<div class="input-radio">
-								<input type="radio" name="paymentMethod" id="onlinepayment" value="Online Payment">
-								<label for="onlinepayment">
-									<span></span>
-									Online Payment
-								</label>
+
 								<!--<div class="caption">
 									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
 								</div>-->
 							</div>
-							<div class="input-radio">
-								<input type="radio"  name="paymentMethod" id="cashondelivery" value="Cash On Delivey">
-								<label for="cashondelivery">
-									<span></span>
-									Cash On Delivery
-								</label>
-								<!--<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								</div>-->
+							<div class="">
+								<div class="form-check">
+									<input type="radio" id="cashOnDelivery" name="paymentMethod" value="Cash On Delivery" class="" checked>
+									<label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
+								</div>
+								<div class="form-check">
+									<input type="radio" id="onlinePay" name="paymentMethod" value="Online Payment" class="" >
+									<label class="form-check-label" for="onlinePay">Online Payment</label>
+								</div>
 							</div>
 
 						</div>
 
-						<button type="submit" class="primary-btn order-submit">Place order</button>
-					</div>
-					</form>
+						<button type="submit"  id="placeOrderButton" class="primary-btn order-submit" style="display:none;" >Place order</button>
+						<button  id="paymentPlaceOrderButton" class="primary-btn order-submit" >Pay & order</button>
+						</div>
+						</form>
 					<!-- /Order Details -->
 				</div>
 				<!-- /row -->
@@ -205,7 +203,132 @@
 		<!-- /NEWSLETTER -->
 
 <div th:replace="fragments/cart_footer :: cart_footer"></div>
-<div th:replace="fragments/cart_js :: cart_js"></div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+<script>
+	const cashOnDeliveryRadio = document.getElementById('cashOnDelivery');
+    const onlinePayRadio = document.getElementById('onlinePay');
+    const placeOrderButton = document.getElementById('placeOrderButton');
+    const paymentPlaceOrderButton = document.getElementById('paymentPlaceOrderButton');
+    const checkoutForm = document.getElementById('checkoutForm');
+
+    paymentPlaceOrderButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        paymentStart();
+    });
+
+    cashOnDeliveryRadio.addEventListener('change', () => {
+        placeOrderButton.style.display = 'block';
+        paymentPlaceOrderButton.style.display = 'none';
+    });
+
+    onlinePayRadio.addEventListener('change', () => {
+        placeOrderButton.style.display = 'none';
+        paymentPlaceOrderButton.style.display = 'block';
+    });
+</script>
+
+<!--first-request to server to create an order-->
+<script>
+	const paymentStart = () => {
+        console.log("Payment Started...");
+        let amount = $("#cartTotal span").text();
+        console.log(amount);
+
+        if(amount == "" || amount == null) {
+        alert("amount is required");
+        swal("Sorry!", "amount is required", "error");
+        return;
+        }
+
+        $.ajax(
+            {
+                url:"/user/create_order",
+                data:JSON.stringify({amount:amount, info:"order_request"}),
+                contentType: "application/json",
+                type:"POST",
+                dataType: "json",
+                success:function(response){
+                    //invoked when success
+                    console.log(response);
+                    if(response.status == "created") {
+                        //open payment form
+                        let options = {
+                            key: "rzp_test_jbK2099xuYUKYX",
+                            amount:response.amount,
+                            currency:"INR",
+                            name:"FirstCart",
+                            description:"FirstCart Online Payment",
+                            order_id:response.id,
+                            handler:function(response){
+                                console.log(response.razorpay_payment_id);
+                                console.log(response.razorpay_order_id);
+                                console.log(response.razorpay_signature);
+                                console.log("payment successful!");
+                                alert("congratulations! Payment successful.");
+                                updatePaymentOnServer(response.razorpay_payment_id,
+                                 response.razorpay_order_id,
+                                 'paid');
+
+                                checkoutForm.submit();
+                            },
+                            prefill: {
+                                name: "",
+                                email: "",
+                                contact: ""
+                            },
+                            notes: {
+                                address: "OneCart Corporate Office"
+                            },
+                            theme: {
+                                color: "#3399cc"
+                            }
+                        };
+
+                        let rzp = new Razorpay(options);
+                        rzp.on('payment.failed', function (response){
+                            console.log(response.error.code);
+                            console.log(response.error.description);
+                            console.log(response.error.source);
+                            console.log(response.error.step);
+                            console.log(response.error.reason);
+                            console.log(response.error.metadata.order_id);
+                            console.log(response.error.metadata.payment_id);
+                            alert("Oops payment failed!");
+                            swal("Sorry!", "Oops payment failed!", "error");
+                        });
+                        rzp.open();
+                    }
+                },
+                error:function(error){
+                    //invoked when unsuccessful
+                    console.error(error);
+                    alert("something went wrong!!");
+                    swal("Sorry!", "something went wrong!!", "error");
+                }
+            }
+        )
+    };
+
+    function updatePaymentOnServer(payment_id, order_id, status)
+    {
+        $.ajax({
+            url:"/user/update_order",
+                data:JSON.stringify({payment_id: payment_id, order_id: order_id, status: status}),
+                contentType: "application/json",
+                type:"POST",
+                dataType: "json",
+                success:function(response){
+                    //swal("Good Job!", "congratulations!, payment successful", "success");
+                },
+                error:function(error){
+                    //swal("Sorry!", "Oops payment failed!", "error");
+                },
+        })
+    }
+</script>
+<!--<div th:replace="fragments/cart_js :: cart_js"></div>-->
 
 
 	</body>
