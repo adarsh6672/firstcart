@@ -31,7 +31,7 @@
                     <tr th:each="item : ${order.orderItems}">
                         <td><div class="row" >
                             <div class="col-md-5 text-left">
-                                <a th:href="@{/user/viewproduct/{id}(id=${item.product.id})}">
+                                <a th:href="@{/user/order/orderview/{id}(id=${order.id})}">
                                     <img th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/'+item.product.images[0].imageName}"
                                          th:alt="${item.product.name}" class="card-img-top rounded-0" alt="..." src=""
                                          style="width:100px;height:100px;">

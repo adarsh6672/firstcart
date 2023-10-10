@@ -45,6 +45,8 @@ public class CartController {
     @Autowired
     private UserService userService;
 
+
+
     @GetMapping("/user/addToCart/{id}")
     public String addToCart(@PathVariable Long id, Principal principal) {
         Product product = productService.getProductById(id).orElse(null);
@@ -83,12 +85,17 @@ public class CartController {
     @GetMapping("/user/cart/addqty/{id}")
     public String addQty(@PathVariable Long id, HttpSession session){
         CartItem ci=cartItemRepo.getById(id);
-        try {
-            ci.setQuantity(ci.getQuantity()+1);
-            cartItemRepo.save(ci);
-            return "redirect:/user/cart";
-        }catch (Exception e){
-            session.setAttribute("msg","Maximum Quantity is 5");
+        if(ci.getProduct().getStockQuantity()>ci.getQuantity()) {
+            try {
+                ci.setQuantity(ci.getQuantity() + 1);
+                cartItemRepo.save(ci);
+                return "redirect:/user/cart";
+            } catch (Exception e) {
+                session.setAttribute("msg", "Maximum Quantity is 5");
+                return "redirect:/user/cart";
+            }
+        }else {
+            session.setAttribute("msg","product out of stock....You can purchase "+ci.getQuantity()+"item");
             return "redirect:/user/cart";
         }
 

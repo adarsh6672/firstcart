@@ -79,7 +79,7 @@
 								<label for="savedAddresses">Select Address:</label>
 								<select id="savedAddresses" name="selectedAddressId" class="form-control">
 									<option value="">Select an Address</option>
-									<option th:each="address : ${user.addresses}"
+									<option th:each="address : ${address}"
 											th:value="${address.id}"
 											th:text="${address.fullName + ', ' + address.mobile + ', ' + address.houseNo + ', ' + address.street + ', ' + address.city + ', ' + address.state + ', ' + address.pinCode + ', ' + address.country}"
 											th:selected="${address.defaultAddress}"></option>

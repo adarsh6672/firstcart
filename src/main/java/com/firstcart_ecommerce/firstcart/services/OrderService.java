@@ -66,4 +66,14 @@ public class OrderService {
     public List<Order> orderItemFind(User user){
         return orderRepo.findByUserOrderByOrderDateTimeDesc(user);
     }
+
+    public void changeStock(Order order) {
+
+       List<OrderItem> oi=order.getOrderItems();
+       for(OrderItem orderItem:oi){
+           Product p=orderItem.getProduct();
+           p.setStockQuantity(orderItem.getProduct().getStockQuantity()+orderItem.getQuantity());
+           productRepo.save(p);
+       }
+    }
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -107,6 +108,7 @@ public class UserController {
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         m.addAttribute("user", user);
+        m.addAttribute("address",addressRepo.findByUserAndDeletedFalse(user));
         return "user/addressestest";
     }
     @GetMapping("/profile/address/add")
@@ -152,8 +154,8 @@ public class UserController {
         try {
             if(address.isDefaultAddress()){
                 addressService.deleteAddressById(id);
-                Address firstAddress = user.getAddresses().stream().findFirst()
-                        .orElseThrow(() -> new EntityNotFoundException("address not found"));
+                Address firstAddress = user.getAddresses().stream().filter(addres -> !addres.isDeleted()).findFirst()
+                                                .orElseThrow(() -> new EntityNotFoundException("address not found"));
 
                 firstAddress.setDefaultAddress(true);
                 addressRepo.save(firstAddress);
@@ -222,6 +224,7 @@ public class UserController {
         Cart userCart=userService.getUserCart(user);
         m.addAttribute("cartitem",cartService.getCartItems(userCart.getId()));
         m.addAttribute("user", user);
+        m.addAttribute("address",addressRepo.findByUserAndDeletedFalse(user));
         m.addAttribute("total",userCart.getTotalAmount()+40);
         m.addAttribute("deliveryCharge",40.0);
         return "user/checkout";
@@ -240,12 +243,11 @@ public class UserController {
             return "redirect:/user/checkout";
         }
         Address selectedAddress=addressRepo.findById(selectedAddressId).orElse(null);
-        String Address= AddressConverter.convertAddressToString(selectedAddress);
         User user = userRepo.findByEmail(p.getName());
         Order order=new Order();
         order.setOrderDateTime(LocalDateTime.now());
         order.setTotalAmount(userService.getUserCart(user).getTotalAmount()+40);
-        order.setShippingAddressString(Address);
+        order.setShippingAddress(selectedAddress);
         order.setPaymentMethod(paymentMethod);
         order.setStatus(OrderStatus.CONFIRMED);
         orderService.placeOrder(user,order);
@@ -270,6 +272,31 @@ public class UserController {
         return "user/OrderList";
     }
 
+    @GetMapping("/order/orderview/{id}")
+    public String orderView(@PathVariable ("id") Long orderId,Model m){
+        m.addAttribute("order",orderRepo.getById(orderId));
+        m.addAttribute("address",orderRepo.getById(orderId).getShippingAddress());
+        m.addAttribute("deliveryCharge",40);
+        return "user/Orderview";
+    }
+    @GetMapping("/order/cancel/{id}")
+    public String orderCancel(@PathVariable ("id")Long orderId){
+        Order order= orderRepo.getById(orderId);
+        orderService.changeStock(order);
+        order.setStatus(OrderStatus.CANCELED);
+        orderRepo.save(order);
+        return "redirect:/user/order/orderview/"+orderId;
+    }
+
+    @GetMapping("/order/return/{id}")
+    public String orderReturn(@PathVariable ("id")Long orderId){
+        Order order= orderRepo.getById(orderId);
+        orderService.changeStock(order);
+        order.setStatus(OrderStatus.RETURN);
+        orderRepo.save(order);
+        return "redirect:/user/order/orderview/"+orderId;
+    }
+
     @GetMapping("/store/{categoryid}")
     public String showStore(@PathVariable("categoryid")int catId,Model m){
         List<Product>products=productService.getProductsByCategory(catId);
@@ -277,9 +304,6 @@ public class UserController {
 
         return "user/store";
     }
-
-
-
 
 
 

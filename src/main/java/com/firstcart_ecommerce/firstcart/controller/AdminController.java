@@ -60,6 +60,9 @@ public class AdminController {
     @Autowired
     private OrderRepo orderRepo;
 
+    @Autowired
+    private OrderService orderService;
+
 
 
 
@@ -405,6 +408,9 @@ public class AdminController {
     public String updateStatus(@PathVariable("id") Long id,
                                @RequestParam ("status")OrderStatus status){
         Order order= orderRepo.getById(id);
+        if(status == OrderStatus.CANCELED||status==OrderStatus.RETURN){
+            orderService.changeStock(order);
+        }
         order.setStatus(status);
         orderRepo.save(order);
         return "redirect:/admin/orderManage";

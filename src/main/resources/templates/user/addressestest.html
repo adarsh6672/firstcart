@@ -25,7 +25,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="address : ${user.addresses}">
+                        <tr th:each="address : ${address}">
                             <td>
                                 <div th:if="${address.defaultAddress}">
                                     <i class="fa fa-home" style="color: #71bd00;"></i>

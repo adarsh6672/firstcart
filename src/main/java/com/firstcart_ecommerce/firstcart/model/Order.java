@@ -4,6 +4,7 @@ import com.firstcart_ecommerce.firstcart.util.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,16 +22,18 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
-
     @Column(name = "order_date_time")
     private LocalDateTime orderDateTime;
 
     public String getFormattedOrderDate() {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         return orderDateTime.format(dateFormatter);
+    }
+    public String getDelivreyDate() {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate orderDate = LocalDate.parse(orderDateTime.format(dateFormatter), dateFormatter);
+        LocalDate newDate = orderDate.plusDays(4); // Adding 4 days
+        return newDate.format(dateFormatter);
     }
 
     public String getFormattedOrderTime() {
@@ -50,8 +53,9 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @Column(name = "shipping_address_string")
-    private String shippingAddressString;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address shippingAddress;
 
     public List<OrderItem> getItems() {
         return this.orderItems;

@@ -2,9 +2,11 @@ package com.firstcart_ecommerce.firstcart.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLDelete;
 import org.springframework.stereotype.Component;
 
 @Entity
+@SQLDelete(sql = "UPDATE address SET deleted = true WHERE id = ?")
 @Data
 public class Address {
 
@@ -34,6 +36,10 @@ public class Address {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    private boolean deleted = Boolean.FALSE;
+
+
 
 
 
