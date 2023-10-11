@@ -1,6 +1,7 @@
 package com.firstcart_ecommerce.firstcart.controller;
 
 
+import com.firstcart_ecommerce.firstcart.config.RazorPayConfig;
 import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.*;
 import com.firstcart_ecommerce.firstcart.services.*;
@@ -34,6 +35,9 @@ public class UserController {
     private UserRepo userRepo;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RazorPayConfig razorPayConfig;
 
     @Autowired
     private UserService userService;
@@ -239,6 +243,7 @@ public class UserController {
     @PostMapping("/placeorder")
     public String orderplace(@RequestParam ("paymentMethod") String paymentMethod,
                                 @RequestParam("selectedAddressId") Long selectedAddressId,
+                                @RequestParam("paymentId") String paymentId,
                                 Principal p,HttpSession session){
         if(paymentMethod==null){
             session.setAttribute("msg","PLEASE SELECT PAYMENT METHOD");
@@ -259,6 +264,11 @@ public class UserController {
         orderService.placeOrder(user,order);
         orderRepo.save(order);
         orderService.deleteCartItems(user);
+        System.out.println(paymentId);
+        Payment myorder = paymentRepo.findByOrderId(paymentId);
+        myorder.setOrderNumber(order);
+        paymentRepo.save(myorder);
+
 
 
         return "redirect:/user/orderconfirmed";
@@ -317,7 +327,7 @@ public class UserController {
         System.out.println(data);
 
         double amt = Double.parseDouble(data.get("amount").toString());
-        var client = new RazorpayClient("rzp_test_jbK2099xuYUKYX", "9goQRwyxOBR7yio6eloAQZRZ");
+        var client = new RazorpayClient(razorPayConfig.getKey_id(), razorPayConfig.getKey_secret());
 
         JSONObject ob = new JSONObject();
         ob.put("amount", amt*100);
@@ -348,6 +358,7 @@ public class UserController {
         myorder.setPaymentId(data.get("payment_id").toString());
         myorder.setPaymentStatus(data.get("status").toString());
         this.paymentRepo.save(myorder);
+        paymentRepo.deletePaymentWithNullPaymentId();
 
         System.out.println(data);
         return ResponseEntity.ok(Map.of("msg", "updated"));

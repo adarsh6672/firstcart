@@ -11,6 +11,9 @@ public class Payment {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "order_number")
+        private Order orderNumber;
 
         private String orderId;
 
