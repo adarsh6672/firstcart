@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html
+		lang="en" xmlns:th="http://www.thymeleaf.org"
+		xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments/cart_head :: cart_head">
+	<body>
+<div th:replace="fragments/cart_header :: cart_header"></div>
+
+
+
+		<!-- BREADCRUMB -->
+		<div id="breadcrumb" class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<div class="col-md-12">
+						<h3 class="breadcrumb-header">Checkout</h3>
+						<ul class="breadcrumb-tree">
+							<li><a href="#">Home</a></li>
+							<li class="active">Checkout</li>
+						</ul>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /BREADCRUMB -->
+
+		<!-- SECTION -->
+		<div class="section">
+			<th:block th:if="${session.msg}">
+				<p class="text-center text-success" style="font-size: 18px;">[[${session.msg}]]</p>
+				<th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
+			</th:block>
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+
+					<div class="col-md-7">
+						<!-- Billing Details -->
+						<div class="billing-details">
+							<div class="section-title">
+								<h3 class="title">Shipping address</h3>
+							</div>
+							<!--<table class="table border-none table-striped table-responsive-md">
+								<thead>
+								<tr>
+									<th></th>
+									<th></th>
+
+								</tr>
+								</thead>
+								<tbody>
+								<tr th:each="address : ${user.addresses}">
+									<td>
+										<div th:if="${address.defaultAddress}">
+											<i class="fa fa-home" style="color: #71bd00;"></i>
+										</div>
+									</td>
+									<td><div th:if="${address.defaultAddress}">
+										<h4 th:text="${address.fullName}"></h4>
+										<p th:text="${address.mobile}"></p>
+										<span th:text="${address.houseNo}">,</span>
+										<span th:text="${address.street}"></span><br>
+										<span th:text="${address.city}">   </span>
+										<span th:text="${address.pinCode}"></span><br>
+										<span th:text="${address.state}">   </span>
+										<span th:text="${address.country}"></span><br>
+									</div>
+									</td>
+								</tr>
+								</tbody>
+							</table>-->
+							<form id="checkoutForm" th:action="@{/user/placebuyorder}" method="post">
+							<div class="form-group">
+								<input type="hidden" id="paymentId" name="paymentId" >
+								<label for="savedAddresses">Select Address:</label>
+								<select id="savedAddresses" name="selectedAddressId" class="form-control">
+									<option value="">Select an Address</option>
+									<option th:each="address : ${address}"
+											th:value="${address.id}"
+											th:text="${address.fullName + ', ' + address.mobile + ', ' + address.houseNo + ', ' + address.street + ', ' + address.city + ', ' + address.state + ', ' + address.pinCode + ', ' + address.country}"
+											th:selected="${address.defaultAddress}"></option>
+								</select>
+							</div>
+							<div class="" th:if="${#lists.isEmpty(user.addresses)}">
+								<p>Address Not Avilable . Please Add Address</p>
+							</div>
+							<div class="form-group">
+								<a class="btn btn-success" th:href="@{/user/profile/address/add(fromCheckout=true)}">Add New</a>
+							</div>
+						</div>
+						<!-- /Billing Details -->
+
+						<!-- Shiping Details -->
+						<div class="shiping-details">
+
+						</div>
+						<!-- /Shiping Details -->
+
+						<!-- Order notes -->
+						<div class="order-notes">
+
+						</div>
+						<!-- /Order notes -->
+					</div>
+
+					<!-- Order Details -->
+					<div class="col-md-5 order-details">
+						<div class="section-title text-center">
+							<h3 class="title">Your Order</h3>
+						</div>
+						<div class="order-summary">
+							<div class="order-col">
+								<div><strong>PRODUCT</strong></div>
+								<div><strong>TOTAL</strong></div>
+							</div>
+							<div class="order-products" >
+								<div class="order-col">
+									<div>
+										<input type="hidden" th:name="productId" th:value="${product.id}"/>
+										<input type="hidden" th:name="quantity" th:value="${quantity}"/>
+										<span  th:text="${quantity}"></span> X <span th:text="${product.name}"></span>
+									</div>
+									<div name="total" th:text="${product.price*quantity}">$980.00</div>
+								</div>
+							</div>
+							<div class="order-col">
+								<div>Shiping</div>
+								<div><strong th:text="'₹ ' + ${deliveryCharge}">FREE</strong></div>
+							</div>
+							<div class="order-col">
+								<div><strong>TOTAL</strong></div>
+								<div><span id="cartTotal"><strong>₹<span th:text="${total}"></span></strong></span></div>
+								<input type="hidden" th:name="cartTotal" th:value="${total}"/>
+
+							</div>
+						</div>
+						<div class="payment-method">
+							<div class="input-radio">
+
+								<!--<div class="caption">
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+								</div>-->
+							</div>
+							<div class="">
+								<div class="form-check">
+									<input type="radio" id="onlinePay" name="paymentMethod" value="Online Payment" class="" checked>
+									<label class="form-check-label" for="onlinePay">Online Payment</label>
+								</div>
+								<div class="form-check">
+									<input type="radio" id="cashOnDelivery" name="paymentMethod" value="Cash On Delivery" class="" >
+									<label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
+								</div>
+
+							</div>
+
+						</div>
+
+						<button type="submit"  id="placeOrderButton" class="primary-btn order-submit" style="display:none;" >Place order</button>
+						<button  id="paymentPlaceOrderButton" class="primary-btn order-submit" >Pay & order</button>
+						</div>
+						</form>
+					<!-- /Order Details -->
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->
+
+		<!-- NEWSLETTER -->
+		<div id="newsletter" class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="newsletter">
+							<p>Sign Up for the <strong>NEWSLETTER</strong></p>
+							<form>
+								<input class="input" type="email" placeholder="Enter Your Email">
+								<button class="newsletter-btn"><i class="fa fa-envelope"></i> Subscribe</button>
+							<ul class="newsletter-follow">
+								<li>
+									<a href="#"><i class="fa fa-facebook"></i></a>
+								</li>
+								<li>
+									<a href="#"><i class="fa fa-twitter"></i></a>
+								</li>
+								<li>
+									<a href="#"><i class="fa fa-instagram"></i></a>
+								</li>
+								<li>
+									<a href="#"><i class="fa fa-pinterest"></i></a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /NEWSLETTER -->
+
+<div th:replace="fragments/cart_footer :: cart_footer"></div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+<script>
+	const cashOnDeliveryRadio = document.getElementById('cashOnDelivery');
+    const onlinePayRadio = document.getElementById('onlinePay');
+    const placeOrderButton = document.getElementById('placeOrderButton');
+    const paymentPlaceOrderButton = document.getElementById('paymentPlaceOrderButton');
+    const checkoutForm = document.getElementById('checkoutForm');
+
+    paymentPlaceOrderButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        paymentStart();
+    });
+
+    cashOnDeliveryRadio.addEventListener('change', () => {
+        placeOrderButton.style.display = 'block';
+        paymentPlaceOrderButton.style.display = 'none';
+    });
+
+    onlinePayRadio.addEventListener('change', () => {
+        placeOrderButton.style.display = 'none';
+        paymentPlaceOrderButton.style.display = 'block';
+    });
+</script>
+
+<!--first-request to server to create an order-->
+<script>
+	const paymentStart = () => {
+        console.log("Payment Started...");
+        let amount = $("#cartTotal span").text();
+        console.log(amount);
+
+        if(amount == "" || amount == null) {
+        alert("amount is required");
+        swal("Sorry!", "amount is required", "error");
+        return;
+        }
+
+        $.ajax(
+            {
+                url:"/user/create_order",
+                data:JSON.stringify({amount:amount, info:"order_request"}),
+                contentType: "application/json",
+                type:"POST",
+                dataType: "json",
+                success:function(response){
+                    //invoked when success
+                    console.log(response);
+                    if(response.status == "created") {
+                        //open payment form
+                        let options = {
+                            key: "rzp_test_jbK2099xuYUKYX",
+                            amount:response.amount,
+                            currency:"INR",
+                            name:"FirstCart",
+                            description:"FirstCart Online Payment",
+                            order_id:response.id,
+                            handler:function(response){
+                                console.log(response.razorpay_payment_id);
+                                console.log(response.razorpay_order_id);
+                                console.log(response.razorpay_signature);
+                                console.log("payment successful!");
+                                //alert("congratulations! Payment successful.");
+                                updatePaymentOnServer(response.razorpay_payment_id,
+                                 response.razorpay_order_id,
+                                 'paid');
+                                 document.getElementById('paymentId').value = response.razorpay_order_id;
+                                checkoutForm.submit();
+                            },
+                            prefill: {
+                                name: "",
+                                email: "",
+                                contact: ""
+                            },
+                            notes: {
+                                address: "FirstCart Corporate Office"
+                            },
+                            theme: {
+                                color: "#3399cc"
+                            }
+                        };
+
+                        let rzp = new Razorpay(options);
+                        rzp.on('payment.failed', function (response){
+                            console.log(response.error.code);
+                            console.log(response.error.description);
+                            console.log(response.error.source);
+                            console.log(response.error.step);
+                            console.log(response.error.reason);
+                            console.log(response.error.metadata.order_id);
+                            console.log(response.error.metadata.payment_id);
+                            alert("Oops payment failed!");
+                            swal("Sorry!", "Oops payment failed!", "error");
+                        });
+                        rzp.open();
+                    }
+                },
+                error:function(error){
+                    //invoked when unsuccessful
+                    console.error(error);
+                    alert("something went wrong!!");
+                    swal("Sorry!", "something went wrong!!", "error");
+                }
+            }
+        )
+    };
+
+    function updatePaymentOnServer(payment_id, order_id, status)
+    {
+        $.ajax({
+            url:"/user/update_order",
+                data:JSON.stringify({payment_id: payment_id, order_id: order_id, status: status}),
+                contentType: "application/json",
+                type:"POST",
+                dataType: "json",
+                success:function(response){
+                    //swal("Good Job!", "congratulations!, payment successful", "success");
+                },
+                error:function(error){
+                    //swal("Sorry!", "Oops payment failed!", "error");
+                },
+        })
+    }
+</script>
+<!--<div th:replace="fragments/cart_js :: cart_js"></div>-->
+
+
+	</body>
+</html>

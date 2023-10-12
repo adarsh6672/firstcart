@@ -233,7 +233,7 @@ public class UserController {
     }
 
     @GetMapping("/checkout")
-    public String test(Principal p,Model m){
+    public String checkout(Principal p,Model m){
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         Cart userCart=userService.getUserCart(user);
@@ -243,6 +243,20 @@ public class UserController {
         m.addAttribute("total",userCart.getTotalAmount()+40);
         m.addAttribute("deliveryCharge",40.0);
         return "user/checkout";
+    }
+
+    @GetMapping("/buyNow")
+    public String buyNow(Principal p,Model m,@RequestParam Long productId, @RequestParam int quantity){
+        String email = p.getName();
+        User user = userRepo.findByEmail(email);
+        Product product=productRepo.getById(productId);
+        m.addAttribute("product",product);
+        m.addAttribute("user", user);
+        m.addAttribute("quantity",quantity);
+        m.addAttribute("address",addressRepo.findByUserAndDeletedFalse(user));
+        m.addAttribute("total",(product.getPrice()*quantity)+40);
+        m.addAttribute("deliveryCharge",40.0);
+        return "user/checkout_buy";
     }
 
     @PostMapping("/placeorder")
@@ -270,10 +284,49 @@ public class UserController {
         orderRepo.save(order);
         orderService.deleteCartItems(user);
         System.out.println(paymentId);
-        Payment myorder = paymentRepo.findByOrderId(paymentId);
-        myorder.setOrderNumber(order);
-        paymentRepo.save(myorder);
+        if(paymentId != null && !paymentId.isEmpty()){
+            Payment myorder = paymentRepo.findByOrderId(paymentId);
+            myorder.setOrderNumber(order);
+            paymentRepo.save(myorder);
+        }
 
+
+
+        return "redirect:/user/orderconfirmed";
+    }
+    @PostMapping("/placebuyorder")
+    public String orderbuyplace(@RequestParam ("paymentMethod") String paymentMethod,
+                             @RequestParam("selectedAddressId") Long selectedAddressId,
+                             @RequestParam("paymentId") String paymentId,
+                             @RequestParam("quantity")int quantity,
+                             @RequestParam("productId") Long productId,
+                             @RequestParam("cartTotal") double total,
+                             Principal p,HttpSession session){
+        if(paymentMethod==null){
+            session.setAttribute("msg","PLEASE SELECT PAYMENT METHOD");
+            return "redirect:/user/checkout";
+        }
+        if(selectedAddressId==null||selectedAddressId==0){
+            session.setAttribute("msg","PLEASE SELECT SHIPPING ADDRESS");
+            return "redirect:/user/checkout";
+        }
+        Address selectedAddress=addressRepo.findById(selectedAddressId).orElse(null);
+        User user = userRepo.findByEmail(p.getName());
+        Product product=productRepo.getById(productId);
+        Order order=new Order();
+        order.setOrderDateTime(LocalDateTime.now());
+        order.setTotalAmount(total);
+        order.setShippingAddress(selectedAddress);
+        order.setPaymentMethod(paymentMethod);
+        order.setStatus(OrderStatus.CONFIRMED);
+        orderService.placeOrderbuynow(product,order,user,quantity);
+        orderRepo.save(order);
+        System.out.println(paymentId);
+        if(paymentId != null && !paymentId.isEmpty()){
+            Payment myorder = paymentRepo.findByOrderId(paymentId);
+            myorder.setOrderNumber(order);
+            paymentRepo.save(myorder);
+        }
 
 
         return "redirect:/user/orderconfirmed";

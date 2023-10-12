@@ -56,6 +56,26 @@ public class OrderService {
 
         return order;
     }
+    public Order placeOrderbuynow(Product product,Order order,User user ,int quantity) {
+        order.setUser(user);
+        Cart cart=userService.getUserCart(user);
+
+        /*List<CartItem> cartItems = cartService.getCartItems(cart.getId());
+        for (CartItem cartItem : cartItems) {*/
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setProduct(product);
+            orderItem.setQuantity(quantity);
+            product.setStockQuantity(product.getStockQuantity()-quantity);
+            productRepo.save(product);
+            order.getItems().add(orderItem);
+
+
+
+        orderRepo.save(order);
+
+        return order;
+    }
 
     public void deleteCartItems(User user){
         Cart cart=cartRepo.findByUser(user);
