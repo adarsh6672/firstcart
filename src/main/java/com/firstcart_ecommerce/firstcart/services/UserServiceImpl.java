@@ -42,6 +42,10 @@ public class UserServiceImpl implements UserService{
         User newuser = userRepo.save(user);
         return newuser;
     }
+    @Override
+    public int getTotalUsers() {
+        return (int) userRepo.count();
+    }
 
 
 

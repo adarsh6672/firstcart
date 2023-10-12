@@ -13,6 +13,8 @@ public interface UserService {
 
     public User updatePassword(User user);
 
+    int getTotalUsers();
+
     public void removeSessionMessage();
     List<User> getAllUsers();
 

@@ -18,4 +18,8 @@ public class SubCategoryService {
     public Optional<SubCategory> getSubCategoryById(int id){
         return subCategoryRepo.findById(id);
     }
+
+    public int getTotalCategories() {
+        return (int) subCategoryRepo.count();
+    }
 }

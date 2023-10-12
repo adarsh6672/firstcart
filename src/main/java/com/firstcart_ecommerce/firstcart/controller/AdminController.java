@@ -91,7 +91,21 @@ public class AdminController {
     }
 
     @GetMapping("/adminpanel")
-    public String adminpanel(){
+    public String adminpanel(Model model){
+        int totalUsers = userService.getTotalUsers();
+        model.addAttribute("totalUsers", totalUsers);
+        int totalProducts = productService.getTotalProducts();
+        model.addAttribute("totalProducts", totalProducts);
+       /* model.addAttribute("todaysSales",orderService.countOrdersCreatedToday());*/
+        int totalCategories = subCategoryService.getTotalCategories();
+        model.addAttribute("totalCategories", totalCategories);
+        int totalOrders = orderService.getTotalOrders();
+        model.addAttribute("totalOrders", totalOrders);
+        List<Product> lowStockProducts = productService.getProductsLowStock();
+        model.addAttribute("lowStockProducts", lowStockProducts);
+        List<Order> recentOrders = orderService.getRecentOrders();
+        model.addAttribute("recentOrders", recentOrders);
+        model.addAttribute("pageTitle", "Admin Dashboard | Admin");
         return "admin/adminpanel";
     }
     /*users crud operations*/
@@ -415,10 +429,7 @@ public class AdminController {
         orderRepo.save(order);
         return "redirect:/admin/orderManage";
     }
-    @PostMapping("/chek")
-    public String ve(){
-        return "/user/home";
-    }
+
 
 
 }

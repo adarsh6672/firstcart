@@ -4,6 +4,7 @@ import com.firstcart_ecommerce.firstcart.model.Order;
 import com.firstcart_ecommerce.firstcart.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface OrderRepo extends JpaRepository<Order , Long> {
@@ -11,4 +12,6 @@ public interface OrderRepo extends JpaRepository<Order , Long> {
     List<Order> findByUserOrderByOrderDateTimeDesc(User user);
 
     List<Order> findAllByOrderByOrderDateTimeDesc();
+
+   /* int countByorderDateTimeAfter(LocalDate date);*/
 }

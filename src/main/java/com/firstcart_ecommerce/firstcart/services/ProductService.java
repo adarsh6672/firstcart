@@ -69,4 +69,12 @@ public class ProductService {
     public List<Product> getProductsByCategory(int categoryId) {
         return productRepo.findBySubCategoryId(categoryId);
     }
+
+    public int getTotalProducts() {
+        return (int) productRepo.count();
+    }
+
+    public List<Product> getProductsLowStock() {
+        return productRepo.findLowStockProducts();
+    }
 }

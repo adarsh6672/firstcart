@@ -3,8 +3,12 @@ package com.firstcart_ecommerce.firstcart.services;
 import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -61,6 +65,21 @@ public class OrderService {
         }
 
 
+    }
+    public int getTotalOrders() {
+        return (int) orderRepo.count();
+    }
+    /*public int countOrdersCreatedToday() {
+        LocalDate today = LocalDate.now();
+        return (int) orderRepo.countByorderDateTimeAfter(today);
+    }*/
+
+    public List<Order> getRecentOrders() {
+        // Create a Pageable object to fetch the top 5 recent orders sorted by orderDateTime
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "orderDateTime"));
+
+        // Fetch the recent orders
+        return orderRepo.findAll(pageable).getContent();
     }
 
     public List<Order> orderItemFind(User user){

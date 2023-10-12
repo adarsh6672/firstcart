@@ -18,4 +18,7 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
     @Query(value = "SELECT * FROM product p WHERE "+
             "p.name LIKE CONCAT('%',:query,'%' )",nativeQuery = true)
     List<Product> searchProduct(String query);
+
+    @Query("SELECT p FROM Product p WHERE p.stockQuantity < 10")
+    List<Product> findLowStockProducts();
 }
