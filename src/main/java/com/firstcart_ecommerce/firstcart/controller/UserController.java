@@ -6,9 +6,11 @@ import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.*;
 import com.firstcart_ecommerce.firstcart.services.*;
 import com.firstcart_ecommerce.firstcart.util.AddressConverter;
+import com.firstcart_ecommerce.firstcart.util.InvoiceGenerator;
 import com.firstcart_ecommerce.firstcart.util.OrderStatus;
 import com.razorpay.RazorpayClient;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,9 @@ public class UserController {
 
     @Autowired
     private CartRepo cartRepo;
+
+    @Autowired
+    private InvoiceGenerator invoiceGenerator;
 
     @Autowired
     private AddressService addressService;
@@ -278,6 +283,20 @@ public class UserController {
     public String orderConfirm(){
 
         return "user/ordersuccess";
+    }
+
+    @GetMapping("/orders/invoice/{orderId}")
+    public void generateInvoice(@PathVariable Long orderId, HttpServletResponse response) {
+        try {
+            Order order = orderRepo.getById(orderId);
+            if (order != null) {
+                response.setContentType("application/pdf");
+                response.setHeader("Content-Disposition", "attachment; filename=invoice_" + orderId + ".pdf");
+                invoiceGenerator.generateInvoice(order, response.getOutputStream());
+            }
+        } catch (IOException e) {
+            // Handle exceptions
+        }
     }
 
     @GetMapping("/orderlist")

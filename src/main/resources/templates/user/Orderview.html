@@ -81,7 +81,9 @@
                         <td th:text="${order.status}" class="text-bold text-success">Order Status</td>
                     </tr>
                     <tr>
-                        <td></td>
+                        <td>
+                            <a class="btn btn-success" th:href="@{/user/orders/invoice/{orderId}(orderId=${order.id})}">Invoice</a>
+                        </td>
                         <td></td>
                         <td></td>
                         <td >
