@@ -17,9 +17,10 @@
                 <th scope="col">Customer</th>
                 <th scope="col">Total(Rs.)</th>
                 <th scope="col">Payment</th>
+                <th scope="col">Invoice</th>
                 <th scope="col">Current Status</th>
                 <th scope="col">New Status</th>
-                <th scope="col">Updation</th>
+                <th scope="col">Action</th>
             </tr>
             </thead>
             <tbody>
@@ -40,6 +41,9 @@
                 <td th:text="${order.totalAmount}">$604.50</td>
                 <td th:text="${order.paymentMethod}"></td>
                 <td>
+                    <a th:href="@{/user/orders/invoice/{orderId}(orderId=${order.id})}"><span th:text="'invoice'+${order.id}"></span></a>
+                </td>
+                <td>
                     <p th:if="${order.status.name() == 'CONFIRMED'}"  class="text-success font-weight-bolder">CONFIRMED</p>
                     <p th:if="${order.status.name() == 'SHIPPED'}"  class="text-success font-weight-bolder">SHIPPED</p>
                     <p th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"  class="text-success font-weight-bolder">OUT_FOR_DELIVERY</p>
@@ -58,7 +62,7 @@
                 </td>
 
                 <td>
-                    <button type="submit" class="btn btn-warning btn-sm">Update Status</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Update</button>
                 </td>
                 </form>
 

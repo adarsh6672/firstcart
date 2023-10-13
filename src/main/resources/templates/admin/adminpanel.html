@@ -16,7 +16,7 @@
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Today sales</p>
-                                <h6 class="mb-0">$1234</h6>
+                                <h6 class="mb-0" th:text="'₹ '+${todayrevenue}">$1234</h6>
                             </div>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                             <i class="fa fa-chart-pie fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Total Revenue</p>
-                                <h6 class="mb-0">$1234</h6>
+                                <h6 class="mb-0" th:text="'₹ '+${totalrevenue}">$1234</h6>
                             </div>
                         </div>
                     </div>
@@ -59,19 +59,21 @@
                         <div class="bg-secondary text-center rounded p-4 mh-100">
                             <div class="d-flex align-items-center justify-content-between mb-4">
                                 <h6 class="mb-0">Maintain Stock</h6>
-                                <a href="">Show All</a>
+                                <a th:href="@{/admin/stockmanagement}">Show All</a>
                             </div>
                             <div>
                                 <table class="table text-start align-middle table-bordered table-hover mb-0">
                                     <thead>
-                                    <tr><th></th>
-                                    <th></th>
-                                    <th></th></tr>
+                                    <tr>
+                                    <th>Product</th>
+                                    <th>Stock</th>
+                                    <th>Category</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="pro : ${lowStockProducts}">
+                                    <tr th:each="pro, stat: ${lowStockProducts}" th:if="${stat.count <= 3}">
                                         <td th:text="${pro.name}"></td>
-                                        <td th:text="${pro.stockQuantity}"></td>
+                                        <td class="text-danger" th:text="${pro.stockQuantity}"></td>
                                         <td th:text="${pro.subCategory.name}"> </td>
                                     </tr>
                                     </tbody>
@@ -85,7 +87,7 @@
                                 <h6 class="mb-0">Salse & Revenue</h6>
                                 <a href="">Show All</a>
                             </div>
-                            <canvas id="salse-revenue"></canvas>
+                            <canvas></canvas>
                         </div>
                     </div>
                 </div>
@@ -98,7 +100,7 @@
                 <div class="bg-secondary text-center rounded p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <h6 class="mb-0">Recent Salse</h6>
-                        <a href="">Show All</a>
+                        <a th:href="@{/admin/orderManage}">Show All</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table text-start align-middle table-bordered table-hover mb-0">
@@ -109,20 +111,20 @@
                                     <th scope="col">Customer</th>
                                     <th scope="col">Amount</th>
                                     <th scope="col">Status</th>
-                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr th:each="order : ${recentOrders}">
                                     <td th:text="${order.getFormattedOrderDate()}">01 Jan 2045</td>
-                                    <td>INV-0123</td>
-                                    <td th:text="${order.user.name}">Jhon Doe</td>
-                                    <td th:text="${order.totalAmount}"> $123</td>
                                     <td >
-                                        <p th:if="${order.paymentMethod == 'Cash On Delivey'}">COD</p>
-                                        <p th:if="${order.paymentMethod == 'Online Payment'}">PAID</p>
+                                        <a th:href="@{/user/orders/invoice/{orderId}(orderId=${order.id})}">Invoice</a>
                                     </td>
-                                    <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
+                                    <td th:text="${order.user.name}">Jhon Doe</td>
+                                    <td class="text-right" th:text="${order.totalAmount}"> $123</td>
+                                    <td >
+                                        <p th:if="${order.paymentMethod == 'Cash On Delivery'}">COD</p>
+                                        <p th:if="${order.paymentMethod == 'Online Payment'}"class="text-success">PAID</p>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -132,8 +134,21 @@
             <!-- Recent Sales End -->
 
 
+                 <div class="container-fluid pt-4 px-4">
+                     <div class="bg-secondary text-center rounded p-4">
+                         <div class="d-flex align-items-center justify-content-between mb-4">
+                             <h6 class="mb-0">Salse Graph</h6>
+
+                         </div>
+                         <div class="table-responsive">
+                             <div id="linechart" style="width: 1050px; height: 500px;"></div>
+                         </div>
+                     </div>
+                 </div>
+
+
             <!-- Widgets Start -->
-            <div class="container-fluid pt-4 px-4">
+            <!--<div class="container-fluid pt-4 px-4">
                 <div class="row g-4">
                     <div class="col-sm-12 col-md-6 col-xl-4">
                         <div class="h-100 bg-secondary rounded p-4">
@@ -250,22 +265,39 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>-->
             <!-- Widgets End -->
+                 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                 <script type="text/javascript" th:inline="javascript">
+                     google.charts.load('current', {'packages':['corechart']});
+                     google.charts.setOnLoadCallback(drawChart);
 
+                     function drawChart() {
+                       var data = new google.visualization.DataTable();
+                       data.addColumn('date', 'Date');
+                       data.addColumn('number', 'Total');
+                       [[${dailyTotals}]].forEach(function(row) {
+                         data.addRow([new Date(row.date), row.total]);
+                       });
+
+                       var options = {
+                         title: 'Monthly Revenue',
+                         curveType: 'function',
+                         legend: { position: 'bottom' }
+                       };
+
+                       var chart = new google.visualization.LineChart(document.getElementById('linechart'));
+
+                       chart.draw(data, options);
+                     }
+                 </script>
 
             <!-- Footer Start -->
      <div th:replace="fragments/html_footer :: html_footer"></div>
-        </div>
-        <!-- Content End -->
 
-
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
-    </div>
 
     <!-- JavaScript Libraries -->
-<div th:replace="fragments/js_links :: js_links"></div>
+    <div th:replace="fragments/js_links :: js_links"></div>
 </body>
 
 </html>

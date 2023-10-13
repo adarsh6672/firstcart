@@ -20,8 +20,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -92,6 +95,18 @@ public class AdminController {
 
     @GetMapping("/adminpanel")
     public String adminpanel(Model model){
+        List<Order> orders = orderRepo.findAll();
+        Double sum = orders.stream()
+                .map(Order::getTotalAmount)
+                .reduce(0.0, Double::sum);
+
+        LocalDate today = LocalDate.now();
+        List<Order> ordertoday = orderRepo.findByDate(today);
+        Double sumtoday = ordertoday.stream()
+                .map(Order::getTotalAmount)
+                .reduce(0.0, Double::sum);
+        model.addAttribute("todayrevenue",sumtoday);
+        model.addAttribute("totalrevenue",sum);
         int totalUsers = userService.getTotalUsers();
         model.addAttribute("totalUsers", totalUsers);
         int totalProducts = productService.getTotalProducts();
@@ -101,11 +116,19 @@ public class AdminController {
         model.addAttribute("totalCategories", totalCategories);
         int totalOrders = orderService.getTotalOrders();
         model.addAttribute("totalOrders", totalOrders);
-        List<Product> lowStockProducts = productService.getProductsLowStock();
-        model.addAttribute("lowStockProducts", lowStockProducts);
+
+        model.addAttribute("lowStockProducts", productService.getAllProductsSortedByQuantity());
         List<Order> recentOrders = orderService.getRecentOrders();
         model.addAttribute("recentOrders", recentOrders);
         model.addAttribute("pageTitle", "Admin Dashboard | Admin");
+
+        LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime endOfMonth = LocalDateTime.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        List<Map<String, Object>> dailyTotals = orderRepo.findDailyTotals(startOfMonth, endOfMonth);
+
+        model.addAttribute("dailyTotals", dailyTotals);
+
+
         return "admin/adminpanel";
     }
     /*users crud operations*/
