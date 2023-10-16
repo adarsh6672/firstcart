@@ -62,7 +62,7 @@
                                 <a th:href="@{/admin/stockmanagement}">Show All</a>
                             </div>
                             <div>
-                                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                                <table class="table text-start align-middle table-bordered  mb-0">
                                     <thead>
                                     <tr>
                                     <th>Product</th>
@@ -85,9 +85,21 @@
                         <div class="bg-secondary text-center rounded p-4">
                             <div class="d-flex align-items-center justify-content-between mb-4">
                                 <h6 class="mb-0">Salse & Revenue</h6>
-                                <a href="">Show All</a>
+
                             </div>
-                            <canvas></canvas>
+                            <div class="mb-3">
+                                <a th:href="@{/admin/sales/download/{id}(id=1)}">Todays sales report</a><br>
+                            </div>
+                            <div class="mb-3">
+                                <a th:href="@{/admin/sales/download/{id}(id=2)}">This month sales report</a><br>
+                            </div>
+                            <div class="mb-3">
+                                <a th:href="@{/admin/sales/download/{id}(id=3)}">This Year sales report</a><br>
+                            </div>
+                            <div class="mb-3">
+                                <a th:href="@{/admin/sales/download}"></a><br>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -103,7 +115,7 @@
                         <a th:href="@{/admin/orderManage}">Show All</a>
                     </div>
                     <div class="table-responsive">
-                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                        <table class="table text-start align-middle table-bordered  mb-0">
                             <thead>
                                 <tr class="text-dark">
                                     <th scope="col">Date</th>

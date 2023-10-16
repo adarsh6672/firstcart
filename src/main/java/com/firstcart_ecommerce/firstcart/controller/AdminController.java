@@ -6,7 +6,10 @@ import com.firstcart_ecommerce.firstcart.dto.ProductDTO;
 import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.*;
 import com.firstcart_ecommerce.firstcart.services.*;
+import com.firstcart_ecommerce.firstcart.util.InvoiceGenerator;
 import com.firstcart_ecommerce.firstcart.util.OrderStatus;
+import com.firstcart_ecommerce.firstcart.util.SalesReportGenerator;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -65,6 +69,11 @@ public class AdminController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private SalesReportGenerator salesReportGenerator;
+
+
 
 
 
@@ -131,7 +140,22 @@ public class AdminController {
 
         return "admin/adminpanel";
     }
-    /*users crud operations*/
+    @GetMapping("/orders/salesreport")
+    public void generatereport( HttpServletResponse response) {
+        try {
+            LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+            LocalDateTime endOfMonth = LocalDateTime.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+            List<Order>orders=orderRepo.findOrdersInDateRange(startOfMonth,endOfMonth);
+            if (orders != null) {
+                response.setContentType("application/pdf");
+                response.setHeader("Content-Disposition", "attachment; filename=monthsalesreport.pdf");
+                salesReportGenerator.GenerateReport(orders, response.getOutputStream());
+            }
+        } catch (IOException e) {
+            // Handle exceptions
+        }
+    }
+
 
         @PostMapping("/blockuser/{id}")
         public String blockUsr(@PathVariable (value ="id")int id ){
