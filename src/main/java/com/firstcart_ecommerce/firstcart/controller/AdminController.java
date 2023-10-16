@@ -8,7 +8,6 @@ import com.firstcart_ecommerce.firstcart.repository.*;
 import com.firstcart_ecommerce.firstcart.services.*;
 import com.firstcart_ecommerce.firstcart.util.InvoiceGenerator;
 import com.firstcart_ecommerce.firstcart.util.OrderStatus;
-import com.firstcart_ecommerce.firstcart.util.SalesReportGenerator;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +69,8 @@ public class AdminController {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private SalesReportGenerator salesReportGenerator;
+
+
 
 
 
@@ -140,7 +139,7 @@ public class AdminController {
 
         return "admin/adminpanel";
     }
-    @GetMapping("/orders/salesreport")
+    /*@GetMapping("/orders/salesreport")
     public void generatereport( HttpServletResponse response) {
         try {
             LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
@@ -154,7 +153,7 @@ public class AdminController {
         } catch (IOException e) {
             // Handle exceptions
         }
-    }
+    }*/
 
 
         @PostMapping("/blockuser/{id}")
