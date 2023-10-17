@@ -26,4 +26,9 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images = new ArrayList<>();
+
+
+    @ManyToMany(mappedBy = "products")
+    private List<WishList> wishlists;
+
 }

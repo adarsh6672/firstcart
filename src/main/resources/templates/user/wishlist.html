@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html
+      lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments/cart_head :: cart_head">
+
+<body>
+<div th:replace="fragments/cart_header :: cart_header"></div>
+<section style="background-color: #eee; min-height:100vh;">
+    <div class="container">
+        <div class="row w-100">
+            <div class="col-lg-12 col-md-12 col-12">
+                <h3 class="display-5 mb-2 text-center">Wish List</h3>
+                <p class="mb-5 text-center">
+                    <i class="text-info font-weight-bold"></i><span ></span> items in your WishList</p>
+                <th:block th:if="${session.msg}">
+                    <p class="text-center text-danger" style="font-size: 18px;">[[${session.msg}]]</p>
+                    <th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
+                </th:block>
+                <table id="shoppingCart" class="table table-condensed table-responsive">
+                    <thead>
+                    <tr>
+                        <th style="width:60%">Product</th>
+                        <th style="width:16%"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product, iStat : ${products}">
+                        <td data-th="Product" >
+                            <div class="row" >
+                                <div class="col-md-5 text-left">
+                                    <a th:href="@{/user/viewproduct/{id}(id=${product.id})}">
+                                        <img th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/'+product.images[0].imageName}"
+                                             th:alt="${product.name}" class="card-img-top rounded-0" alt="..." src=""
+                                        style="width:200px;height:200px;">
+                                    </a>
+                                </div>
+                                <div class="col-md-5 text-left mt-sm-2">
+                                    <h4 th:text="${product.name}">Product Name</h4>
+                                    <p class="font-weight-light">Brand Name</p>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="actions" data-th="">
+                            <div class="text-right">
+                                <a class="btn btn-white border-secondary bg-white btn-md mb-2" th:href="@{/user/wishlist/remove/{id}(id=${product.id})}"
+                                   th:data-confirm-block="|Are you sure you want to Remove ${product.name}?|"
+                                   onclick="if (!confirm(this.getAttribute('data-confirm-block'))) return false">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row mt-4 d-flex align-items-center">
+
+
+                <a th:href="@{/user/home}" class="btn btn-success">
+                    <i class="fa fa-arrow-left me-2"></i> Continue Shopping</a>
+
+        </div>
+    </div>
+</section>
+<div th:replace="fragments/cart_footer :: cart_footer"></div>
+<div th:replace="fragments/cart_js :: cart_js"></div>
+</body>
+</html>

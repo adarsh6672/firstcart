@@ -80,7 +80,7 @@
                             <a class="add-to-cart btn" style="background:orange;" th:if="${isInCart}" th:href="@{/user/cart}" type="button">Go To Cart</a>
 
                             <a class="add-to-cart btn btn-warning" th:if="${!isInCart}" th:href="@{/user/addToCart/{id}(id=${product.id})}" type="button">add to cart</a>
-                            <a class="like btn btn-default" type="button"><span class="fa fa-heart"></span></a>
+                            <a class="like btn btn-default" th:href="@{/user/wishlist/add/{id}(id=${product.id})}" type="button"><span class="fa fa-heart"></span></a>
                         </div>
 
                     </div>
