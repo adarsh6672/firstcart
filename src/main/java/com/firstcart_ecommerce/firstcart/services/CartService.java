@@ -23,18 +23,7 @@ public class CartService {
 
     @Autowired
     private CartItemRepo cartItemRepo;
-    public boolean isInCart(Long id , User user){
-        Cart cart= cartRepo.findByUser(user);
-    /*    List<Product> productsInCart=cart.getProducts();*/
-
-        List<CartItem> itemsInCart=cart.getItems();
-        for (CartItem product : itemsInCart) {
-            if (product.getId()==id) {
-                return true;
-            }
-        }
-        return false;
-    }
+    
 
     public List<CartItem> getCartItems(Long cartId) {
         TypedQuery<CartItem> query = em.createQuery(

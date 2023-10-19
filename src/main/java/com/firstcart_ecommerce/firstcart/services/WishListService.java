@@ -1,11 +1,11 @@
 package com.firstcart_ecommerce.firstcart.services;
 
-import com.firstcart_ecommerce.firstcart.model.Cart;
-import com.firstcart_ecommerce.firstcart.model.Product;
-import com.firstcart_ecommerce.firstcart.model.User;
-import com.firstcart_ecommerce.firstcart.model.WishList;
+import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.ProductRepo;
 import com.firstcart_ecommerce.firstcart.repository.WishListRepo;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.apache.tomcat.websocket.server.WsRemoteEndpointImplServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,9 @@ public class WishListService {
     private WishListRepo wishlistRepo;
     @Autowired
     private ProductRepo productRepo;
+
+    @PersistenceContext
+    EntityManager em;
     public void addProductToWishlist(Long wishlistId, Long productId) {
         WishList wishlist = wishlistRepo.findById(wishlistId).get();
         Product product = productRepo.findById(productId).get();
@@ -46,4 +49,24 @@ public class WishListService {
         }
         return wishList;
     }
+
+    public boolean isProductInWL(Long wishlistid, Long productId) {
+        TypedQuery<WishList> query = em.createQuery(
+                "SELECT c FROM WishList c WHERE c.id = :wlId AND c.product.id = :productId", WishList.class
+        );
+        query.setParameter("wlId", wishlistid);
+        query.setParameter("productId", productId);
+        return !query.getResultList().isEmpty();
+    }
+
+    public boolean isProductInWishlist(WishList wishlist,Long productId) {
+        List<Product> products = wishlist.getProducts();
+        for (Product p : products) {
+            if (p.getId() == productId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

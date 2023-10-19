@@ -38,6 +38,9 @@ public class AdminController {
     private UserService userService;
 
     @Autowired
+    private CouponRepo couponRepo;
+
+    @Autowired
     ProductRepo productRepo;
     @Autowired
     private CategoryService categoryService;
@@ -475,6 +478,34 @@ public class AdminController {
         orderRepo.save(order);
         return "redirect:/admin/orderManage";
     }
+    @GetMapping("/coupon")
+    public String coupen(Model model){
+        model.addAttribute("coupons",couponRepo.findAll());
+        return "admin/coupen";
+    }
+
+    @PostMapping("/coupon/add")
+    public String addCoupen(@ModelAttribute Coupon coupon){
+        couponRepo.save(coupon);
+        return "redirect:/admin/coupon";
+    }
+    @GetMapping("/coupon/edit/{id}")
+    public String editCoupon(@PathVariable ("id") Long id,Model model){
+        model.addAttribute("coupon",couponRepo.getById(id));
+        return "admin/couponEdit";
+    }
+
+    @PostMapping("/coupon/update")
+    public String editCoupons(@ModelAttribute("coupon") Coupon coupon){
+        couponRepo.save(coupon);
+        return "redirect:/admin/coupon";
+    }
+    @GetMapping("/coupon/delete/{id}")
+    public String deletecoupon(@PathVariable ("id")Long id){
+        couponRepo.deleteById(id);
+        return "redirect:/admin/coupon";
+    }
+
 
 
 

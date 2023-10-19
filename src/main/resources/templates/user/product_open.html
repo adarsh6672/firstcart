@@ -80,7 +80,8 @@
                             <a class="add-to-cart btn" style="background:orange;" th:if="${isInCart}" th:href="@{/user/cart}" type="button">Go To Cart</a>
 
                             <a class="add-to-cart btn btn-warning" th:if="${!isInCart}" th:href="@{/user/addToCart/{id}(id=${product.id})}" type="button">add to cart</a>
-                            <a class="like btn btn-default" th:href="@{/user/wishlist/add/{id}(id=${product.id})}" type="button"><span class="fa fa-heart"></span></a>
+                            <a class="like btn btn-default" th:if="${!isInWL}" th:href="@{/user/wishlist/add/{id}(id=${product.id})}" type="button"><span class="fa fa-heart"></span></a>
+                            <a class="like btn btn-default" th:if="${isInWL}" onclick="showAlert()"  type="button"><span class="fa fa-heart text-danger"></span></a>
                         </div>
 
                     </div>
@@ -96,6 +97,7 @@
         crossorigin="anonymous"></script>
 <!--Elevate Zoom-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/2.2.3/jquery.elevatezoom.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
     $(".zoom").elevateZoom();
 </script>
@@ -108,5 +110,15 @@
         $('.zoom').elevateZoom();
     }
 </script>
+<script th:inline="javascript">
+    function showAlert() {
+        Swal.fire({
+            title: 'Already Added in Wishlist.!',
+            text: '',
+            icon: 'success'
+        });
+    }
+</script>
+
 </body>
 </html>

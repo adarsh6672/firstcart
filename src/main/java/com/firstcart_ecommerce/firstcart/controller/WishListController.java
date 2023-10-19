@@ -50,6 +50,8 @@ public class WishListController {
         WishList wishList=wishlistService.getOrCreateUserCart(user);
          List<Product> products= wishlistService.getProductsInWishlist(wishList.getId());
          model.addAttribute("products" ,products);
+
         return "user/wishlist";
     }
+
 }

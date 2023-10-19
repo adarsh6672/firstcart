@@ -57,6 +57,8 @@ public class UserController {
 
     @Autowired
     private AddressRepo addressRepo;
+    @Autowired
+    private WishListRepo wishListRepo;
 
     @Autowired
     private CartRepo cartRepo;
@@ -66,6 +68,9 @@ public class UserController {
 
     @Autowired
     private AddressService addressService;
+
+    @Autowired
+    private WishListService wishListService;
 
     @Autowired
     private OrderService orderService;
@@ -221,8 +226,10 @@ public class UserController {
         User u=userRepo.findByEmail(principal.getName());
         Long cid=cartRepo.findByUser(u).getId();
         boolean isInCart = cartService.isProductInCartItem(cid, productId);
+        boolean isInWL= wishListService.isProductInWishlist(wishListRepo.findByUser(u),productId);
         if (product.isPresent()) {
             model.addAttribute("isInCart",isInCart);
+            model.addAttribute("isInWL",isInWL);
             model.addAttribute("product", product.get());
             model.addAttribute("pageTitle", "Product Details | Admin");
 
