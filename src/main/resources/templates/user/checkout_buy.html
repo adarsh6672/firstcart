@@ -43,7 +43,7 @@
 						<!-- Billing Details -->
 						<div class="billing-details">
 							<div class="section-title">
-								<h3 class="title">Shipping address</h3>
+
 							</div>
 							<!--<table class="table border-none table-striped table-responsive-md">
 								<thead>
@@ -74,9 +74,26 @@
 								</tr>
 								</tbody>
 							</table>-->
+							<div class="coupon">
+								<h4>COUPON</h4>
+								<form method="get" th:action="@{/user/buyNow}">
+									<input type="hidden" th:name="productId" th:value="${product.id}"/>
+									<input type="hidden" th:name="quantity" th:value="${quantity}"/>
+									<label for="coupon">Select Coupon:</label>
+									<select id="coupon" name="selectedCoupon" class="form-control">
+										<option value="">Select Coupon</option>
+										<option th:each="coupon : ${coupons}"
+												th:value="${coupon.id}"
+												th:text="${coupon.couponCode+'-----------------For Orders Above '+coupon.minimumAmount}"></option>
+									</select>
+									<button type="submit" class="btn btn-success"style="margin-bottom:20px;margin-top:10px;" >Apply Coupon</button>
+								</form>
+							</div>
 							<form id="checkoutForm" th:action="@{/user/placebuyorder}" method="post">
 							<div class="form-group">
 								<input type="hidden" id="paymentId" name="paymentId" >
+								<input type="hidden" id="couponId" th:if="${isCouponApplied}" th:attr="name=couponId" th:value="${selectedcouponId}">
+								<h4>SHIPPING ADDRESS</h4>
 								<label for="savedAddresses">Select Address:</label>
 								<select id="savedAddresses" name="selectedAddressId" class="form-control">
 									<option value="">Select an Address</option>
@@ -128,6 +145,10 @@
 									<div name="total" th:text="${product.price*quantity}">$980.00</div>
 								</div>
 							</div>
+							<div class="order-col" th:if="${isCouponApplied}">
+								<div>Coupon Discount</div>
+								<div><span class="text-success" th:text="'₹  -' + ${coupenapplied}">FREE</span></div>
+							</div>
 							<div class="order-col">
 								<div>Shiping</div>
 								<div><strong th:text="'₹ ' + ${deliveryCharge}">FREE</strong></div>
@@ -135,7 +156,9 @@
 							<div class="order-col">
 								<div><strong>TOTAL</strong></div>
 								<div><span id="cartTotal"><strong>₹<span th:text="${total}"></span></strong></span></div>
+								<div>
 								<input type="hidden" th:name="cartTotal" th:value="${total}"/>
+								</div>
 
 							</div>
 						</div>

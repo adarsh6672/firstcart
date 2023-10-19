@@ -45,6 +45,9 @@ public class UserController {
     private UserService userService;
 
     @Autowired
+    private CouponUsageRepo couponUsageRepo;
+
+    @Autowired
     private CartService cartService;
 
     @Autowired
@@ -62,6 +65,9 @@ public class UserController {
 
     @Autowired
     private CartRepo cartRepo;
+
+    @Autowired
+    private CouponRepo couponRepo;
 
     @Autowired
     private InvoiceGenerator invoiceGenerator;
@@ -240,7 +246,10 @@ public class UserController {
     }
 
     @GetMapping("/checkout")
-    public String checkout(Principal p,Model m){
+    public String checkout(Principal p,Model m,
+                           @RequestParam (required = false) Long selectedCoupon,
+                           HttpSession session){
+
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         Cart userCart=userService.getUserCart(user);
@@ -249,20 +258,53 @@ public class UserController {
         m.addAttribute("address",addressRepo.findByUserAndDeletedFalse(user));
         m.addAttribute("total",userCart.getTotalAmount()+40);
         m.addAttribute("deliveryCharge",40.0);
+        m.addAttribute("coupons",couponRepo.findItemsNotInTable2(user.getId()));
+        if(selectedCoupon!=null){
+            long couponId = selectedCoupon.longValue();
+            if(userCart.getTotalAmount()>couponRepo.getById(couponId).getMinimumAmount().longValue()) {
+                m.addAttribute("coupenapplied", couponRepo.getById(couponId).getDiscountPercentage());
+                m.addAttribute("selectedcouponId",couponId);
+                m.addAttribute("total", userCart.getTotalAmount() + 40 - couponRepo.getById(couponId).getDiscountPercentage());
+                boolean iscoupenApplied = true;
+                m.addAttribute("isCouponApplied", iscoupenApplied);
+                session.setAttribute("msg", "Coupon " + couponRepo.getById(couponId).getCouponCode() + " Applied Successfully");
+            }else {
+                session.setAttribute("msg","The minimum cart value should be "+couponRepo.getById(couponId).getMinimumAmount()+" for Applying this coupon");
+            }
+
+        }
         return "user/checkout";
     }
 
     @GetMapping("/buyNow")
-    public String buyNow(Principal p,Model m,@RequestParam Long productId, @RequestParam int quantity){
+    public String buyNow(Principal p,Model m,@RequestParam Long productId, @RequestParam int quantity,
+    @RequestParam (required = false) Long selectedCoupon,
+                         HttpSession session){
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         Product product=productRepo.getById(productId);
         m.addAttribute("product",product);
+        m.addAttribute("coupon",couponRepo.findAll());
         m.addAttribute("user", user);
         m.addAttribute("quantity",quantity);
         m.addAttribute("address",addressRepo.findByUserAndDeletedFalse(user));
         m.addAttribute("total",(product.getPrice()*quantity)+40);
         m.addAttribute("deliveryCharge",40.0);
+        m.addAttribute("coupons",couponRepo.findItemsNotInTable2(user.getId()));
+        if(selectedCoupon!=null){
+            long couponId = selectedCoupon.longValue();
+            if(product.getPrice()*quantity>couponRepo.getById(couponId).getMinimumAmount().longValue()) {
+                m.addAttribute("coupenapplied", couponRepo.getById(couponId).getDiscountPercentage());
+                m.addAttribute("selectedcouponId",couponId);
+                m.addAttribute("total", (product.getPrice()*quantity)+40 - couponRepo.getById(couponId).getDiscountPercentage());
+                boolean iscoupenApplied = true;
+                m.addAttribute("isCouponApplied", iscoupenApplied);
+                session.setAttribute("msg", "Coupon " + couponRepo.getById(couponId).getCouponCode() + " Applied Successfully");
+            }else {
+                session.setAttribute("msg","The minimum cart value should be "+couponRepo.getById(couponId).getMinimumAmount()+" for Applying this coupon");
+            }
+
+        }
         return "user/checkout_buy";
     }
 
@@ -270,6 +312,7 @@ public class UserController {
     public String orderplace(@RequestParam ("paymentMethod") String paymentMethod,
                                 @RequestParam("selectedAddressId") Long selectedAddressId,
                                 @RequestParam("paymentId") String paymentId,
+                                @RequestParam("couponId") Long couponId,
                                 Principal p,HttpSession session){
         if(paymentMethod==null){
             session.setAttribute("msg","PLEASE SELECT PAYMENT METHOD");
@@ -297,6 +340,18 @@ public class UserController {
             paymentRepo.save(myorder);
         }
 
+        if(couponId != null){
+            Coupon coupon = couponRepo.getById(couponId);
+            order.setCoupon(coupon);
+            order.setTotalAmount(userService.getUserCart(user).getTotalAmount()+40-couponRepo.getById(couponId).getDiscountPercentage());
+            orderRepo.save(order);
+            CouponUsage couponUsage=new CouponUsage();
+            couponUsage.setCoupon(coupon);
+            couponUsage.setUser(userRepo.findByEmail(p.getName()));
+            couponUsage.setUsedAt(LocalDateTime.now());
+            couponUsageRepo.save(couponUsage);
+        }
+
 
 
         return "redirect:/user/orderconfirmed";
@@ -308,6 +363,7 @@ public class UserController {
                              @RequestParam("quantity")int quantity,
                              @RequestParam("productId") Long productId,
                              @RequestParam("cartTotal") double total,
+                                @RequestParam("couponId") Long couponId,
                              Principal p,HttpSession session){
         if(paymentMethod==null){
             session.setAttribute("msg","PLEASE SELECT PAYMENT METHOD");
@@ -334,6 +390,18 @@ public class UserController {
             myorder.setOrderNumber(order);
             paymentRepo.save(myorder);
         }
+        if(couponId != null){
+            Coupon coupon = couponRepo.getById(couponId);
+            order.setCoupon(coupon);
+            order.setTotalAmount(userService.getUserCart(user).getTotalAmount()+40-couponRepo.getById(couponId).getDiscountPercentage());
+            orderRepo.save(order);
+            CouponUsage couponUsage=new CouponUsage();
+            couponUsage.setCoupon(coupon);
+            couponUsage.setUser(userRepo.findByEmail(p.getName()));
+            couponUsage.setUsedAt(LocalDateTime.now());
+            couponUsageRepo.save(couponUsage);
+        }
+
 
 
         return "redirect:/user/orderconfirmed";
