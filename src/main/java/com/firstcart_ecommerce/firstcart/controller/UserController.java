@@ -393,7 +393,6 @@ public class UserController {
         if(couponId != null){
             Coupon coupon = couponRepo.getById(couponId);
             order.setCoupon(coupon);
-            order.setTotalAmount(userService.getUserCart(user).getTotalAmount()+40-couponRepo.getById(couponId).getDiscountPercentage());
             orderRepo.save(order);
             CouponUsage couponUsage=new CouponUsage();
             couponUsage.setCoupon(coupon);
