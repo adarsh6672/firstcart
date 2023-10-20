@@ -86,6 +86,9 @@ public class UserController {
 
     @Autowired
     private ProductService productService;
+
+
+
     @ModelAttribute
     public void profile(Principal p, Model m){
         if(p != null) {
