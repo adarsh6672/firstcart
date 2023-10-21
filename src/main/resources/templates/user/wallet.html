@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html
+      lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments/cart_head :: cart_head">
+
+<body>
+<div th:replace="fragments/cart_header :: cart_header"></div>
+<section style="background-color: #eee; min-height:100vh;">
+    <div class="container">
+        <div class="w-100">
+            <div class="col-md-12 mx-auto">
+                <h2 class="display-5 mb-2 text-center mt-5" >Wallet</h2><i class="fa fa-wallet"></i>
+                <div class="col-md-12 mx-auto bg-success " style="height:300px;padding:100px;">
+                    <div class="text-center">
+                    <h3 >Balance In Your Wallet</h3>
+                    <h1 class="text-success" th:text="'₹ ' + ${walletBalance}"></h1>
+                        <button class="btn btn-success">Add Money</button>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</section>
+<div th:replace="fragments/cart_footer :: cart_footer"></div>
+<div th:replace="fragments/cart_js :: cart_js"></div>
+</body>
+</html>

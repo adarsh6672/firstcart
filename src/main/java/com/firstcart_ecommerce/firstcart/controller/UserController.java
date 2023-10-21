@@ -9,6 +9,8 @@ import com.firstcart_ecommerce.firstcart.util.AddressConverter;
 import com.firstcart_ecommerce.firstcart.util.InvoiceGenerator;
 import com.firstcart_ecommerce.firstcart.util.OrderStatus;
 import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
+import com.razorpay.Refund;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -39,6 +41,9 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private WalletRepo walletRepo;
+
+    @Autowired
     private RazorPayConfig razorPayConfig;
 
     @Autowired
@@ -57,6 +62,9 @@ public class UserController {
 
     @Autowired
     private OrderRepo orderRepo;
+
+    @Autowired
+    private WalletService walletService;
 
     @Autowired
     private AddressRepo addressRepo;
@@ -234,8 +242,9 @@ public class UserController {
         Optional<Product> product = productService.getProductById(productId);
         User u=userRepo.findByEmail(principal.getName());
         Long cid=cartRepo.findByUser(u).getId();
+        WishList wl=wishListService.getOrCreateUserCart(u);
         boolean isInCart = cartService.isProductInCartItem(cid, productId);
-        boolean isInWL= wishListService.isProductInWishlist(wishListRepo.findByUser(u),productId);
+        boolean isInWL= wishListService.isProductInWishlist(wl,productId);
         if (product.isPresent()) {
             model.addAttribute("isInCart",isInCart);
             model.addAttribute("isInWL",isInWL);
@@ -315,7 +324,7 @@ public class UserController {
     public String orderplace(@RequestParam ("paymentMethod") String paymentMethod,
                                 @RequestParam("selectedAddressId") Long selectedAddressId,
                                 @RequestParam("paymentId") String paymentId,
-                                @RequestParam("couponId") Long couponId,
+                                @RequestParam(required = false,name = "couponId") Long couponId,
                                 Principal p,HttpSession session){
         if(paymentMethod==null){
             session.setAttribute("msg","PLEASE SELECT PAYMENT METHOD");
@@ -334,7 +343,6 @@ public class UserController {
         order.setPaymentMethod(paymentMethod);
         order.setStatus(OrderStatus.CONFIRMED);
         orderService.placeOrder(user,order);
-        orderRepo.save(order);
         orderService.deleteCartItems(user);
         System.out.println(paymentId);
         if(paymentId != null && !paymentId.isEmpty()){
@@ -347,13 +355,14 @@ public class UserController {
             Coupon coupon = couponRepo.getById(couponId);
             order.setCoupon(coupon);
             order.setTotalAmount(userService.getUserCart(user).getTotalAmount()+40-couponRepo.getById(couponId).getDiscountPercentage());
-            orderRepo.save(order);
+
             CouponUsage couponUsage=new CouponUsage();
             couponUsage.setCoupon(coupon);
             couponUsage.setUser(userRepo.findByEmail(p.getName()));
             couponUsage.setUsedAt(LocalDateTime.now());
             couponUsageRepo.save(couponUsage);
         }
+        orderRepo.save(order);
 
 
 
@@ -366,7 +375,7 @@ public class UserController {
                              @RequestParam("quantity")int quantity,
                              @RequestParam("productId") Long productId,
                              @RequestParam("cartTotal") double total,
-                                @RequestParam("couponId") Long couponId,
+                                @RequestParam(required = false,name = "couponId") Long couponId,
                              Principal p,HttpSession session){
         if(paymentMethod==null){
             session.setAttribute("msg","PLEASE SELECT PAYMENT METHOD");
@@ -386,7 +395,7 @@ public class UserController {
         order.setPaymentMethod(paymentMethod);
         order.setStatus(OrderStatus.CONFIRMED);
         orderService.placeOrderbuynow(product,order,user,quantity);
-        orderRepo.save(order);
+
         System.out.println(paymentId);
         if(paymentId != null && !paymentId.isEmpty()){
             Payment myorder = paymentRepo.findByOrderId(paymentId);
@@ -396,14 +405,14 @@ public class UserController {
         if(couponId != null){
             Coupon coupon = couponRepo.getById(couponId);
             order.setCoupon(coupon);
-            orderRepo.save(order);
+
             CouponUsage couponUsage=new CouponUsage();
             couponUsage.setCoupon(coupon);
             couponUsage.setUser(userRepo.findByEmail(p.getName()));
             couponUsage.setUsedAt(LocalDateTime.now());
             couponUsageRepo.save(couponUsage);
         }
-
+        orderRepo.save(order);
 
 
         return "redirect:/user/orderconfirmed";
@@ -445,11 +454,31 @@ public class UserController {
         return "user/Orderview";
     }
     @GetMapping("/order/cancel/{id}")
-    public String orderCancel(@PathVariable ("id")Long orderId){
-        Order order= orderRepo.getById(orderId);
+    public String orderCancel(@PathVariable ("id")Long orderId,Principal principal) throws RazorpayException {
+        Order order = orderRepo.getById(orderId);
         orderService.changeStock(order);
         order.setStatus(OrderStatus.CANCELED);
         orderRepo.save(order);
+        String paymentmethod="Online Payment";
+        if (order.getPaymentMethod().equals(paymentmethod)){
+            System.out.println(order.getPaymentMethod());
+            Wallet wallet = walletService.getOrCreateUserWallet(userRepo.findByEmail(principal.getName()));
+            wallet.setAmount(wallet.getAmount()+order.getTotalAmount());
+            Payment payment=paymentRepo.findByOrderNumber(order);
+            try {
+                RazorpayClient razorpayClient = new RazorpayClient(razorPayConfig.getKey_id(), razorPayConfig.getKey_secret());
+                JSONObject refundRequest = new JSONObject();
+                refundRequest.put("amount", order.getTotalAmount()*100); // Refund amount in paise (e.g., 10000 paise = ₹100)
+                refundRequest.put("speed", "optimum"); // Set the refund speed to "optimum"
+                refundRequest.put("receipt","Receipt No."+order.getId());
+                razorpayClient.payments.refund(payment.getPaymentId(),refundRequest);
+                walletRepo.save(wallet);
+
+            } catch (RazorpayException e) {
+                e.printStackTrace();
+            }
+
+        }
         return "redirect:/user/order/orderview/"+orderId;
     }
 
@@ -511,6 +540,14 @@ public class UserController {
 
         System.out.println(data);
         return ResponseEntity.ok(Map.of("msg", "updated"));
+    }
+
+    @GetMapping("/wallet")
+    public String openWallet(Model model,Principal principal){
+        User user=userRepo.findByEmail(principal.getName());
+        Wallet wallet=walletService.getOrCreateUserWallet(user);
+        model.addAttribute("walletBalance",wallet.getAmount());
+        return "/user/wallet";
     }
 
 
