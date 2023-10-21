@@ -114,8 +114,9 @@ public class AdminController {
         LocalDate today = LocalDate.now();
         List<Order> ordertoday = orderRepo.findByDate(today);
         Double sumtoday = ordertoday.stream()
-                .map(Order::getTotalAmount)
-                .reduce(0.0, Double::sum);
+                .filter(order -> !order.getStatus().toString().equals("CANCELED") && !order.getStatus().toString().equals("RETURN"))
+                .mapToDouble(Order::getTotalAmount)
+                .sum();
         model.addAttribute("todayrevenue",sumtoday);
         model.addAttribute("totalrevenue",sum);
         int totalUsers = userService.getTotalUsers();
@@ -142,21 +143,7 @@ public class AdminController {
 
         return "admin/adminpanel";
     }
-    /*@GetMapping("/orders/salesreport")
-    public void generatereport( HttpServletResponse response) {
-        try {
-            LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
-            LocalDateTime endOfMonth = LocalDateTime.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59).withNano(999999999);
-            List<Order>orders=orderRepo.findOrdersInDateRange(startOfMonth,endOfMonth);
-            if (orders != null) {
-                response.setContentType("application/pdf");
-                response.setHeader("Content-Disposition", "attachment; filename=monthsalesreport.pdf");
-                salesReportGenerator.GenerateReport(orders, response.getOutputStream());
-            }
-        } catch (IOException e) {
-            // Handle exceptions
-        }
-    }*/
+
 
 
         @PostMapping("/blockuser/{id}")

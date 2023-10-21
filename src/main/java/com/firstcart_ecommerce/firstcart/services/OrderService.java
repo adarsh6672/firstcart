@@ -1,7 +1,11 @@
 package com.firstcart_ecommerce.firstcart.services;
 
+import com.firstcart_ecommerce.firstcart.config.RazorPayConfig;
 import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.*;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +23,21 @@ public class OrderService {
 
     @Autowired
     private ProductRepo productRepo;
+
+    @Autowired
+    private WalletService walletService;
+
+    @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
+    private PaymentRepo paymentRepo;
+
+    @Autowired
+    private RazorPayConfig razorPayConfig;
+
+    @Autowired
+    private WalletRepo walletRepo;
 
     @Autowired
     private UserService userService;
@@ -114,5 +133,23 @@ public class OrderService {
            p.setStockQuantity(orderItem.getProduct().getStockQuantity()+orderItem.getQuantity());
            productRepo.save(p);
        }
+    }
+
+    public void refundProcess(User user,Order order){
+        Wallet wallet = walletService.getOrCreateUserWallet(user);
+        wallet.setAmount(wallet.getAmount()+order.getTotalAmount());
+        Payment payment=paymentRepo.findByOrderNumber(order);
+        try {
+            RazorpayClient razorpayClient = new RazorpayClient(razorPayConfig.getKey_id(), razorPayConfig.getKey_secret());
+            JSONObject refundRequest = new JSONObject();
+            refundRequest.put("amount", order.getTotalAmount()*100); // Refund amount in paise (e.g., 10000 paise = ₹100)
+            refundRequest.put("speed", "optimum"); // Set the refund speed to "optimum"
+            refundRequest.put("receipt","Receipt No."+order.getId());
+            razorpayClient.payments.refund(payment.getPaymentId(),refundRequest);
+            walletRepo.save(wallet);
+
+        } catch (RazorpayException e) {
+            e.printStackTrace();
+        }
     }
 }

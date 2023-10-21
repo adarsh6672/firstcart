@@ -461,33 +461,25 @@ public class UserController {
         orderRepo.save(order);
         String paymentmethod="Online Payment";
         if (order.getPaymentMethod().equals(paymentmethod)){
-            System.out.println(order.getPaymentMethod());
-            Wallet wallet = walletService.getOrCreateUserWallet(userRepo.findByEmail(principal.getName()));
-            wallet.setAmount(wallet.getAmount()+order.getTotalAmount());
-            Payment payment=paymentRepo.findByOrderNumber(order);
-            try {
-                RazorpayClient razorpayClient = new RazorpayClient(razorPayConfig.getKey_id(), razorPayConfig.getKey_secret());
-                JSONObject refundRequest = new JSONObject();
-                refundRequest.put("amount", order.getTotalAmount()*100); // Refund amount in paise (e.g., 10000 paise = ₹100)
-                refundRequest.put("speed", "optimum"); // Set the refund speed to "optimum"
-                refundRequest.put("receipt","Receipt No."+order.getId());
-                razorpayClient.payments.refund(payment.getPaymentId(),refundRequest);
-                walletRepo.save(wallet);
-
-            } catch (RazorpayException e) {
-                e.printStackTrace();
-            }
-
+            orderService.refundProcess(userRepo.findByEmail(principal.getName()),order);
         }
         return "redirect:/user/order/orderview/"+orderId;
     }
 
     @GetMapping("/order/return/{id}")
-    public String orderReturn(@PathVariable ("id")Long orderId){
+    public String orderReturn(@PathVariable ("id")Long orderId , Principal principal){
         Order order= orderRepo.getById(orderId);
         orderService.changeStock(order);
         order.setStatus(OrderStatus.RETURN);
+        String paymentmethod="Online Payment";
+        if (order.getPaymentMethod().equals(paymentmethod)){
+           orderService.refundProcess(userRepo.findByEmail(principal.getName()),order);
+        }
+
+
         orderRepo.save(order);
+
+
         return "redirect:/user/order/orderview/"+orderId;
     }
 

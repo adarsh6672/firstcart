@@ -21,7 +21,7 @@ public interface OrderRepo extends JpaRepository<Order , Long> {
     @Query("SELECT o FROM Order o WHERE DATE(o.orderDateTime) = :date")
     List<Order> findByDate(@Param("date") LocalDate date);
 
-    @Query("SELECT DATE(o.orderDateTime) as date, SUM(o.totalAmount) as total FROM Order o WHERE o.orderDateTime BETWEEN :start AND :end GROUP BY DATE(o.orderDateTime)")
+    @Query("SELECT DATE(o.orderDateTime) as date, SUM(o.totalAmount) as total FROM Order o WHERE o.orderDateTime BETWEEN :start AND :end AND o.status NOT IN ('RETURN', 'CANCELED') GROUP BY DATE(o.orderDateTime)")
     List<Map<String, Object>> findDailyTotals(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("SELECT o FROM Order o WHERE o.orderDateTime BETWEEN :start AND :end")
