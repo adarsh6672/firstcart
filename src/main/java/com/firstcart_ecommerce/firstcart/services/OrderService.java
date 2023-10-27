@@ -138,18 +138,19 @@ public class OrderService {
     public void refundProcess(User user,Order order){
         Wallet wallet = walletService.getOrCreateUserWallet(user);
         wallet.setAmount(wallet.getAmount()+order.getTotalAmount());
-        Payment payment=paymentRepo.findByOrderNumber(order);
-        try {
+        walletRepo.save(wallet);
+       /* try {
+            Payment payment=paymentRepo.findByOrderNumber(order);
             RazorpayClient razorpayClient = new RazorpayClient(razorPayConfig.getKey_id(), razorPayConfig.getKey_secret());
             JSONObject refundRequest = new JSONObject();
             refundRequest.put("amount", order.getTotalAmount()*100); // Refund amount in paise (e.g., 10000 paise = ₹100)
             refundRequest.put("speed", "optimum"); // Set the refund speed to "optimum"
             refundRequest.put("receipt","Receipt No."+order.getId());
             razorpayClient.payments.refund(payment.getPaymentId(),refundRequest);
-            walletRepo.save(wallet);
+
 
         } catch (RazorpayException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }
