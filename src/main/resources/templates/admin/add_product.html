@@ -2,8 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" >
 <head th:replace="fragments/html_head :: html_head">
 
-<body>
 
+<body>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" />
 <div th:replace="fragments/html_nav :: html_nav"></div>
 
 <div class="container-fluid content">
@@ -12,7 +13,7 @@
             <h5 class="card-title fw-semibold mb-4">Add a new Product</h5>
             <div class="card">
                 <div class="card-body" style="background:white!important">
-                    <form th:action="@{/admin/product/add}" method="post" th:object="${productDTO}" enctype="multipart/form-data">
+                    <form id="form" th:action="@{/admin/product/add}" method="post" th:object="${productDTO}" enctype="multipart/form-data">
 
                         <div class="mb-3">
                             <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></span>
@@ -59,10 +60,14 @@
                             </div>
                             <!-- Display image previews for each selected image -->
                             <div class="form-group">
-                                <div class="row" id="imagePreviews">
+                                <img class="row" style="max-height=500px" id="imagePreviews">
                                     <!-- Individual image previews will be displayed here -->
+                                <div id="croppedImageContainer" name="croppedImageContainer"></div>
+                                <button id="cropButton">Crop Image</button>
+
                                 </div>
                             </div>
+
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
@@ -102,6 +107,9 @@
 <div th:replace="fragments/js_links :: js_links"></div>
 <script src="https://cdn.jsdelivr.net/npm/file-upload-with-preview@2.4.1/dist/file-upload-with-preview.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js" integrity="sha512-9KkIqdfN7ipEW6B6k+Aq20PV31bjODg4AA52W+tYtAE0jE0kMx49bjJ3FgvS56wzmyfMUHbQ4Km2b7l9+Y/+Eg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
 
 
@@ -143,6 +151,46 @@ openModalBtn.addEventListener('click', () => {
   const modal = document.getElementById('addCategoryModal');
   modal.setAttribute('aria-hidden', 'false');
 });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+<script>
+    var croppie = new Croppie(document.getElementById('croppedImageContainer'), {
+      viewport: { width: 200, height: 200 },
+      boundary: { width: 300, height: 300 }
+    });
+
+    document.getElementById('productImages').addEventListener('change', function(event) {
+      var file = event.target.files[0];
+
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        croppie.bind({
+          url: e.target.result
+        });
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('cropButton').addEventListener('click', function() {
+      croppie.result('base64').then(function(result) {
+        var croppedImage = document.createElement('img');
+        croppedImage.src = result;
+        document.getElementById('croppedImageContainer').appendChild(croppedImage);
+        const dataUrl = 'data:image/png;base64,' + croppedImage;
+
+// Create a hidden input field in the form
+const input = document.createElement('input');
+input.type = 'hidden';
+input.name = 'croppedImage';
+input.value = dataUrl;
+
+// Append the input field to the form
+const form = document.querySelector('form');
+form.appendChild(input);
+      });
+    });
 </script>
 
 </body>

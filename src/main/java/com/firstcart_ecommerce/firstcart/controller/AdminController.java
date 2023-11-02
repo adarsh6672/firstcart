@@ -363,7 +363,8 @@ public class AdminController {
 
     @PostMapping("/product/update")
     public String updateProductIn(@ModelAttribute("productDTO") ProductDTO productDTO,
-                               @RequestParam("productImages") List<MultipartFile> files,
+                              /* @RequestParam("productImages") List<MultipartFile> files,*/
+                                  @RequestParam("croppedImage") List<MultipartFile> croppedfile,
                                @RequestParam("imgNames") List<String> imgNames,
                                Model model)throws IOException {
         Product product=new Product();
@@ -377,13 +378,16 @@ public class AdminController {
 
         List<ProductImage> images = new ArrayList<>();
 
-        for (int i = 0; i < files.size(); i++) {
-            MultipartFile file = files.get(i);
+        for (int i = 0; i < croppedfile.size(); i++) {
+            /*MultipartFile file = files.get(i);*/
+            MultipartFile file=croppedfile.get(i);
             String imageUUID;
 
             if (!file.isEmpty()) {
-                imageUUID = file.getOriginalFilename();
+                /*imageUUID = file.getOriginalFilename();*/
+                /*s3Service.saveFile(file);*/
                 s3Service.saveFile(file);
+                imageUUID=file.getOriginalFilename();
 
 
             } else {

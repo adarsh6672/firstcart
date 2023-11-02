@@ -1,5 +1,6 @@
 package com.firstcart_ecommerce.firstcart.services;
 
+import com.amazonaws.services.alexaforbusiness.model.NotFoundException;
 import com.firstcart_ecommerce.firstcart.model.*;
 import com.firstcart_ecommerce.firstcart.repository.ProductRepo;
 import com.firstcart_ecommerce.firstcart.repository.WishListRepo;
@@ -38,6 +39,11 @@ public class WishListService {
     public List<Product> getProductsInWishlist(Long wishlistId) {
         WishList wishlist = wishlistRepo.findById(wishlistId).get();
         return wishlist.getProducts();
+    }
+    public int getNumberOfItemsInWishlist(User user) {
+        WishList wishList=getOrCreateUserCart(user);
+        /*WishList wishlist = wishlistRepo.findById(wishlistId).orElseThrow(() -> new NotFoundException("Wishlist not found"));*/
+        return wishList.getProducts().size();
     }
 
     public WishList getOrCreateUserCart(User user) {

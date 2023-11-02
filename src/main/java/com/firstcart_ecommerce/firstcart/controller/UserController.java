@@ -105,6 +105,7 @@ public class UserController {
             m.addAttribute("user", user);
             Cart userCart = userService.getUserCart(user);
             m.addAttribute("cartProductCount", userCart.getItems().size());
+            m.addAttribute("wishListCount",wishListService.getNumberOfItemsInWishlist(user));
         }
 
     }
