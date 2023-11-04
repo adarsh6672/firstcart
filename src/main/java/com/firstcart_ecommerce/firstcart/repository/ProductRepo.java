@@ -21,4 +21,6 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
 
     @Query("SELECT p FROM Product p WHERE p.stockQuantity < 10")
     List<Product> findLowStockProducts();
+
+    List<Product> findByNameContainingIgnoreCase(String searchQuery);
 }

@@ -10,6 +10,7 @@ import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.CartService;
 import com.firstcart_ecommerce.firstcart.services.ProductService;
 import com.firstcart_ecommerce.firstcart.services.UserService;
+import com.firstcart_ecommerce.firstcart.services.WishListService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
@@ -37,6 +39,9 @@ public class CartController {
     private CartService cartService;
 
     @Autowired
+    private WishListService wishListService;
+
+    @Autowired
     private CartItemRepo cartItemRepo;
 
     @Autowired
@@ -44,6 +49,19 @@ public class CartController {
 
     @Autowired
     private UserService userService;
+
+    @ModelAttribute
+    public void profile(Principal p, Model m){
+        if(p != null) {
+            String email = p.getName();
+            User user = userRepo.findByEmail(email);
+            m.addAttribute("user", user);
+            Cart userCart = userService.getUserCart(user);
+            m.addAttribute("cartProductCount", userCart.getItems().size());
+            m.addAttribute("wishListCount",wishListService.getNumberOfItemsInWishlist(user));
+        }
+
+    }
 
 
 

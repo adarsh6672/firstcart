@@ -47,6 +47,9 @@ public class UserController {
     private RazorPayConfig razorPayConfig;
 
     @Autowired
+    private CategoryOfferRepo categoryOfferRepo;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -89,6 +92,8 @@ public class UserController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private ProductOfferRepo productOfferRepo;
     @Autowired
     private OrderItemRepo orderItemRepo;
 
@@ -246,11 +251,22 @@ public class UserController {
         WishList wl=wishListService.getOrCreateUserCart(u);
         boolean isInCart = cartService.isProductInCartItem(cid, productId);
         boolean isInWL= wishListService.isProductInWishlist(wl,productId);
+        ProductOffer productOffer=productOfferRepo.findByProduct_Id(productId);
+        CategoryOffer categoryOffer=categoryOfferRepo.findBySubCategory_id(product.get().getSubCategory().getId());
+
+
+
         if (product.isPresent()) {
             model.addAttribute("isInCart",isInCart);
             model.addAttribute("isInWL",isInWL);
             model.addAttribute("product", product.get());
+            if(productService.getOfferPrice(product)!=0) {
+                model.addAttribute("offerPrice", productService.getOfferPrice(product));
+            }
+            model.addAttribute("productOffer",productOffer);
+            model.addAttribute("categoryOffer",categoryOffer);
             model.addAttribute("pageTitle", "Product Details | Admin");
+
 
             return "user/product_open";
         } else {

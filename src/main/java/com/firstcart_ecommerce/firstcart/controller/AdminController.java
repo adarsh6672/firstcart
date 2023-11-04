@@ -38,6 +38,9 @@ public class AdminController {
     private UserService userService;
 
     @Autowired
+    private CategoryOfferRepo categoryOfferRepo;
+
+    @Autowired
     private CouponRepo couponRepo;
 
     @Autowired
@@ -47,6 +50,9 @@ public class AdminController {
 
     @Autowired
     private SubCategoryService subCategoryService;
+
+    @Autowired
+    private ProductOfferRepo productOfferRepo;
 
     @Autowired
     private CategoryRepo categoryRepo;
@@ -497,6 +503,33 @@ public class AdminController {
         return "redirect:/admin/coupon";
     }
 
+    @GetMapping("/offer/manage")
+    public String offerManagement(Model model){
+        model.addAttribute("categories",subCategoryService.getAllSubCategories());
+        model.addAttribute("products", productService.getAllProduct());
+        model.addAttribute("categoryOffers",categoryOfferRepo.findAll());
+        model.addAttribute("productOffers",productOfferRepo.findAll());
+        return "admin/offerManagement";
+    }
+
+    @PostMapping("/offer/category/add")
+    public String categoryOfferAdd(@ModelAttribute CategoryOffer categoryOffer){
+        categoryOfferRepo.save(categoryOffer);
+        return "redirect:/admin/offer/manage";
+    }
+
+    @PostMapping("/offer/product/add")
+    public String productOfferAdd(@ModelAttribute ProductOffer productOffer){
+        productOfferRepo.save(productOffer);
+        return "redirect:/admin/offer/manage";
+    }
+
+    @PostMapping("/search/product")
+    public List<Product> searchProducts(@RequestParam("searchQuery") String searchQuery) {
+        // Call the service method to retrieve the filtered product list
+        List<Product> filteredProducts = productService.searchProducts(searchQuery);
+        return filteredProducts;
+    }
 
 
 

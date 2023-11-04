@@ -43,7 +43,15 @@
                             <span class="review-no">41 reviews</span>
                         </div>
                         <p class="product-description" th:text="${product.description}"></p>
-                        <h4 class="price">current price:₹ <span th:text="${product.price}"> $180</span></h4>
+                        <div th:if="${offerPrice == null}">
+                        <h4 class="price">current price: <span class="text-success" th:text="${'₹ '+product.price}"> $180</span></h4>
+                            </div>
+                        <div th:if="${offerPrice != null}">
+                        <h4 class="price">current price: <span class="text-success"  th:text="${'₹ '+offerPrice}"></span> </h4>
+                            <span style="text-decoration: line-through;" class="text-danger" th:text="${'₹ '+product.price}"> $180</span>
+                            <p th:if="${productOffer != null}" th:text="${productOffer.offerDetails}" class="text-success"></p>
+                            <p th:if="${categoryOffer != null}" th:text="${categoryOffer.offerDetails}" class="text-success"></p>
+                            </div>
                         <p class="vote"><strong>91%</strong> of buyers enjoyed this product! <strong>(87 votes)</strong></p>
                         <div th:if="${product.subCategory.name == 'shirt'}">
                         <h5 class="sizes"  >sizes:

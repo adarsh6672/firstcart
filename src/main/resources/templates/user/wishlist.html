@@ -22,6 +22,7 @@
                     <tr>
                         <th style="width:60%">Product</th>
                         <th style="width:16%"></th>
+                        <th style="width:16%"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -38,9 +39,11 @@
                                 <div class="col-md-5 text-left mt-sm-2">
                                     <h4 th:text="${product.name}">Product Name</h4>
                                     <p class="font-weight-light">Brand Name</p>
+                                    <p class="font-weight-light>" th:text="${product.description}"></p>
                                 </div>
                             </div>
                         </td>
+                        <td th:text="'₹ ' + ${product.price}" class="text-success"></td>
 
                         <td class="actions" data-th="">
                             <div class="text-right">

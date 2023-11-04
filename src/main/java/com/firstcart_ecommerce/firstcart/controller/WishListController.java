@@ -1,5 +1,6 @@
 package com.firstcart_ecommerce.firstcart.controller;
 
+import com.firstcart_ecommerce.firstcart.model.Cart;
 import com.firstcart_ecommerce.firstcart.model.Product;
 import com.firstcart_ecommerce.firstcart.model.User;
 import com.firstcart_ecommerce.firstcart.model.WishList;
@@ -25,6 +26,19 @@ public class WishListController {
     private UserService userService;
     @Autowired
     private UserRepo userRepo;
+
+    @ModelAttribute
+    public void profile(Principal p, Model m){
+        if(p != null) {
+            String email = p.getName();
+            User user = userRepo.findByEmail(email);
+            m.addAttribute("user", user);
+            Cart userCart = userService.getUserCart(user);
+            m.addAttribute("cartProductCount", userCart.getItems().size());
+            m.addAttribute("wishListCount",wishlistService.getNumberOfItemsInWishlist(user));
+        }
+
+    }
 
 
 

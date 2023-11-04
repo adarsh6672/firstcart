@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head th:replace="fragments/html_head :: html_head">
+
+<body>
+<div class="content container" style="background-color:white;!important">
+    <div class="">
+<h4>Offer Management</h4>
+<div th:replace="fragments/html_nav :: html_nav"></div>
+        <div class="col-md-6 mx-auto">
+<button type="button" class="btn btn-primary mt-5 mb-3 " data-toggle="modal" data-target="#addCoupon">
+    Add Category Offer
+</button>
+        <button type="button" class="btn btn-primary mt-5 ml-5 mr-5 mb-3" data-toggle="modal" data-target="#addProductOffer">
+            Add Product Offer
+        </button>
+        <button type="button" class="btn btn-primary mt-5 mb-3 " data-toggle="modal" data-target="#">
+            Add Refferal Offer
+        </button>
+            </div>
+
+        <h4 class="mt-5">Category Offers</h4>
+<table class="table table-bordered border-primary table-striped table-responsive-md mb-5">
+    <thead>
+    <tr>
+        <th>Sl No</th>
+        <th>Category</th>
+        <th>Discount Percentage</th>
+        <th>Details</th>
+        <th>Expiry Date</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="offer, index : ${categoryOffers}">
+        <td th:text="${index.index+1}"></td>
+        <td th:text="${offer.subCategory.name}"></td>
+        <td th:text="${offer.discountPercentage}"></td>
+        <td th:text="${offer.offerDetails}"></td>
+        <td th:text="${offer.expiryDate}"></td>
+        <td><div class="d-flex">
+           <!-- <div>
+                <a type="button" th:href="@{/admin/coupon/edit/{id}(id=${coupon.id})}"> <i class="fa fa-edit me-2"></i></a>
+            </div>
+            <div>
+                    <a type="submit" th:href="@{'/admin/coupon/delete/'+${coupon.id}}"
+                       th:data-confirm-delete="|Are you sure you want to delete this Subcategory ${coupon.couponCode}?|"
+                       onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"> <i class="fa fa-trash me-2"></i></a>
+            </div>-->
+            <div>
+                <!--<a type="submit" th:if="${dto.subCategoryIsListed}" class="btn btn-success" th:href="@{/admin/category/unlist/{id}(id=${dto.subCategoryId})}"
+                   th:data-confirm-unlist="|Are you sure you want to Unlist this Subcategory ${dto.subCategoryName}?|"
+                   onclick="if (!confirm(this.getAttribute('data-confirm-unlist'))) return false">Unlist</a>-->
+            </div>
+            <div>
+                <!--<a type="submit" th:href="@{/admin/category/list/{id}(id=${dto.subCategoryId})}"
+                   th:if="${!dto.subCategoryIsListed}" class="btn btn-primary"
+                   th:data-confirm-list="|Are you sure you want to list this Subcategory ${dto.subCategoryName}?|"
+                   onclick="if (!confirm(this.getAttribute('data-confirm-list'))) return false">List</a>-->
+            </div>
+        </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+        <h4>Product Offers</h4>
+        <table class="table table-bordered border-primary table-striped table-responsive-md">
+            <thead>
+            <tr>
+                <th>Sl No</th>
+                <th>Product</th>
+                <th>Discount Percentage</th>
+                <th>Details</th>
+                <th>Expiry Date</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="offer, index : ${productOffers}">
+                <td th:text="${index.index+1}"></td>
+                <td th:text="${offer.product.name}"></td>
+                <td th:text="${offer.discountPercentage}"></td>
+                <td th:text="${offer.offerDetails}"></td>
+                <td th:text="${offer.expiryDate}"></td>
+                <td><div class="d-flex">
+                    <!-- <div>
+                         <a type="button" th:href="@{/admin/coupon/edit/{id}(id=${coupon.id})}"> <i class="fa fa-edit me-2"></i></a>
+                     </div>
+                     <div>
+                             <a type="submit" th:href="@{'/admin/coupon/delete/'+${coupon.id}}"
+                                th:data-confirm-delete="|Are you sure you want to delete this Subcategory ${coupon.couponCode}?|"
+                                onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"> <i class="fa fa-trash me-2"></i></a>
+                     </div>-->
+                    <div>
+                        <!--<a type="submit" th:if="${dto.subCategoryIsListed}" class="btn btn-success" th:href="@{/admin/category/unlist/{id}(id=${dto.subCategoryId})}"
+                           th:data-confirm-unlist="|Are you sure you want to Unlist this Subcategory ${dto.subCategoryName}?|"
+                           onclick="if (!confirm(this.getAttribute('data-confirm-unlist'))) return false">Unlist</a>-->
+                    </div>
+                    <div>
+                        <!--<a type="submit" th:href="@{/admin/category/list/{id}(id=${dto.subCategoryId})}"
+                           th:if="${!dto.subCategoryIsListed}" class="btn btn-primary"
+                           th:data-confirm-list="|Are you sure you want to list this Subcategory ${dto.subCategoryName}?|"
+                           onclick="if (!confirm(this.getAttribute('data-confirm-list'))) return false">List</a>-->
+                    </div>
+                </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="addCoupon" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New Category Offer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addcouponform" th:action="@{/admin/offer/category/add}" method="post">
+            <div class="modal-body col-md-12">
+
+                <div class="form-outline mb-4">
+                    <label for="subCategory_id" class="form-label ">Category:</label><br>
+                    <select class="form-control form-control-lg bg-white" id="subCategory_id" name="subCategory">
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                    </select>
+                </div>
+                <div class="form-outline mb-4">
+                    <label for="percentage" class="form-label"> Discount Percentage:</label>
+                    <input type="number" class="form-control form-control-lg bg-white" id="percentage" name="discountPercentage">
+                </div>
+                <div class="form-outline mb-4">
+                    <label for="expirydate" class="form-label"> Expiry Date </label>
+                    <input type="date" id="expirydate" class="form-control form-control-lg bg-white" name="expiryDate">
+                    </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Offer Description</label>
+                    <textarea class="form-control form-control-lg bg-white" rows="3"  name="offerDetails" id="description"></textarea>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit"  class="btn btn-primary">Save</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addProductOffer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addproductoffers">Add New Product Offer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="productOfferForm" th:action="@{/admin/offer/product/add}" method="post">
+                <div class="modal-body col-md-12">
+                    <!--<div class="form-outline mb-4">
+                        <input type="text" id="searchQuery" class="form-control form-control-lg bg-white" placeholder="Search for a product...">
+                    </div>-->
+                    <div class="form-outline mb-4">
+                        <label for="productid" class="form-label ">Product:</label><br>
+                        <select class="form-control form-control-lg bg-white" id="productid" name="product">
+                            <option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-outline mb-4">
+                        <label for="percentage" class="form-label"> Discount Percentage:</label>
+                        <input type="number" class="form-control form-control-lg bg-white"  name="discountPercentage">
+                    </div>
+                    <div class="form-outline mb-4">
+                        <label for="expirydate" class="form-label"> Expiry Date </label>
+                        <input type="date"  class="form-control form-control-lg bg-white" name="expiryDate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Offer Description</label>
+                        <textarea class="form-control form-control-lg bg-white" rows="3"  name="offerDetails" ></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit"  class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/html_footer :: html_footer"></div>
+<div th:replace="fragments/js_links :: js_links"></div>
+<div th:replace="fragments/js_links :: js_links"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $("#searchQuery").on("input", function() {
+    var searchQuery = $(this).val();
+    filterProducts(searchQuery);
+});
+</script>
+<script>
+    function filterProducts(searchQuery) {
+    // Send AJAX request to the server
+    $.ajax({
+        type: "POST",
+        url: "/admin/search/product",
+        data: { searchQuery: searchQuery },
+        success: function(response) {
+            // Update the dropdown menu with the filtered products
+            var dropdown = $("#productid");
+            dropdown.empty();
+            $.each(response.products, function(index, product) {
+                dropdown.append($("<option>").val(product.id).text(product.name));
+            });
+        },
+        error: function() {
+            console.log("Error occurred while filtering products.");
+        }
+    });
+}
+</script>
+<!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
