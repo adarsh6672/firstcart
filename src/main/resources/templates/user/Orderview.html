@@ -76,7 +76,7 @@
                         </div>
                         </td>
 
-                        <td th:text="'₹ ' +${item.product.price*item.quantity}">Product Price</td>
+                        <td th:text="${'₹ '+@productService.getOfferPrice(item.product.id)*item.quantity}">Product Price</td>
                         <td th:text="${item.quantity}">Quantity</td>
                         <td th:text="${order.status}" class="text-bold text-success">Order Status</td>
                     </tr>
@@ -125,7 +125,7 @@
                         <div>
                             <span th:text="${item.quantity}"></span> X <span th:text="${item.product.name}"></span>
                         </div>
-                        <div th:text="${item.product.price*item.quantity}">$980.00</div>
+                        <div th:text="${'₹ '+@productService.getOfferPrice(item.product.id)*item.quantity}">$980.00</div>
                     </div>
                 </div>
                 <div class="order-col">

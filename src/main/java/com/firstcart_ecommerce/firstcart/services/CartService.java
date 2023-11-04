@@ -23,6 +23,9 @@ public class CartService {
 
     @Autowired
     private CartItemRepo cartItemRepo;
+
+    @Autowired
+    private ProductService productService;
     
 
     public List<CartItem> getCartItems(Long cartId) {
@@ -40,6 +43,14 @@ public class CartService {
         query.setParameter("cartId", cartId);
         query.setParameter("productId", productId);
         return !query.getResultList().isEmpty();
+    }
+
+    public double findTotalAfterOffer(List<CartItem> cartItems){
+        double totalAfterOffer=0;
+        for (CartItem item : cartItems) {
+            totalAfterOffer+= productService.getOfferPrice(item.getProduct().getId())*item.getQuantity();
+        }
+        return totalAfterOffer;
     }
 
 

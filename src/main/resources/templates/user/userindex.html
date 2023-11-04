@@ -106,7 +106,7 @@
 											<div class="product-body">
 												<p class="product-category" th:text="${product.subCategory.name}">Category</p>
 												<h3 class="product-name"><a href="#" th:text="${product.name}">product name goes here</a></h3>
-												<h4 class="product-price" th:text="${product.price}"><del class="product-old-price">$990.00</del></h4>
+												<h4 class=" text-success" th:text="${'₹ '+@productService.getOfferPrice(product.id)}"><del class="text-danger product-old-price">$990.00</del></h4>
 												<div class="product-rating">
 													<i class="fa fa-star"></i>
 													<i class="fa fa-star"></i>

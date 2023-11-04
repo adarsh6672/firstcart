@@ -44,7 +44,7 @@
                         </div>
                         </td>
 
-                        <td th:text="'₹ ' +${item.product.price*item.quantity}">Product Price</td>
+                        <td th:text="${'₹ '+@productService.getOfferPrice(item.product.id)*item.quantity}">Product Price</td>
                         <td th:text="${item.quantity}">Quantity</td>
                         <td th:text="${order.status}" class="text-bold text-success">Order Status</td>
                     </tr>

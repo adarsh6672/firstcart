@@ -29,6 +29,8 @@ public class ProductService {
     @Autowired
     private ProductOfferRepo productOfferRepo;
 
+
+
     public boolean isProductNameExists(String productName) {
         return productRepo.existsByName(productName);
     }
@@ -94,7 +96,8 @@ public class ProductService {
         return filteredProducts;
     }
 
-    public double getOfferPrice(Optional<Product> product){
+    public double getOfferPrice(Long productId){
+            Optional<Product> product=getProductById(productId);
             double productPrice = product.get().getPrice();
             ProductOffer productOffer=productOfferRepo.findByProduct_Id(product.get().getId());
             CategoryOffer categoryOffer=categoryOfferRepo.findBySubCategory_id(product.get().getSubCategory().getId());
@@ -109,6 +112,6 @@ public class ProductService {
                 return productPrice-(productPrice*(categoryOffer.getDiscountPercentage()/100));
             }
 
-        return 0;
+        return productPrice;
     }
 }

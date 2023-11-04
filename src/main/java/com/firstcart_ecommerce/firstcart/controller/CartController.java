@@ -81,13 +81,19 @@ public class CartController {
         Cart userCart = userService.getUserCart(user);
         Long a=userCart.getId();
         List<CartItem> cartItems = cartService.getCartItems(a);
-        double totalCartAmount = userCart.getTotalCartAmount();
+        /*double totalAfterOffer=0;
+        for (CartItem item : cartItems) {
+            totalAfterOffer=totalAfterOffer+productService.getOfferPrice(item.getProduct().getId());
+        }
+        double totalCartAmount = userCart.getTotalCartAmount();*/
+        double totalAfterOffer=cartService.findTotalAfterOffer(cartItems);
 
-        userCart.setTotalCartAmount(totalCartAmount);
+
+        userCart.setTotalCartAmount(totalAfterOffer);
         cartRepo.save(userCart);
 
         model.addAttribute("cartCount", userCart.getItems().size());
-        model.addAttribute("total", totalCartAmount);
+        model.addAttribute("total", totalAfterOffer);
         model.addAttribute("cartItems", cartItems);
 
         return "user/cart";

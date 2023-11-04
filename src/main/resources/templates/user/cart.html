@@ -43,7 +43,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td th:text="'₹ ' + ${item.product.price}"></td>
+                        <td class="text-success" th:text="${'₹ '+@productService.getOfferPrice(item.product.id)}"></td>
                         <td data-th="Quantity">
                             <a th:href="@{/user/cart/minusqty/{id}(id=${item.id})}" class="btn "><i class="fa fa-minus me-2"></i></a>
                             <span th:text="${item.quantity}"></span>
@@ -66,7 +66,7 @@
                 </table>
                 <div class="float-right text-right">
                     <h4>Subtotal:</h4>
-                    <h1 th:text="'₹ ' + ${total}">99.00</h1>
+                    <h1 class="text-success" th:text="'₹ ' + ${total}">99.00</h1>
 
                         <a th:href="@{/user/checkout}" class="btn btn-success mb-4 btn-lg pl-5 pr-5">Checkout</a>
 

@@ -111,6 +111,7 @@ public class UserController {
             Cart userCart = userService.getUserCart(user);
             m.addAttribute("cartProductCount", userCart.getItems().size());
             m.addAttribute("wishListCount",wishListService.getNumberOfItemsInWishlist(user));
+
         }
 
     }
@@ -122,6 +123,7 @@ public class UserController {
             String email = p.getName();
             User user = userRepo.findByEmail(email);
             m.addAttribute("user", user);
+
         }
         return "user/pro";
     }
@@ -240,6 +242,7 @@ public class UserController {
     public String home(Model model){
         List<Product> product1=productService.getAllProduct();
         model.addAttribute("products",product1);
+        /*model.addAttribute("productService",productService);*/
         return "user/userindex";
     }
 
@@ -260,8 +263,8 @@ public class UserController {
             model.addAttribute("isInCart",isInCart);
             model.addAttribute("isInWL",isInWL);
             model.addAttribute("product", product.get());
-            if(productService.getOfferPrice(product)!=0) {
-                model.addAttribute("offerPrice", productService.getOfferPrice(product));
+            if(productService.getOfferPrice(productId)!=product.get().getPrice()) {
+                model.addAttribute("offerPrice", productService.getOfferPrice(productId));
             }
             model.addAttribute("productOffer",productOffer);
             model.addAttribute("categoryOffer",categoryOffer);
@@ -282,10 +285,11 @@ public class UserController {
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         Cart userCart=userService.getUserCart(user);
-        m.addAttribute("cartitem",cartService.getCartItems(userCart.getId()));
+        List<CartItem> cartItems = cartService.getCartItems(userCart.getId());
+        m.addAttribute("cartitem",cartItems);
         m.addAttribute("user", user);
         m.addAttribute("address",addressRepo.findByUserAndDeletedFalse(user));
-        m.addAttribute("total",userCart.getTotalAmount()+40);
+        m.addAttribute("total",cartService.findTotalAfterOffer(cartItems)+40);
         m.addAttribute("deliveryCharge",40.0);
         m.addAttribute("coupons",couponRepo.findItemsNotInTable2(user.getId()));
         if(selectedCoupon!=null){
@@ -293,7 +297,7 @@ public class UserController {
             if(userCart.getTotalAmount()>couponRepo.getById(couponId).getMinimumAmount().longValue()) {
                 m.addAttribute("coupenapplied", couponRepo.getById(couponId).getDiscountPercentage());
                 m.addAttribute("selectedcouponId",couponId);
-                m.addAttribute("total", userCart.getTotalAmount() + 40 - couponRepo.getById(couponId).getDiscountPercentage());
+                m.addAttribute("total", cartService.findTotalAfterOffer(cartItems) + 40 - couponRepo.getById(couponId).getDiscountPercentage());
                 boolean iscoupenApplied = true;
                 m.addAttribute("isCouponApplied", iscoupenApplied);
                 session.setAttribute("msg", "Coupon " + couponRepo.getById(couponId).getCouponCode() + " Applied Successfully");
@@ -317,7 +321,7 @@ public class UserController {
         m.addAttribute("user", user);
         m.addAttribute("quantity",quantity);
         m.addAttribute("address",addressRepo.findByUserAndDeletedFalse(user));
-        m.addAttribute("total",(product.getPrice()*quantity)+40);
+        m.addAttribute("total",(productService.getOfferPrice(productId)*quantity)+40);
         m.addAttribute("deliveryCharge",40.0);
         m.addAttribute("coupons",couponRepo.findItemsNotInTable2(user.getId()));
         if(selectedCoupon!=null){
@@ -325,7 +329,7 @@ public class UserController {
             if(product.getPrice()*quantity>couponRepo.getById(couponId).getMinimumAmount().longValue()) {
                 m.addAttribute("coupenapplied", couponRepo.getById(couponId).getDiscountPercentage());
                 m.addAttribute("selectedcouponId",couponId);
-                m.addAttribute("total", (product.getPrice()*quantity)+40 - couponRepo.getById(couponId).getDiscountPercentage());
+                m.addAttribute("total", (productService.getOfferPrice(productId)*quantity)+40 - couponRepo.getById(couponId).getDiscountPercentage());
                 boolean iscoupenApplied = true;
                 m.addAttribute("isCouponApplied", iscoupenApplied);
                 session.setAttribute("msg", "Coupon " + couponRepo.getById(couponId).getCouponCode() + " Applied Successfully");
@@ -353,9 +357,11 @@ public class UserController {
         }
         Address selectedAddress=addressRepo.findById(selectedAddressId).orElse(null);
         User user = userRepo.findByEmail(p.getName());
+        Cart userCart=userService.getUserCart(user);
+        List<CartItem> cartItems = cartService.getCartItems(userCart.getId());
         Order order=new Order();
         order.setOrderDateTime(LocalDateTime.now());
-        order.setTotalAmount(userService.getUserCart(user).getTotalAmount()+40);
+        order.setTotalAmount(cartService.findTotalAfterOffer(cartItems)+40);
         order.setShippingAddress(selectedAddress);
         order.setPaymentMethod(paymentMethod);
         order.setStatus(OrderStatus.CONFIRMED);
@@ -371,7 +377,7 @@ public class UserController {
         if(couponId != null){
             Coupon coupon = couponRepo.getById(couponId);
             order.setCoupon(coupon);
-            order.setTotalAmount(userService.getUserCart(user).getTotalAmount()+40-couponRepo.getById(couponId).getDiscountPercentage());
+            order.setTotalAmount(cartService.findTotalAfterOffer(cartItems)+40-couponRepo.getById(couponId).getDiscountPercentage());
 
             CouponUsage couponUsage=new CouponUsage();
             couponUsage.setCoupon(coupon);

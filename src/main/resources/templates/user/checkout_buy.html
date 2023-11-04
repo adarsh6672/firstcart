@@ -142,8 +142,12 @@
 										<input type="hidden" th:name="quantity" th:value="${quantity}"/>
 										<span  th:text="${quantity}"></span> X <span th:text="${product.name}"></span>
 									</div>
-									<div name="total" th:text="${product.price*quantity}">$980.00</div>
+									<div name="total" th:text="${'₹ '+@productService.getOfferPrice(product.id)*quantity}">$980.00</div>
 								</div>
+							</div>
+							<div class="order-col">
+								<div>Offer Discount</div>
+								<div><span class="text-success" th:text="'₹  -' + ${#numbers.formatDecimal(product.price * quantity - @productService.getOfferPrice(product.id) * quantity, 0, 2)}">FREE</span></div>
 							</div>
 							<div class="order-col" th:if="${isCouponApplied}">
 								<div>Coupon Discount</div>
@@ -151,15 +155,14 @@
 							</div>
 							<div class="order-col">
 								<div>Shiping</div>
-								<div><strong th:text="'₹ ' + ${deliveryCharge}">FREE</strong></div>
+								<div><span th:text="'₹ +' + ${deliveryCharge}">FREE</span></div>
 							</div>
 							<div class="order-col">
 								<div><strong>TOTAL</strong></div>
-								<div><span id="cartTotal"><strong>₹<span th:text="${total}"></span></strong></span></div>
-								<div>
+								<div><span id="cartTotal"><strong>₹ <span class="text-success" th:text="${total}"></span></strong></span></div>
+							</div>
+							<div>
 								<input type="hidden" th:name="cartTotal" th:value="${total}"/>
-								</div>
-
 							</div>
 						</div>
 						<div class="payment-method">

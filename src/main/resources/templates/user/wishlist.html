@@ -43,7 +43,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td th:text="'₹ ' + ${product.price}" class="text-success"></td>
+                        <td th:text="${'₹ '+@productService.getOfferPrice(product.id)}" class="text-success"></td>
 
                         <td class="actions" data-th="">
                             <div class="text-right">
