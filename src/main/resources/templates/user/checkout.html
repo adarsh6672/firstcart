@@ -140,13 +140,13 @@
 									<div>
 										<span th:text="${item.quantity}"></span> X <span th:text="${item.product.name}"></span>
 									</div>
-									<div th:text="${'₹ '+@productService.getOfferPrice(item.product.id)*item.quantity}" >$980.00</div>
+									<div th:text="${'₹ '+item.product.price}" >$980.00</div>
 								</div>
 							</div>
-							<!--<div class="order-col">
+							<div class="order-col">
 								<div>Offer Discount</div>
-								<div><span class="text-success" th:text="'₹  -' + ${#numbers.formatDecimal(item.product.price*item.quantity-@productService.getOfferPrice(item.product.id)*item.quantity, 0, 2)}">FREE</span></div>
-							</div>-->
+								<div><span class="text-success" th:text="'₹  ' + ${#numbers.formatDecimal(offer, 0, 2)}">FREE</span></div>
+							</div>
 							<div class="order-col" th:if="${isCouponApplied}">
 								<div>Coupon Discount</div>
 								<div><span class="text-success" th:text="'₹  -' + ${coupenapplied}">FREE</span></div>

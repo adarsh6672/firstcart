@@ -1,6 +1,7 @@
 package com.firstcart_ecommerce.firstcart.repository;
 
 import com.firstcart_ecommerce.firstcart.model.Product;
+import com.firstcart_ecommerce.firstcart.model.SubCategory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,5 +23,7 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
     @Query("SELECT p FROM Product p WHERE p.stockQuantity < 10")
     List<Product> findLowStockProducts();
 
+    @Query("SELECT p FROM Product p JOIN p.subCategory sc WHERE sc.isListed = true")
+    List<Product> findListedProducts();
     List<Product> findByNameContainingIgnoreCase(String searchQuery);
 }

@@ -87,6 +87,9 @@ public class UserController {
     private AddressService addressService;
 
     @Autowired
+    private SubCategoryRepo subCategoryRepo;
+
+    @Autowired
     private WishListService wishListService;
 
     @Autowired
@@ -241,9 +244,16 @@ public class UserController {
     @GetMapping("/home")
     public String home(Model model){
         List<Product> product1=productService.getAllProduct();
+        /*model.addAttribute("listedproducts",productRepo.findListedProducts());*/
         model.addAttribute("products",product1);
-        /*model.addAttribute("productService",productService);*/
+
         return "user/userindex";
+    }
+
+    @GetMapping("/bookcategories")
+    public String bookCategories(Model model){
+        model.addAttribute("categories",subCategoryRepo.findByIsListedTrue());
+        return "user/categories";
     }
 
     @GetMapping("/viewproduct/{productId}")
@@ -292,6 +302,7 @@ public class UserController {
         m.addAttribute("total",cartService.findTotalAfterOffer(cartItems)+40);
         m.addAttribute("deliveryCharge",40.0);
         m.addAttribute("coupons",couponRepo.findItemsNotInTable2(user.getId()));
+        m.addAttribute("offer",cartService.findDiscountAmount(cartItems));
         if(selectedCoupon!=null){
             long couponId = selectedCoupon.longValue();
             if(userCart.getTotalAmount()>couponRepo.getById(couponId).getMinimumAmount().longValue()) {

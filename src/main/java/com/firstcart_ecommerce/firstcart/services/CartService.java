@@ -53,6 +53,14 @@ public class CartService {
         return totalAfterOffer;
     }
 
+    public double findDiscountAmount(List<CartItem> cartItems){
+        double offer=0;
+        for (CartItem item : cartItems) {
+            offer+= (productService.getOfferPrice(item.getProduct().getId())*item.getQuantity())-(item.getProduct().getPrice()* item.getQuantity());
+        }
+        return offer;
+    }
+
 
 
 

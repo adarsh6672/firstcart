@@ -142,7 +142,7 @@
 										<input type="hidden" th:name="quantity" th:value="${quantity}"/>
 										<span  th:text="${quantity}"></span> X <span th:text="${product.name}"></span>
 									</div>
-									<div name="total" th:text="${'₹ '+@productService.getOfferPrice(product.id)*quantity}">$980.00</div>
+									<div name="total" th:text="${'₹ '+product.price*quantity}">$980.00</div>
 								</div>
 							</div>
 							<div class="order-col">

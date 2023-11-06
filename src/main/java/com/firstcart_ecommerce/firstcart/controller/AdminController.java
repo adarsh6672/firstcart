@@ -102,6 +102,7 @@ public class AdminController {
     public String home(Model model){
         List<Product> products=productService.getAllProduct();
         model.addAttribute("products",products);
+        model.addAttribute("listedproducts",productRepo.findListedProducts());
         return "user/userindex";
     }
     @GetMapping("/manage")
@@ -240,9 +241,16 @@ public class AdminController {
 
     @PostMapping("/addsubcategory")
     public String addSubcategory(@ModelAttribute SubCategory subcategory,
+                                 @RequestParam("productImages") MultipartFile file,
                                  @RequestParam("category_id") int categoryId) {
         Category category = categoryRepo.findById(categoryId).orElseThrow();
         subcategory.setCategory(category);
+        subcategory.setListed(true);
+
+        if (!file.isEmpty()) {
+            subcategory.setImageName(file.getOriginalFilename());
+            s3Service.saveFile(file);
+        }
         subCategoryRepo.save(subcategory);
         return "redirect:/admin/categories";
     }

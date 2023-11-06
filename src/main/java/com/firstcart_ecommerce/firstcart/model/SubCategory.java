@@ -22,4 +22,6 @@ public class SubCategory {
     @Column(name = "is_listed")
     @ColumnDefault(value = "true")
     private boolean isListed;
+
+    private String imageName;
 }
