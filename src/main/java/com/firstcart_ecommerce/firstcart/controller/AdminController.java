@@ -25,6 +25,8 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -142,9 +144,17 @@ public class AdminController {
 
         LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime endOfMonth = LocalDateTime.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+
+        LocalDateTime start = LocalDateTime.now().withDayOfYear(1).withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime end = LocalDateTime.now().with(TemporalAdjusters.lastDayOfYear()).withHour(23).withMinute(59).withSecond(59);
         List<Map<String, Object>> dailyTotals = orderRepo.findDailyTotals(startOfMonth, endOfMonth);
+        List<Map<String, Object>> monthlyTotals = orderRepo.findMonthlyTotals(start,end);
 
         model.addAttribute("dailyTotals", dailyTotals);
+
+
+
+        model.addAttribute("monthlyTotals", orderRepo.getTotalAmountByMonth());
 
 
         return "admin/adminpanel";

@@ -21,8 +21,7 @@ public interface OrderRepo extends JpaRepository<Order , Long> {
     @Query("SELECT o FROM Order o WHERE DATE(o.orderDateTime) = :date")
     List<Order> findByDate(@Param("date") LocalDate date);
 
-    @Query("SELECT DATE(o.orderDateTime) as date, SUM(o.totalAmount) as total FROM Order o WHERE o.orderDateTime BETWEEN :start AND :end AND o.status NOT IN ('RETURN', 'CANCELED') GROUP BY DATE(o.orderDateTime)")
-    List<Map<String, Object>> findDailyTotals(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
 
     @Query("SELECT o FROM Order o WHERE o.orderDateTime BETWEEN :start AND :end")
     List<Order> findOrdersInDateRange(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
@@ -45,4 +44,27 @@ public interface OrderRepo extends JpaRepository<Order , Long> {
             "WHERE DATE(o.orderDateTime) = ?1 " +
             "GROUP BY oi.product")
     List<Object[]> findDailyProductSales(Date date);
+
+
+    @Query("SELECT DATE(o.orderDateTime) as date, SUM(o.totalAmount) as total FROM Order o WHERE o.orderDateTime BETWEEN :start AND :end AND o.status NOT IN ('RETURN', 'CANCELED') GROUP BY DATE(o.orderDateTime)")
+    List<Map<String, Object>> findDailyTotals(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+
+    /*@Query(value = "SELECT MONTH(o.orderDateTime) AS month, SUM(o.totalAmount) AS totalAmount FROM 'orders' o " +
+            "WHERE YEAR(o.orderDateTime) = :year " +
+            "GROUP BY MONTH(o.orderDateTime)", nativeQuery = true)
+    List<Map<String, Object>> findMonthlyTotals(@Param("year") int year);*/
+
+    @Query("SELECT YEAR(o.orderDateTime) AS year, MONTH(o.orderDateTime) AS month, SUM(o.totalAmount) AS totalAmount " +
+            "FROM Order o " +
+            "WHERE o.orderDateTime BETWEEN :start AND :end " +
+            "AND o.status NOT IN ('RETURN', 'CANCELED') " +
+            "GROUP BY YEAR(o.orderDateTime), MONTH(o.orderDateTime)")
+    List<Map<String, Object>> findMonthlyTotals(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT MONTHNAME(o.orderDateTime) AS month, SUM(o.totalAmount) AS totalAmount "
+            + "FROM Order o "
+            + "WHERE YEAR(o.orderDateTime) = YEAR(CURRENT_DATE()) "
+            + "GROUP BY MONTHNAME(o.orderDateTime)")
+    List<Map<String, Object>> getTotalAmountByMonth();
 }
