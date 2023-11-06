@@ -246,6 +246,7 @@ public class UserController {
         List<Product> product1=productService.getAllProduct();
         /*model.addAttribute("listedproducts",productRepo.findListedProducts());*/
         model.addAttribute("products",product1);
+        model.addAttribute("categories",subCategoryRepo.findByIsListedTrue());
 
         return "user/userindex";
     }

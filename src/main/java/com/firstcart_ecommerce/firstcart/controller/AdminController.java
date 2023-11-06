@@ -69,6 +69,9 @@ public class AdminController {
     private ProductService productService;
 
     @Autowired
+    private WishListService wishListService;
+
+    @Autowired
     private S3Service s3Service;
 
     @Autowired
@@ -80,7 +83,19 @@ public class AdminController {
     @Autowired
     private OrderService orderService;
 
+    @ModelAttribute
+    public void profiler(Principal p, Model m){
+        if(p != null) {
+            String email = p.getName();
+            User user = userRepo.findByEmail(email);
+            m.addAttribute("user", user);
+            Cart userCart = userService.getUserCart(user);
+            m.addAttribute("cartProductCount", userCart.getItems().size());
+            m.addAttribute("wishListCount",wishListService.getNumberOfItemsInWishlist(user));
 
+        }
+
+    }
 
 
 
@@ -103,6 +118,9 @@ public class AdminController {
         List<Product> products=productService.getAllProduct();
         model.addAttribute("products",products);
         model.addAttribute("listedproducts",productRepo.findListedProducts());
+        model.addAttribute("romance",subCategoryRepo.getById(13));
+        model.addAttribute("horror",subCategoryRepo.getById(17));
+        model.addAttribute("trading",subCategoryRepo.getById(16));
         return "user/userindex";
     }
     @GetMapping("/manage")
