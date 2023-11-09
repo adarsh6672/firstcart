@@ -308,6 +308,15 @@ public class UserController {
         m.addAttribute("deliveryCharge",40.0);
         m.addAttribute("coupons",couponRepo.findItemsNotInTable2(user.getId()));
         m.addAttribute("offer",cartService.findDiscountAmount(cartItems));
+        Wallet wallet=walletRepo.findByUser(user);
+        if(wallet.getAmount()!=0){
+            if(wallet.getAmount()>cartService.findTotalAfterOffer(cartItems)+40) {
+                m.addAttribute("walletAmount", cartService.findTotalAfterOffer(cartItems) + 40);
+            }else {
+                m.addAttribute("walletAmount",wallet.getAmount());
+            }
+        }
+
         if(selectedCoupon!=null){
             long couponId = selectedCoupon.longValue();
             if(userCart.getTotalAmount()>couponRepo.getById(couponId).getMinimumAmount().longValue()) {
@@ -316,12 +325,20 @@ public class UserController {
                 m.addAttribute("total", cartService.findTotalAfterOffer(cartItems) + 40 - couponRepo.getById(couponId).getDiscountPercentage());
                 boolean iscoupenApplied = true;
                 m.addAttribute("isCouponApplied", iscoupenApplied);
+                if(wallet.getAmount()!=0){
+                    if(wallet.getAmount()>cartService.findTotalAfterOffer(cartItems)+40) {
+                        m.addAttribute("walletAmount", cartService.findTotalAfterOffer(cartItems) + 40 - couponRepo.getById(couponId).getDiscountPercentage());
+                    }else {
+                        m.addAttribute("walletAmount",wallet.getAmount());
+                    }
+                }
                 session.setAttribute("msg", "Coupon " + couponRepo.getById(couponId).getCouponCode() + " Applied Successfully");
             }else {
                 session.setAttribute("msg","The minimum cart value should be "+couponRepo.getById(couponId).getMinimumAmount()+" for Applying this coupon");
             }
 
         }
+
         return "user/checkout";
     }
 
@@ -361,6 +378,7 @@ public class UserController {
     public String orderplace(@RequestParam ("paymentMethod") String paymentMethod,
                                 @RequestParam("selectedAddressId") Long selectedAddressId,
                                 @RequestParam("paymentId") String paymentId,
+                             @RequestParam(value = "walletChecked", required = false) boolean walletChecked,
                                 @RequestParam(required = false,name = "couponId") Long couponId,
                                 Principal p,HttpSession session){
         if(paymentMethod==null){
@@ -380,10 +398,29 @@ public class UserController {
         order.setTotalAmount(cartService.findTotalAfterOffer(cartItems)+40);
         order.setShippingAddress(selectedAddress);
         order.setPaymentMethod(paymentMethod);
+        if(walletChecked && paymentMethod.equals("Cash On Delivery")){
+
+            order.setPaymentMethod("Online Payment");
+            Wallet wallet=walletRepo.findByUser(user);
+            wallet.setAmount(wallet.getAmount()-cartService.findTotalAfterOffer(cartItems)+40);
+            walletRepo.save(wallet);
+            order.setWalletUsed(true);
+
+        }
+        if(walletChecked && paymentMethod.equals("Online Payment")){
+
+            order.setPaymentMethod("Online Payment");
+            Wallet wallet=walletRepo.findByUser(user);
+            wallet.setAmount(0.0);
+            walletRepo.save(wallet);
+            order.setWalletUsed(true);
+
+        }
         order.setStatus(OrderStatus.CONFIRMED);
         orderService.placeOrder(user,order);
         orderService.deleteCartItems(user);
         System.out.println(paymentId);
+
         if(paymentId != null && !paymentId.isEmpty()){
             Payment myorder = paymentRepo.findByOrderId(paymentId);
             myorder.setOrderNumber(order);

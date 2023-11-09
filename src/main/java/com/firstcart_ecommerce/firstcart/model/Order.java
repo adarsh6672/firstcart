@@ -67,4 +67,6 @@ public class Order {
 
     @ManyToOne
     private Coupon coupon;
+
+    private boolean isWalletUsed=false;
 }

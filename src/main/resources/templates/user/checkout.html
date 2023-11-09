@@ -156,24 +156,29 @@
 								<div><span th:text="'₹ +' + ${deliveryCharge}">FREE</span></div>
 							</div>
 							<div class="order-col">
-								<div><strong>TOTAL</strong></div>
-								<div><span id="cartTotal"><strong>₹<span th:text="${total}"></span></strong></span></div>
+								<div><strong>SUB TOTAL</strong></div>
+								<div><span id="cartTot"><strong>₹<span class="text-success" th:text="${total}"></span></strong></span></div>
+
+							</div>
+							<div class="order-col">
+								<div><strong>TOTAL TO PAY</strong></div>
+								<div><span class="text-success" id="cartTotal" th:value="${total}"><strong>₹<span class="text-success" th:text="${total}"></span></strong></span></div>
 
 							</div>
 						</div>
-						<div class="payment-method">
-							<div class="input-radio">
+						<div >
+							<input type="checkbox" id="walletCheckbox" onchange="updatePaymentMethods()" name="walletChecked">
+							<label for="walletCheckbox">Use Wallet Amount <span class="text-success" th:text="${walletAmount}"></span></label>
+						</div>
 
-								<!--<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								</div>-->
-							</div>
+						<div class="payment-method">
+
 							<div class="">
 								<div class="form-check">
 									<input type="radio" id="onlinePay" name="paymentMethod" value="Online Payment" class="" checked>
 									<label class="form-check-label" for="onlinePay">Online Payment</label>
 								</div>
-								<div class="form-check">
+								<div class="form-check" >
 									<input type="radio" id="cashOnDelivery" name="paymentMethod" value="Cash On Delivery" class="" >
 									<label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
 								</div>
@@ -182,8 +187,8 @@
 
 						</div>
 
-						<button type="submit"  id="placeOrderButton" class="primary-btn order-submit" style="display:none;" >Place order</button>
-						<button  id="paymentPlaceOrderButton" class="btn-success btn order-submit" >Pay & order</button>
+						<button type="submit"  id="placeOrderButton" class="btn btn-success order-submit" style="display:none;" >Place order w</button>
+						<button  id="paymentPlaceOrderButton" class="btn-success btn order-submit" >Place order o</button>
 						</div>
 						</form>
 					<!-- /Order Details -->
@@ -239,6 +244,42 @@
     const placeOrderButton = document.getElementById('placeOrderButton');
     const paymentPlaceOrderButton = document.getElementById('paymentPlaceOrderButton');
     const checkoutForm = document.getElementById('checkoutForm');
+    var paymentMethodSection = document.querySelector('.payment-method');
+	var total = [[${total}]];
+     var walletAmount = [[${walletAmount}]];
+
+    function updatePaymentMethods() {
+    if (walletCheckbox.checked) {
+  	if (walletAmount >= [[${total}]]) {
+    cashOnDeliveryRadio.checked = true;
+	paymentMethodSection.style.display = 'none';
+	placeOrderButton.style.display = 'block';
+        paymentPlaceOrderButton.style.display = 'none';
+	} else {
+    paymentMethodSection.style.display = 'block';
+    onlinePayRadio.checked = true;
+    onlinePayRadio.disabled = false;
+    cashOnDeliveryRadio.disabled = true;
+    placeOrderButton.style.display = 'none';
+        paymentPlaceOrderButton.style.display = 'block';
+        totaln = total - walletAmount;
+        document.getElementById("cartTotal").innerText = totaln;
+        console.log(totaln);
+        console.log(total);
+        console.log(walletAmount);
+
+	}
+
+  } else {
+  paymentMethodSection.style.display = 'block';
+    cashOnDeliveryRadio.disabled = false;
+    onlinePayRadio.disabled = false;
+    document.getElementById("cartTotal").innerText = total;
+  }
+
+}
+
+
 
     paymentPlaceOrderButton.addEventListener('click', (event) => {
         event.preventDefault();
@@ -260,7 +301,7 @@
 <script>
 	const paymentStart = () => {
         console.log("Payment Started...");
-        let amount = $("#cartTotal span").text();
+        let amount = $("#cartTotal").text();
         console.log(amount);
 
         if(amount == "" || amount == null) {
@@ -355,6 +396,7 @@
         })
     }
 </script>
+
 <!--<div th:replace="fragments/cart_js :: cart_js"></div>-->
 
 
