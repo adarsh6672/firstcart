@@ -43,10 +43,13 @@ public class WishListController {
 
 
     @GetMapping("/add/{productId}")
-    public String addProductToWishlist(Principal principal, @PathVariable Long productId) {
+    public String addProductToWishlist(Principal principal, @PathVariable Long productId,@RequestParam(value = "fromIndex", required = false) boolean fromIndex)throws Exception {
         User user=userRepo.findByEmail(principal.getName());
         WishList wishList=wishlistService.getOrCreateUserCart(user);
         wishlistService.addProductToWishlist(wishList.getId(), productId);
+        if(fromIndex){
+            return "redirect:/user/home";
+        }
         return "redirect:/user/viewproduct/{productId}";
     }
 

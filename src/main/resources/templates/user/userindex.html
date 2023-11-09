@@ -119,7 +119,8 @@
 													<i class="fa fa-star"></i>
 												</div>
 												<div class="product-btns">
-													<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
+													<a class="like btn btn-default" th:if="${!@wishListService.isProductInWishlist(wl,product.id)}" th:href="@{/user/wishlist/add/{id}?fromIndex=true(id=${product.id})}" type="button"><i class="fa fa-heart-o"></i></a>
+													<a class="like btn btn-default" th:if="${@wishListService.isProductInWishlist(wl,product.id)}" onclick="showAlert()"  type="button"><span class="fa fa-heart text-danger"></span></a>
 													<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
 													<button  class="quick-view"><a th:href="@{/user/viewproduct/{id}(id=${product.id})}"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></a></button>
 												</div>
@@ -248,9 +249,14 @@
 													<button class=" quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
 												</div>
 											</div>
-											<div class="add-to-cart">
+											<!--<div class="add-to-cart">
 												<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-											</div>
+												<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+												<a class="add-to-cart-btn"  th:if="${@cartService.isProductInCartItem(cart,product.id}" th:href="@{/user/cart}" type="button"><i class="fa fa-shopping-cart"></i>Go To Cart</a>
+
+												<a class="add-to-cart-btn " th:if="${!@cartService.isProductInCartItem(cart,product.id}" th:href="@{/user/addToCart/{id}(id=${product.id})}" type="button"><i class="fa fa-shopping-cart"></i>add to cart</a>
+
+											</div>-->
 										</div>
 										<!-- /product -->
 
@@ -606,6 +612,17 @@
 
 		<!-- jQuery Plugins -->
 		<div th:replace="fragments/cart_js :: cart_js"></div>
+		<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+		<script th:inline="javascript">
+			function showAlert() {
+                Swal.fire({
+                    title: 'Already Added in Wishlist.!',
+                    text: '',
+                    icon: 'success'
+                });
+            }
+		</script>
 
 	</body>
 </html>

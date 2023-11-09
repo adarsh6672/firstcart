@@ -114,9 +114,10 @@ public class AdminController {
         return "admin_profile";
     }
     @GetMapping("/home")
-    public String home(Model model){
-        List<Product> products=productService.getAllProduct();
-        model.addAttribute("products",products);
+    public String home(Model model,Principal principal){
+        User user= userRepo.findByEmail(principal.getName());
+        model.addAttribute("wl",wishListService.getOrCreateUserCart(user));
+
         model.addAttribute("listedproducts",productRepo.findListedProducts());
         model.addAttribute("romance",subCategoryRepo.getById(13));
         model.addAttribute("horror",subCategoryRepo.getById(17));

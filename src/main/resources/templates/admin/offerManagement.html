@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" >
-<head th:replace="fragments/html_head :: html_head">
+<head th:replace="fragments/html_head :: html_head"
+link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
 
 <body>
 <div class="content container" style="background-color:white;!important">
@@ -178,7 +179,7 @@
                     </div>
                     <div class="form-outline mb-4">
                         <label for="percentage" class="form-label"> Discount Percentage:</label>
-                        <input type="number" class="form-control form-control-lg bg-white"  name="discountPercentage">
+                        <input type="number" id="discountf" class="form-control form-control-lg bg-white"  name="discountPercentage">
                     </div>
                     <div class="form-outline mb-4">
                         <label for="expirydate" class="form-label"> Expiry Date </label>
@@ -202,6 +203,44 @@
 <div th:replace="fragments/js_links :: js_links"></div>
 <div th:replace="fragments/js_links :: js_links"></div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    const form1 = document.getElementById('addcouponform');
+form1.addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent the default form submission
+
+  const inputField = document.getElementById('percentage');
+  const value = inputField.value;
+  if (value > 100) {
+    Swal.fire({
+      title: 'Invalid Input',
+      text: 'Disocount Percentage must not be greater than 100!',
+      icon: 'error'
+    });
+    return; // Stop further execution
+  }
+
+  form1.submit(); // Submit the form
+});
+    const form2 = document.getElementById('productOfferForm');
+form2.addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent the default form submission
+
+  const inputField = document.getElementById('discountf');
+  const value = inputField.value;
+  if (value > 100) {
+    Swal.fire({
+      title: 'Invalid Input',
+      text: 'Discount percentage not be greater than 100!',
+      icon: 'error'
+    });
+    return; // Stop further execution
+  }
+
+  form2.submit(); // Submit the form
+});
+</script>
+
 <script>
     $("#searchQuery").on("input", function() {
     var searchQuery = $(this).val();

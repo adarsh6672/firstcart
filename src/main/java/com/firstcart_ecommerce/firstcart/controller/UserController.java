@@ -242,11 +242,15 @@ public class UserController {
 
 
     @GetMapping("/home")
-    public String home(Model model){
-        List<Product> product1=productService.getAllProduct();
-        /*model.addAttribute("listedproducts",productRepo.findListedProducts());*/
-        model.addAttribute("products",product1);
+    public String home(Model model,Principal principal){
+        User user= userRepo.findByEmail(principal.getName());
+        model.addAttribute("wl",wishListService.getOrCreateUserCart(user));
+        model.addAttribute("cart",userService.getUserCart(user).getId());
         model.addAttribute("categories",subCategoryRepo.findByIsListedTrue());
+        model.addAttribute("listedproducts",productRepo.findListedProducts());
+        model.addAttribute("romance",subCategoryRepo.getById(13));
+        model.addAttribute("horror",subCategoryRepo.getById(17));
+        model.addAttribute("trading",subCategoryRepo.getById(16));
 
         return "user/userindex";
     }
@@ -521,6 +525,7 @@ public class UserController {
     @GetMapping("/store/{categoryid}")
     public String showStore(@PathVariable("categoryid")int catId,Model m){
         List<Product>products=productService.getProductsByCategory(catId);
+        m.addAttribute("categories",subCategoryRepo.findByIsListedTrue());
         m.addAttribute("products",products);
 
         return "user/store";
