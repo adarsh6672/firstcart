@@ -23,52 +23,58 @@ background: linear-gradient(63deg, rgba(2,0,36,1) 0%, rgba(0,0,0,1) 35%, rgba(25
                 <div class="col-12 col-md-9 col-lg-7 col-xl-6">
                     <div class="card mt-2 bg-dark" style="border-radius: 1rem;">
                         <div class="card-body  text-white p-5">
-                            <h2 class="text-uppercase text-center mb-5">Create an account</h2>
+                            <h2 class="text-uppercase text-center mb-3">Create an account</h2>
                             <th:block th:if="${session.msg}">
                                 <p class="text-center text-success">[[${session.msg}]]</p>
                                 <th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
                             </th:block>
+                            <div class="col-md-12">
 
                             <form  id="myForm" action=""  method="post" th:action="@{/sendOTP}" th:object="${user}"  >
 
-                                <div class="form-outline mb-3">
-                                    <input type="text" id="name" name="name" th:field="*{name}"  class="form-control form-control-lg" />
+                                <div class=" mb-3 ">
+                                    <input type="text" id="name" name="name" th:field="*{name}"  class="form-control" />
                                     <label class="form-label" for="name">Your Name</label>
                                 </div>
 
 
-                                <div class="form-outline mb-3">
-                                    <input type="email" id="email"name="email" th:field="*{email}"  class="form-control form-control-lg" />
+                                <div class=" mb-3">
+                                    <input type="email" id="email"name="email" th:field="*{email}"  class="form-control " />
                                     <label class="form-label"  for="Email">Your Email</label>
                                 </div>
 
                                 <div class="form-outline mb-3">
-                                    <input type="tel" id="phone"name="phone" required th:field="*{phone}"  class="form-control form-control-lg" />
+                                    <input type="tel" id="phone"name="phone" required th:field="*{phone}"  class="form-control " />
                                     <label class="form-label"  >Your Phone</label>
 
                                 </div>
 
                                 <div class="form-outline mb-3">
-                                    <input type="password" id="password" name="password" th:field="*{password}" class="form-control form-control-lg" />
+                                    <input type="password" id="password" name="password" th:field="*{password}" class="form-control " />
                                     <label class="form-label"  for="Password">Password</label>
                                 </div>
 
                                 <div class="form-outline mb-3">
-                                    <input type="password" id="confirm" name="conf" class="form-control form-control-lg" />
+                                    <input type="password" id="confirm" name="conf" class="form-control " />
                                     <label class="form-label"  for="confirm">Re-enter Password</label>
                                 </div>
-
+                                <div class="form-outline mb-3">
+                                    <input type="text" id="refferalCode" name="refferalCode"   class="form-control " />
+                                    <label class="form-label" for="refferalCode">Do You Have Refferal Code ?</label>
+                                </div>
 
 
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" id="submit-button" onclick="return validateForm()"
-                                            class="btn btn-success btn-block btn-lg  text-white">Register</button>
+                                            class="btn btn-success btn-lg  text-white">Register</button>
                                 </div>
 
 
-                                <p class="text-center  mt-3 mb-0">Already a member of First Cart ? <a href="/login" class=" text-white-50 fw-bold"><u>Login here</u></a></p>
+
+                                <p class="text-center  mt-2 mb-0">Already a member of First Cart ? <a href="/login" class=" text-white-50 fw-bold"><u>Login here</u></a></p>
 
                             </form>
+                            </div>
 
                         </div>
                     </div>

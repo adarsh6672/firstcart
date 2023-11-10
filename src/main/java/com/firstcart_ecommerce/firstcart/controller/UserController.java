@@ -91,7 +91,8 @@ public class UserController {
 
     @Autowired
     private WishListService wishListService;
-
+    @Autowired
+    private RefferalCodeService refferalCodeService;
     @Autowired
     private OrderService orderService;
 
@@ -112,8 +113,10 @@ public class UserController {
             User user = userRepo.findByEmail(email);
             m.addAttribute("user", user);
             Cart userCart = userService.getUserCart(user);
+            WishList wishList=wishListService.getOrCreateUserCart(user);
             m.addAttribute("cartProductCount", userCart.getItems().size());
             m.addAttribute("wishListCount",wishListService.getNumberOfItemsInWishlist(user));
+            Wallet wallet=walletService.getOrCreateUserWallet(user);
 
         }
 
@@ -248,9 +251,9 @@ public class UserController {
         model.addAttribute("cart",userService.getUserCart(user).getId());
         model.addAttribute("categories",subCategoryRepo.findByIsListedTrue());
         model.addAttribute("listedproducts",productRepo.findListedProducts());
-        model.addAttribute("romance",subCategoryRepo.getById(13));
-        model.addAttribute("horror",subCategoryRepo.getById(17));
-        model.addAttribute("trading",subCategoryRepo.getById(16));
+        model.addAttribute("romance",subCategoryRepo.getById(1));
+        model.addAttribute("horror",subCategoryRepo.getById(3));
+        model.addAttribute("trading",subCategoryRepo.getById(2));
 
         return "user/userindex";
     }
@@ -309,7 +312,7 @@ public class UserController {
         m.addAttribute("coupons",couponRepo.findItemsNotInTable2(user.getId()));
         m.addAttribute("offer",cartService.findDiscountAmount(cartItems));
         Wallet wallet=walletRepo.findByUser(user);
-        if(wallet.getAmount()!=0){
+        if(wallet.getAmount()!=null){
             if(wallet.getAmount()>cartService.findTotalAfterOffer(cartItems)+40) {
                 m.addAttribute("walletAmount", cartService.findTotalAfterOffer(cartItems) + 40);
             }else {
@@ -357,6 +360,16 @@ public class UserController {
         m.addAttribute("total",(productService.getOfferPrice(productId)*quantity)+40);
         m.addAttribute("deliveryCharge",40.0);
         m.addAttribute("coupons",couponRepo.findItemsNotInTable2(user.getId()));
+
+        Wallet wallet=walletRepo.findByUser(user);
+        if(wallet.getAmount()!=null){
+            if(wallet.getAmount()>productService.getOfferPrice(productId)*quantity+40) {
+                m.addAttribute("walletAmount", productService.getOfferPrice(productId)*quantity+40);
+            }else {
+                m.addAttribute("walletAmount",wallet.getAmount());
+            }
+        }
+
         if(selectedCoupon!=null){
             long couponId = selectedCoupon.longValue();
             if(product.getPrice()*quantity>couponRepo.getById(couponId).getMinimumAmount().longValue()) {
@@ -365,6 +378,13 @@ public class UserController {
                 m.addAttribute("total", (productService.getOfferPrice(productId)*quantity)+40 - couponRepo.getById(couponId).getDiscountPercentage());
                 boolean iscoupenApplied = true;
                 m.addAttribute("isCouponApplied", iscoupenApplied);
+                if(wallet.getAmount()!=0){
+                    if(wallet.getAmount()>productService.getOfferPrice(productId)*quantity+40 - couponRepo.getById(couponId).getDiscountPercentage()) {
+                        m.addAttribute("walletAmount", productService.getOfferPrice(productId)*quantity+40 - couponRepo.getById(couponId).getDiscountPercentage());
+                    }else {
+                        m.addAttribute("walletAmount",wallet.getAmount());
+                    }
+                }
                 session.setAttribute("msg", "Coupon " + couponRepo.getById(couponId).getCouponCode() + " Applied Successfully");
             }else {
                 session.setAttribute("msg","The minimum cart value should be "+couponRepo.getById(couponId).getMinimumAmount()+" for Applying this coupon");
@@ -385,8 +405,8 @@ public class UserController {
             session.setAttribute("msg","PLEASE SELECT PAYMENT METHOD");
             return "redirect:/user/checkout";
         }
-        if(selectedAddressId==null||selectedAddressId==0){
-            session.setAttribute("msg","PLEASE SELECT SHIPPING ADDRESS");
+        if (Optional.ofNullable(selectedAddressId).orElse((long) 0) == 0) {
+            session.setAttribute("msg", "PLEASE SELECT SHIPPING ADDRESS");
             return "redirect:/user/checkout";
         }
         Address selectedAddress=addressRepo.findById(selectedAddressId).orElse(null);
@@ -449,6 +469,7 @@ public class UserController {
                              @RequestParam("selectedAddressId") Long selectedAddressId,
                              @RequestParam("paymentId") String paymentId,
                              @RequestParam("quantity")int quantity,
+                                @RequestParam(value = "walletChecked", required = false) boolean walletChecked,
                              @RequestParam("productId") Long productId,
                              @RequestParam("cartTotal") double total,
                                 @RequestParam(required = false,name = "couponId") Long couponId,
@@ -470,6 +491,24 @@ public class UserController {
         order.setShippingAddress(selectedAddress);
         order.setPaymentMethod(paymentMethod);
         order.setStatus(OrderStatus.CONFIRMED);
+        if(walletChecked && paymentMethod.equals("Cash On Delivery")){
+
+            order.setPaymentMethod("Online Payment");
+            Wallet wallet=walletRepo.findByUser(user);
+            wallet.setAmount(wallet.getAmount()-total);
+            walletRepo.save(wallet);
+            order.setWalletUsed(true);
+
+        }
+        if(walletChecked && paymentMethod.equals("Online Payment")){
+
+            order.setPaymentMethod("Online Payment");
+            Wallet wallet=walletRepo.findByUser(user);
+            wallet.setAmount(0.0);
+            walletRepo.save(wallet);
+            order.setWalletUsed(true);
+
+        }
         orderService.placeOrderbuynow(product,order,user,quantity);
 
         System.out.println(paymentId);
@@ -618,6 +657,29 @@ public class UserController {
         model.addAttribute("walletBalance",wallet.getAmount());
         return "/user/wallet";
     }
+    @GetMapping("/refferAndEarn")
+    public String refferalcode(Principal principal,Model m){
+        User user=userRepo.findByEmail(principal.getName());
+        if(refferalCodeService.isUserHavingCode(user)) {
+            m.addAttribute("refferalCode", refferalCodeService.findcodebyuser(user).getCode());
+            if(refferalCodeService.findcodebyuser(user).getUsagecount()>=2) {
+                m.addAttribute("max", "Maximumm User Used Your Refferal Code");
+            }
+        }
+        m.addAttribute("havingCode",refferalCodeService.isUserHavingCode(user));
+        return "/user/refferAndEarn";
+    }
+
+    @PostMapping("/generateRefferalCode")
+    public String generateRefferalCode(Principal principal,Model m){
+        User user=userRepo.findByEmail(principal.getName());
+        if(!refferalCodeService.isUserHavingCode(user)) {
+            refferalCodeService.generateRefferalCode(user);
+        }
+        return "redirect:/user/refferAndEarn";
+    }
+
+
 
 
 

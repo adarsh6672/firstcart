@@ -7,6 +7,7 @@ import com.firstcart_ecommerce.firstcart.repository.CartRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -104,8 +105,7 @@ public class UserServiceImpl implements UserService{
     public User updatePassword(User user) {
         String password=passwordEncoder.encode(user.getPassword());
         user.setPassword(password);
-        User newuser = userRepo.save(user);
-        return newuser;
+        return userRepo.save(user);
     }
 
     @Override
@@ -163,6 +163,8 @@ public class UserServiceImpl implements UserService{
         item.ifPresent(cart.getItems()::remove);
         cartRepo.save(cart);
     }
+
+
 
 
 

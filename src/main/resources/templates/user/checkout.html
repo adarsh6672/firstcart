@@ -162,11 +162,11 @@
 							</div>
 							<div class="order-col">
 								<div><strong>TOTAL TO PAY</strong></div>
-								<div><span class="text-success" id="cartTotal" th:value="${total}"><strong>₹<span class="text-success" th:text="${total}"></span></strong></span></div>
+								<div><span class="text-success" id="cartTotal" th:text="${total}"><strong>₹<span class="text-success" th:text="${total}"></span></strong></span></div>
 
 							</div>
 						</div>
-						<div >
+						<div th:if="${walletAmount}">
 							<input type="checkbox" id="walletCheckbox" onchange="updatePaymentMethods()" name="walletChecked">
 							<label for="walletCheckbox">Use Wallet Amount <span class="text-success" th:text="${walletAmount}"></span></label>
 						</div>
@@ -245,6 +245,22 @@
     const paymentPlaceOrderButton = document.getElementById('paymentPlaceOrderButton');
     const checkoutForm = document.getElementById('checkoutForm');
     var paymentMethodSection = document.querySelector('.payment-method');
+
+    paymentPlaceOrderButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        paymentStart();
+    });
+
+    cashOnDeliveryRadio.addEventListener('change', () => {
+        placeOrderButton.style.display = 'block';
+        paymentPlaceOrderButton.style.display = 'none';
+    });
+
+    onlinePayRadio.addEventListener('change', () => {
+        placeOrderButton.style.display = 'none';
+        paymentPlaceOrderButton.style.display = 'block';
+    });
+
 	var total = [[${total}]];
      var walletAmount = [[${walletAmount}]];
 
@@ -281,20 +297,7 @@
 
 
 
-    paymentPlaceOrderButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        paymentStart();
-    });
 
-    cashOnDeliveryRadio.addEventListener('change', () => {
-        placeOrderButton.style.display = 'block';
-        paymentPlaceOrderButton.style.display = 'none';
-    });
-
-    onlinePayRadio.addEventListener('change', () => {
-        placeOrderButton.style.display = 'none';
-        paymentPlaceOrderButton.style.display = 'block';
-    });
 </script>
 
 <!--first-request to server to create an order-->

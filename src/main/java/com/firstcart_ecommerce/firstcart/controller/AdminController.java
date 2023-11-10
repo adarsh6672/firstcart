@@ -83,6 +83,9 @@ public class AdminController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private WalletService walletService;
+
     @ModelAttribute
     public void profiler(Principal p, Model m){
         if(p != null) {
@@ -90,6 +93,7 @@ public class AdminController {
             User user = userRepo.findByEmail(email);
             m.addAttribute("user", user);
             Cart userCart = userService.getUserCart(user);
+            Wallet wallet=walletService.getOrCreateUserWallet(user);
             m.addAttribute("cartProductCount", userCart.getItems().size());
             m.addAttribute("wishListCount",wishListService.getNumberOfItemsInWishlist(user));
 
@@ -119,9 +123,9 @@ public class AdminController {
         model.addAttribute("wl",wishListService.getOrCreateUserCart(user));
 
         model.addAttribute("listedproducts",productRepo.findListedProducts());
-        model.addAttribute("romance",subCategoryRepo.getById(13));
-        model.addAttribute("horror",subCategoryRepo.getById(17));
-        model.addAttribute("trading",subCategoryRepo.getById(16));
+        model.addAttribute("romance",subCategoryRepo.getById(1));
+        model.addAttribute("horror",subCategoryRepo.getById(3));
+        model.addAttribute("trading",subCategoryRepo.getById(2));
         return "user/userindex";
     }
     @GetMapping("/manage")

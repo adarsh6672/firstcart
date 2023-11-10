@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html
+      lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments/cart_head :: cart_head">
+
+<body>
+<div th:replace="fragments/cart_header :: cart_header"></div>
+<section style="background-color: #eee; min-height:100vh;">
+    <div class="container">
+        <div class="w-100">
+            <div class="col-md-12 mx-auto">
+                <h2 class="display-5 mb-2 text-center mt-5" ></h2><i class="fa fa-wallet"></i>
+                <div class="col-md-12 mx-auto bg-success " style="height:300px;padding:100px;">
+                    <div class="text-center">
+                    <h3 >Share your unique referral code with friends.</h3><br><br>
+                        <div th:if="${havingCode}" class="col-md-12">
+                            <div class="col-md-6">
+                        <input class="form-control " type="text" th:value="${refferalCode}" id="myInput" readonly>
+                            </div>
+                            <div class="col-md-6">
+                            <button class="btn btn-primary   text-white" onclick="copyToClipboard()">Copy Code</button>
+                            </div>
+                            <div class="col-md-12" th:if="${max}">
+                                <h4 class="text-danger" th:text="${max}"></h4>
+                            </div>
+
+                        </div>
+                        <div th:if="${!havingCode}">
+                            <form method="post" th:action="@{/user/generateRefferalCode}">
+                        <button type="submit" class="btn btn-success">Generate Refferal Code</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 container" >
+                <div style="text-align: center; font-family: Arial, sans-serif;">
+                    <div style="  padding: 20px; max-width: 1200px; margin: 0 auto;">
+                        <div style="font-size: 20px; font-weight: bold; color: #007BFF;">Refer & Earn with First Cart</div>
+
+
+                        <div style="font-size: 16px; text-align: left;">
+                            <div style="font-size: 16px;margin-bottom: 10px;">Invite your friends to First Cart and both of you can earn rewards!</div>
+                            <strong>How It Works:</strong>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-size: 16px; margin-bottom: 10px;">👉 Share your unique referral code with friends.</div>
+                            <div style="font-size: 16px; margin-bottom: 10px;">💸 Your friends get ₹200 off their first purchase.</div>
+                            <div style="font-size: 16px; margin-bottom: 10px;">💰 You earn ₹250 in your account.</div>
+                        </div>
+
+                        <div style="font-size: 16px; text-align: left;">
+                            <strong>Why You'll Love It:</strong>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-size: 16px; margin-bottom: 10px;">✨ Instant savings for your friends.</div>
+                            <div style="font-size: 16px; margin-bottom: 10px;">💰 Cashback for you with every successful referral.</div>
+                            <div style="font-size: 16px; margin-bottom: 10px;">🌐 Share your code easily via email or social media.</div>
+                            <div style="font-size: 16px; margin-bottom: 10px;">🌟 It's a win-win for all!</div>
+                        </div>
+
+
+
+                        <div style="font-size: 16px;">
+                            <em>*T&C apply*</em>
+                        </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:replace="fragments/cart_footer :: cart_footer"></div>
+<script>
+    function copyToClipboard() {
+      /* Get the text field */
+      var copyText = document.getElementById("myInput");
+
+      /* Select the text field */
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+      /* Copy the text inside the text field */
+      document.execCommand("copy");
+
+      /* Alert the copied text */
+      alert("Copied the text: " + copyText.value);
+    }
+</script>
+<div th:replace="fragments/cart_js :: cart_js"></div>
+</body>
+</html>

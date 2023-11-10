@@ -20,6 +20,6 @@ public class WishList {
     @JoinTable(name = "wishlist_product",
             joinColumns = @JoinColumn(name = "wishlist_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> products;
+    private List<Product> products=new ArrayList<>();
 
 }
