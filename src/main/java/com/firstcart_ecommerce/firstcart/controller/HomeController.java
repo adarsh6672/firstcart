@@ -3,6 +3,8 @@ package com.firstcart_ecommerce.firstcart.controller;
 
 import com.firstcart_ecommerce.firstcart.model.Product;
 import com.firstcart_ecommerce.firstcart.model.User;
+import com.firstcart_ecommerce.firstcart.repository.ProductRepo;
+import com.firstcart_ecommerce.firstcart.repository.SubCategoryRepo;
 import com.firstcart_ecommerce.firstcart.repository.UserRepo;
 import com.firstcart_ecommerce.firstcart.services.ProductService;
 import com.firstcart_ecommerce.firstcart.services.S3Service;
@@ -35,21 +37,31 @@ public class HomeController {
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private SubCategoryRepo subCategoryRepo;
+
 
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductRepo productRepo;
 
 
 
     @GetMapping("/")
     @Secured({"ROLE_ADMIN", "ROLE_USER"}) // Define the roles that can access this endpoint
     public String log(Model model) {
-        List<Product> products2=productService.getAllProduct();
-        model.addAttribute("products",products2);
+
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            return "index"; // If not authenticated, show the login page.
+            model.addAttribute("products",productRepo.findListedProducts());
+            model.addAttribute("romance",subCategoryRepo.getById(1));
+            model.addAttribute("horror",subCategoryRepo.getById(3));
+            model.addAttribute("trading",subCategoryRepo.getById(2));
+            return "/index"; // If not authenticated, show the login page.
         } else if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
                 return "redirect:/admin/home"; // Redirect regular users to the user home page.
         }

@@ -97,6 +97,7 @@ public class AdminController {
             m.addAttribute("cartProductCount", userCart.getItems().size());
             m.addAttribute("wishListCount",wishListService.getNumberOfItemsInWishlist(user));
 
+
         }
 
     }
@@ -126,12 +127,14 @@ public class AdminController {
         model.addAttribute("romance",subCategoryRepo.getById(1));
         model.addAttribute("horror",subCategoryRepo.getById(3));
         model.addAttribute("trading",subCategoryRepo.getById(2));
+        model.addAttribute("pageTitle", "Home | Admin");
         return "user/userindex";
     }
     @GetMapping("/manage")
     public String viewData(Model model){
 
         model.addAttribute("userdata",userService.getAllUsers());
+        model.addAttribute("pageTitle", "User Details | Admin");
         return "admin/users";
 
     }
@@ -179,6 +182,7 @@ public class AdminController {
 
 
         model.addAttribute("monthlyTotals", orderRepo.getTotalAmountByMonth());
+        model.addAttribute("pageTitle", "Admin Panel | Admin");
 
 
         return "admin/adminpanel";
@@ -216,6 +220,7 @@ public class AdminController {
     @GetMapping("/category")
     public String categories(Model model){
         model.addAttribute("category",categoryService.getAllCategory());
+        model.addAttribute("pageTitle", "Category Details | Admin");
         return "admin/categories";
     }
 
@@ -223,6 +228,7 @@ public class AdminController {
     @GetMapping("/category/add")
     public String addCat(Model model){
         model.addAttribute("category" ,new Category());
+        model.addAttribute("pageTitle", "Add Category | Admin");
         return "admin/add_Parentcat";
     }
 
@@ -249,6 +255,7 @@ public class AdminController {
         model.addAttribute("categoey",new Category());
         model.addAttribute("subcategory", new SubCategory());
         model.addAttribute("categories", categoryService.getAllCategory());
+        model.addAttribute("pageTitle", "Categories | Admin");
 
 
         return "admin/category-list"; // Thymeleaf view name
@@ -259,6 +266,7 @@ public class AdminController {
         public String showAddForm(Model model) {
             model.addAttribute("subcategory", new SubCategory());
             model.addAttribute("categories", categoryService.getAllCategory());
+            model.addAttribute("pageTitle", "Sub Categories | Admin");
         return "admin/add_subcat";
     }
 
@@ -302,6 +310,7 @@ public class AdminController {
         model.addAttribute("categories",subCategoryService.getAllSubCategories());
         model.addAttribute("productDTO", new ProductDTO());
         model.addAttribute("newCategory", new SubCategory());
+        model.addAttribute("pageTitle", "Product Add | Admin");
 
         return "admin/add_product";
     }
@@ -462,6 +471,7 @@ public class AdminController {
     @GetMapping("/stockmanagement")
     public String getStock(Model m){
         m.addAttribute("products" ,productService.getAllProductsSortedByQuantity());
+        m.addAttribute("pageTitle", "Stock Management | Admin");
         return "admin/stockManagement";
     }
     @GetMapping("/searchproduct")
@@ -502,6 +512,7 @@ public class AdminController {
     public String orderManage(Model m){
         List<Order> orders=orderRepo.findAllByOrderByOrderDateTimeDesc();
         m.addAttribute("orders",orders);
+        m.addAttribute("pageTitle", "Order Manage | Admin");
         return "admin/OrderManager";
     }
 
@@ -519,6 +530,7 @@ public class AdminController {
     @GetMapping("/coupon")
     public String coupen(Model model){
         model.addAttribute("coupons",couponRepo.findAll());
+        model.addAttribute("pageTitle", "Coupon Management | Admin");
         return "admin/coupen";
     }
 
@@ -530,6 +542,7 @@ public class AdminController {
     @GetMapping("/coupon/edit/{id}")
     public String editCoupon(@PathVariable ("id") Long id,Model model){
         model.addAttribute("coupon",couponRepo.getById(id));
+        model.addAttribute("pageTitle", "Coupon Edit | Admin");
         return "admin/couponEdit";
     }
 
@@ -550,6 +563,7 @@ public class AdminController {
         model.addAttribute("products", productService.getAllProduct());
         model.addAttribute("categoryOffers",categoryOfferRepo.findAll());
         model.addAttribute("productOffers",productOfferRepo.findAll());
+        model.addAttribute("pageTitle", "Offer Details Details | Admin");
         return "admin/offerManagement";
     }
 

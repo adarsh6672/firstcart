@@ -37,6 +37,9 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private ProductReviewRepo productReviewRepo;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -87,6 +90,9 @@ public class UserController {
     private AddressService addressService;
 
     @Autowired
+    private ProductReviewService productReviewService;
+
+    @Autowired
     private SubCategoryRepo subCategoryRepo;
 
     @Autowired
@@ -129,6 +135,7 @@ public class UserController {
             String email = p.getName();
             User user = userRepo.findByEmail(email);
             m.addAttribute("user", user);
+            m.addAttribute("pageTitle", "Profile | User");
 
         }
         return "user/pro";
@@ -138,6 +145,7 @@ public class UserController {
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         m.addAttribute("user", user);
+        m.addAttribute("pageTitle", "Edit Profile | User");
         return "user/Edit_Details";
     }
     @PostMapping("/saveuser")
@@ -160,6 +168,7 @@ public class UserController {
         User user = userRepo.findByEmail(email);
         m.addAttribute("user", user);
         m.addAttribute("address",addressRepo.findByUserAndDeletedFalse(user));
+        m.addAttribute("pageTitle", "Address | User");
         return "user/addressestest";
     }
     @GetMapping("/profile/address/add")
@@ -167,6 +176,7 @@ public class UserController {
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         m.addAttribute("user", user);
+        m.addAttribute("pageTitle", "Add Address | User");
         if (fromCheckout) {
             m.addAttribute("fromCheckout", true);
         }
@@ -183,6 +193,7 @@ public class UserController {
     public String updateAddresses(@PathVariable (value = "id")Long id, Model m){
         Address address = addressRepo.getById(id);
         m.addAttribute("address",address);
+        m.addAttribute("pageTitle", "Update Address | User");
         return "user/address_update";
     }
     @PostMapping("profile/address/update")
@@ -224,6 +235,7 @@ public class UserController {
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         m.addAttribute("user", user);
+        m.addAttribute("pageTitle", "Password Change | User");
         return "user/change_password";
     }
     @PostMapping("/profile/updatepassword")
@@ -254,6 +266,7 @@ public class UserController {
         model.addAttribute("romance",subCategoryRepo.getById(1));
         model.addAttribute("horror",subCategoryRepo.getById(3));
         model.addAttribute("trading",subCategoryRepo.getById(2));
+        model.addAttribute("pageTitle", "Home | User");
 
         return "user/userindex";
     }
@@ -261,6 +274,7 @@ public class UserController {
     @GetMapping("/bookcategories")
     public String bookCategories(Model model){
         model.addAttribute("categories",subCategoryRepo.findByIsListedTrue());
+        model.addAttribute("pageTitle", "Categories | User");
         return "user/categories";
     }
 
@@ -276,23 +290,23 @@ public class UserController {
         CategoryOffer categoryOffer=categoryOfferRepo.findBySubCategory_id(product.get().getSubCategory().getId());
 
 
-
-        if (product.isPresent()) {
-            model.addAttribute("isInCart",isInCart);
-            model.addAttribute("isInWL",isInWL);
-            model.addAttribute("product", product.get());
-            if(productService.getOfferPrice(productId)!=product.get().getPrice()) {
-                model.addAttribute("offerPrice", productService.getOfferPrice(productId));
-            }
-            model.addAttribute("productOffer",productOffer);
-            model.addAttribute("categoryOffer",categoryOffer);
-            model.addAttribute("pageTitle", "Product Details | Admin");
-
-
-            return "user/product_open";
-        } else {
-            return "productNotFound";
+        model.addAttribute("isInCart", isInCart);
+        model.addAttribute("isInWL",isInWL);
+        model.addAttribute("product", product.get());
+        if(productService.getOfferPrice(productId)!=product.get().getPrice()) {
+            model.addAttribute("offerPrice", productService.getOfferPrice(productId));
         }
+        model.addAttribute("productOffer",productOffer);
+        model.addAttribute("categoryOffer",categoryOffer);
+        model.addAttribute("totalReview",productReviewService.getTotalReviewCount(productId));
+        model.addAttribute("reviews",productReviewService.getAllReviewsByProductId(productId));
+        model.addAttribute("reviewCountByRating",productReviewService.getReviewCountByRating(productId));
+        model.addAttribute("avgReview",productReviewService.averageReview(productId));
+
+        model.addAttribute("pageTitle", "Product Details | Admin");
+
+
+        return "user/product_open";
     }
 
     @GetMapping("/checkout")
@@ -341,6 +355,7 @@ public class UserController {
             }
 
         }
+        m.addAttribute("pageTitle", "Check Out | User");
 
         return "user/checkout";
     }
@@ -391,6 +406,7 @@ public class UserController {
             }
 
         }
+        m.addAttribute("pageTitle", "Buy Now | User");
         return "user/checkout_buy";
     }
 
@@ -534,8 +550,8 @@ public class UserController {
     }
 
     @GetMapping("/orderconfirmed")
-    public String orderConfirm(){
-
+    public String orderConfirm(Model m){
+        m.addAttribute("pageTitle", "Order Confirmed | User");
         return "user/ordersuccess";
     }
 
@@ -558,6 +574,7 @@ public class UserController {
         User user=userRepo.findByEmail(p.getName());
         List <Order> orders= orderService.orderItemFind(user);
         m.addAttribute("orders",orders);
+        m.addAttribute("pageTitle", "Orders | User");
         return "user/OrderList";
     }
 
@@ -566,6 +583,7 @@ public class UserController {
         m.addAttribute("order",orderRepo.getById(orderId));
         m.addAttribute("address",orderRepo.getById(orderId).getShippingAddress());
         m.addAttribute("deliveryCharge",40);
+        m.addAttribute("pageTitle", "Order View | User");
         return "user/Orderview";
     }
     @GetMapping("/order/cancel/{id}")
@@ -603,6 +621,7 @@ public class UserController {
         List<Product>products=productService.getProductsByCategory(catId);
         m.addAttribute("categories",subCategoryRepo.findByIsListedTrue());
         m.addAttribute("products",products);
+        m.addAttribute("pageTitle", "Store | User");
 
         return "user/store";
     }
@@ -655,6 +674,7 @@ public class UserController {
         User user=userRepo.findByEmail(principal.getName());
         Wallet wallet=walletService.getOrCreateUserWallet(user);
         model.addAttribute("walletBalance",wallet.getAmount());
+        model.addAttribute("pageTitle", "Wallet | User");
         return "/user/wallet";
     }
     @GetMapping("/refferAndEarn")
@@ -667,6 +687,7 @@ public class UserController {
             }
         }
         m.addAttribute("havingCode",refferalCodeService.isUserHavingCode(user));
+        m.addAttribute("pageTitle", "Reffer & Earn | User");
         return "/user/refferAndEarn";
     }
 
@@ -677,6 +698,18 @@ public class UserController {
             refferalCodeService.generateRefferalCode(user);
         }
         return "redirect:/user/refferAndEarn";
+    }
+
+    @PostMapping("/product/addreview")
+    public String addReview(@ModelAttribute ProductReview productReview,
+                            @RequestParam ("productId")Long productId,
+                            Principal principal,Model model){
+        productReview.setUser(userRepo.findByEmail(principal.getName()));
+        productReview.setProduct(productRepo.getById(productId));
+        productReviewRepo.save(productReview);
+
+        return "redirect:/user/viewproduct/"+productId;
+
     }
 
 
