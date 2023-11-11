@@ -1,6 +1,9 @@
 package com.firstcart_ecommerce.firstcart.services;
 
+import com.firstcart_ecommerce.firstcart.model.Order;
+import com.firstcart_ecommerce.firstcart.model.OrderItem;
 import com.firstcart_ecommerce.firstcart.model.ProductReview;
+import com.firstcart_ecommerce.firstcart.repository.OrderRepo;
 import com.firstcart_ecommerce.firstcart.repository.ProductReviewRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,9 @@ public class ProductReviewService {
 
     @Autowired
     private ProductReviewRepo productReviewRepository;
+
+    @Autowired
+    private OrderRepo orderRepo;
 
     public int getTotalReviewCount(Long productId) {
         return productReviewRepository.countByProductId(productId);
@@ -53,5 +59,24 @@ public class ProductReviewService {
                         (oldValue, newValue) -> oldValue,
                         LinkedHashMap::new
                 ));
+    }
+
+    public boolean hasOrderedProduct(int userId, Long productId) {
+        List<Order> orders = orderRepo.findAllByUserId(userId);
+
+        for (Order order : orders) {
+            for (OrderItem orderItem : order.getItems()) {
+                if (orderItem.getProduct().getId()==productId) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasUserAddedReview(Long productId, int userId) {
+        ProductReview review = productReviewRepository.findByProductIdAndUserId(productId, userId);
+        return review != null;
     }
 }

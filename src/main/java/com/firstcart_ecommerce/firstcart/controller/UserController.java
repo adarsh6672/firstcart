@@ -117,6 +117,7 @@ public class UserController {
         if(p != null) {
             String email = p.getName();
             User user = userRepo.findByEmail(email);
+            m.addAttribute("username",user.getName());
             m.addAttribute("user", user);
             Cart userCart = userService.getUserCart(user);
             WishList wishList=wishListService.getOrCreateUserCart(user);
@@ -302,6 +303,8 @@ public class UserController {
         model.addAttribute("reviews",productReviewService.getAllReviewsByProductId(productId));
         model.addAttribute("reviewCountByRating",productReviewService.getReviewCountByRating(productId));
         model.addAttribute("avgReview",productReviewService.averageReview(productId));
+        model.addAttribute("isOrdered",productReviewService.hasOrderedProduct(u.getId(),productId));
+        model.addAttribute("isReviewed",productReviewService.hasUserAddedReview(productId,u.getId()));
 
         model.addAttribute("pageTitle", "Product Details | Admin");
 
@@ -706,6 +709,7 @@ public class UserController {
                             Principal principal,Model model){
         productReview.setUser(userRepo.findByEmail(principal.getName()));
         productReview.setProduct(productRepo.getById(productId));
+        productReview.setOrderDateTime(LocalDateTime.now());
         productReviewRepo.save(productReview);
 
         return "redirect:/user/viewproduct/"+productId;

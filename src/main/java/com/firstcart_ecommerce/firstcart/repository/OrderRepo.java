@@ -67,4 +67,6 @@ public interface OrderRepo extends JpaRepository<Order , Long> {
             + "WHERE YEAR(o.orderDateTime) = YEAR(CURRENT_DATE()) "
             + "GROUP BY MONTHNAME(o.orderDateTime)")
     List<Map<String, Object>> getTotalAmountByMonth();
+
+   List<Order> findAllByUserId(int userId);
 }

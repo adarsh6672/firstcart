@@ -34,13 +34,9 @@
                         <h3 class="product-title" th:text="${product.subCategory.name}">CAtegory</h3>
                         <div class="rating">
                             <div class="star">
-                                <span th:if="${avgReview < 2}" class="fa fa-star checked"></span>
-                                <span th:if="${avgReview < 3}" class="fa fa-star checked"></span>
-                                <span th:if="${avgReview < 4}" class="fa fa-star checked"></span>
-                                <span th:if="${avgReview < 5}" class="fa fa-star"></span>
-                                <span th:if="${avgReview < 6}" class="fa fa-star"></span>
+                                <span th:each="star : ${#numbers.sequence(1, avgReview)}" class="fa fa-star checked"></span>
                             </div>
-                            <span class="review-no">41 reviews</span>
+                            <span th:text="${totalReview +'Reviews'}" class="review-no"></span>
                         </div>
                         <p class="product-description" th:text="${product.description}"></p>
                         <div th:if="${offerPrice == null}">
@@ -78,7 +74,7 @@
             </div>
         </div>
     </div>
-    <div class="container">
+    <div class="container" th:if="${isOrdered && !isReviewed}">
         <div class="row" style="margin-top:40px;">
             <div class="col-md-12">
                 <div class="well well-sm">
