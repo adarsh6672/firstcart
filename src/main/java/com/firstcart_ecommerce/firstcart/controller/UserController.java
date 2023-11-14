@@ -678,7 +678,7 @@ public class UserController {
         Wallet wallet=walletService.getOrCreateUserWallet(user);
         model.addAttribute("walletBalance",wallet.getAmount());
         model.addAttribute("pageTitle", "Wallet | User");
-        return "/user/wallet";
+        return "user/wallet";
     }
     @GetMapping("/refferAndEarn")
     public String refferalcode(Principal principal,Model m){
@@ -691,7 +691,7 @@ public class UserController {
         }
         m.addAttribute("havingCode",refferalCodeService.isUserHavingCode(user));
         m.addAttribute("pageTitle", "Reffer & Earn | User");
-        return "/user/refferAndEarn";
+        return "user/refferAndEarn";
     }
 
     @PostMapping("/generateRefferalCode")
