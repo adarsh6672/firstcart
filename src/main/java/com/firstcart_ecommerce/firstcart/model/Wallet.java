@@ -16,7 +16,7 @@ public class Wallet {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Double amount=0.0;
+    private Double amount;
 
 
 }

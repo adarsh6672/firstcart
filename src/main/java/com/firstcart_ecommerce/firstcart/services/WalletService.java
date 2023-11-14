@@ -17,6 +17,7 @@ public class WalletService {
         Wallet wallet = walletRepo.findByUser(user);
         if (wallet == null) {
             Wallet newwallet = new Wallet();
+            newwallet.setAmount(0.0);
             newwallet.setUser(user);
             walletRepo.save(newwallet);
             return newwallet;
