@@ -543,7 +543,7 @@ public class AdminController {
     public String editCoupon(@PathVariable ("id") Long id,Model model){
         model.addAttribute("coupon",couponRepo.getById(id));
         model.addAttribute("pageTitle", "Coupon Edit | Admin");
-        return "admin/couponEdit";
+        return  "admin/couponEdit";
     }
 
     @PostMapping("/coupon/update")
