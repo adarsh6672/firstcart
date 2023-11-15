@@ -413,6 +413,16 @@ public class UserController {
         return "user/checkout_buy";
     }
 
+
+    @GetMapping("/wallet")
+    public String openWallet(Model model,Principal principal){
+        User user=userRepo.findByEmail(principal.getName());
+        Wallet wallet=walletService.getOrCreateUserWallet(user);
+        model.addAttribute("walletBalance",wallet.getAmount());
+        model.addAttribute("pageTitle", "Wallet | User");
+        return "user/wallet";
+    }
+
     @PostMapping("/placeorder")
     public String orderplace(@RequestParam ("paymentMethod") String paymentMethod,
                                 @RequestParam("selectedAddressId") Long selectedAddressId,
@@ -672,14 +682,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("msg", "updated"));
     }
 
-    @GetMapping("/wallet")
-    public String openWallet(Model model,Principal principal){
-        User user=userRepo.findByEmail(principal.getName());
-        Wallet wallet=walletService.getOrCreateUserWallet(user);
-        model.addAttribute("walletBalance",wallet.getAmount());
-        model.addAttribute("pageTitle", "Wallet | User");
-        return "user/wallet";
-    }
+
     @GetMapping("/refferAndEarn")
     public String refferalcode(Principal principal,Model m){
         User user=userRepo.findByEmail(principal.getName());
