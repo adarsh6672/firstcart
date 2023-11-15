@@ -418,8 +418,8 @@ public class UserController {
     public String openWallet(Model model,Principal principal){
         User user=userRepo.findByEmail(principal.getName());
         Wallet wallet=walletService.getOrCreateUserWallet(user);
-        model.addAttribute("walletBalance",wallet.getAmount());
-        model.addAttribute("pageTitle", "Wallet | User");
+       /* model.addAttribute("walletBalance",wallet.getAmount());
+        model.addAttribute("pageTitle", "Wallet | User");*/
         return "user/wallet";
     }
 
