@@ -48,7 +48,7 @@ public class SecurityConfig  {
         http.csrf().disable().authorizeHttpRequests()
                 .requestMatchers("img/**","fonts/**","/static/**","/js/**","css/**","/","/register","/login","/saveuser","/sendOTP","/verifyOTP",
                         "/forgotpassword/**","/resetpassword").permitAll()
-                .requestMatchers("/user/**").hasAnyRole("USER","ADMIN")
+                .requestMatchers("/user/**","/user/wallet").hasAnyRole("USER","ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN").and()
                 .formLogin().loginPage("/login").loginProcessingUrl("/login")
                 .successHandler(successHandler)
