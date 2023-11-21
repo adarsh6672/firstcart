@@ -17,11 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -66,11 +64,14 @@ public class CartController {
 
 
     @GetMapping("/user/addToCart/{id}")
-    public String addToCart(@PathVariable Long id, Principal principal) {
+    public String addToCart(@PathVariable Long id, Principal principal,@RequestParam(value = "fromIndex", required = false) boolean fromCheckout) throws IOException {
         Product product = productService.getProductById(id).orElse(null);
         if (product != null) {
             User user = userRepo.findByEmail(principal.getName());
             userService.addToUserCart(user, product);
+        }
+        if(fromCheckout){
+            return "redirect:/user/home";
         }
         return "redirect:/user/viewproduct/{id}";
     }
