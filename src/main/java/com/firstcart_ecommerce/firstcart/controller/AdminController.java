@@ -122,7 +122,8 @@ public class AdminController {
     public String home(Model model,Principal principal){
         User user= userRepo.findByEmail(principal.getName());
         model.addAttribute("wl",wishListService.getOrCreateUserCart(user));
-
+        model.addAttribute("cart",userService.getUserCart(user).getId());
+        model.addAttribute("categories",subCategoryRepo.findByIsListedTrue());
         model.addAttribute("listedproducts",productRepo.findListedProducts());
         model.addAttribute("romance",subCategoryRepo.getById(1));
         model.addAttribute("horror",subCategoryRepo.getById(3));
