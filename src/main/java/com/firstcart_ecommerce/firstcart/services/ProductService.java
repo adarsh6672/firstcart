@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,13 +105,25 @@ public class ProductService {
             CategoryOffer categoryOffer=categoryOfferRepo.findBySubCategory_id(product.get().getSubCategory().getId());
             if(productOffer != null && categoryOffer != null){
                 double discountPercentage=productOffer.getDiscountPercentage()+categoryOffer.getDiscountPercentage();
-                return productPrice-(productPrice*(discountPercentage/100));
+                double discountedPrice= productPrice-(productPrice*(discountPercentage/100));
+                DecimalFormat df = new DecimalFormat("#.##"); // Set the pattern for two decimal places
+                String formattedDiscountedPrice = df.format(discountedPrice);
+
+                return Double.parseDouble(formattedDiscountedPrice);
             }
             if(productOffer != null){
-                return productPrice-(productPrice*(productOffer.getDiscountPercentage()/100));
+                double discountedPrice= productPrice-(productPrice*(productOffer.getDiscountPercentage()/100));
+                DecimalFormat df = new DecimalFormat("#.##"); // Set the pattern for two decimal places
+                String formattedDiscountedPrice = df.format(discountedPrice);
+
+                return Double.parseDouble(formattedDiscountedPrice);
             }
             if(categoryOffer !=null){
-                return productPrice-(productPrice*(categoryOffer.getDiscountPercentage()/100));
+                double discountedPrice= productPrice-(productPrice*(categoryOffer.getDiscountPercentage()/100));
+                DecimalFormat df = new DecimalFormat("#.##"); // Set the pattern for two decimal places
+                String formattedDiscountedPrice = df.format(discountedPrice);
+
+                return Double.parseDouble(formattedDiscountedPrice);
             }
 
         return productPrice;

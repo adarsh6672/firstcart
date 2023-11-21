@@ -112,7 +112,7 @@ public class OTPController {
                 System.out.println("something went wrong");
                 session.setAttribute("msg","OOPS..! SOMETHING WENT WRONG");
             }
-            return "redirect:/register";
+            return "redirect:/login";
         } else {
             System.out.println("wrong otp");
             session.setAttribute("msg","OOPS..! OTP VERIFICATION FAILED...!");

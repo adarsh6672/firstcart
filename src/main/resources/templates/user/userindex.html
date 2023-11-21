@@ -99,30 +99,27 @@
 									<div class="products-slick" data-nav="#slick-nav-1">
 										<!-- product -->
 										<div class="product" th:each="product : ${listedproducts}">
+											<a th:href="@{/user/viewproduct/{id}(id=${product.id})}">
 											<div class="product-img" th:each="image, iterStat : ${product.images}">
 												<img  th:if="${iterStat.index == 0}" th:src="${'https://firstcart-s3.s3.eu-north-1.amazonaws.com/'+image.imageName}" alt="">
 												<div class="product-label">
 													<span class="sale"></span>
 													<span class="new">NEW</span>
 												</div>
-											</div>
+											</div></a>
 											<div class="product-body">
 												<p class="product-category" th:text="${product.subCategory.name}">Category</p>
-												<h3 class="product-name"><a href="#" th:text="${product.name}">product name goes here</a></h3>
+												<h3 class="product-name" th:text="${product.name}" style="width: 200px;white-space: nowrap; overflow: hidden;  text-overflow: ellipsis;">product name goes here</h3>
 												<h4 class=" text-success" th:text="${'₹ '+@productService.getOfferPrice(product.id)}"><del class="text-danger product-old-price">$990.00</del></h4>
 												<span style="text-decoration: line-through;" class="text-danger" th:text="${'₹ '+product.price}"> $180</span>
 												<div class="product-rating">
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
+													<span th:each="star : ${#numbers.sequence(1, @productReviewService.averageReview(product.id))}" ><i class="fa fa-star text-danger"></i></span>
+
+
 												</div>
 												<div class="product-btns">
 													<a class="like btn btn-default" th:if="${!@wishListService.isProductInWishlist(wl,product.id)}" th:href="@{/user/wishlist/add/{id}?fromIndex=true(id=${product.id})}" type="button"><i class="fa fa-heart-o"></i></a>
 													<a class="like btn btn-default" th:if="${@wishListService.isProductInWishlist(wl,product.id)}" onclick="showAlert()"  type="button"><span class="fa fa-heart text-danger"></span></a>
-													<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-													<button  class="quick-view"><a th:href="@{/user/viewproduct/{id}(id=${product.id})}"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></a></button>
 												</div>
 											</div>
 											<!--<div class="add-to-cart">

@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -57,6 +58,7 @@ public class UserController {
 
     @Autowired
     private CouponUsageRepo couponUsageRepo;
+
 
     @Autowired
     private CartService cartService;
@@ -173,20 +175,26 @@ public class UserController {
         return "user/addressestest";
     }
     @GetMapping("/profile/address/add")
-    public String addAddress(Principal p, Model m,@RequestParam(value = "fromCheckout", required = false) boolean fromCheckout){
+    public String addAddress(Principal p, Model m,@RequestParam(value = "fromCheckout", required = false) boolean fromCheckout,
+                             HttpSession session){
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         m.addAttribute("user", user);
         m.addAttribute("pageTitle", "Add Address | User");
         if (fromCheckout) {
             m.addAttribute("fromCheckout", true);
+            session.setAttribute("fromckt",true);
         }
         return "user/add_address";
     }
 
     @PostMapping("profile/add-address")
-    public String addAddress(@ModelAttribute Address address, Principal principal) {
+    public String addAddress(@ModelAttribute Address address, Principal principal ,HttpSession session) {
+        boolean fromCheckout=(boolean)  session.getAttribute("fromckt");
         userService.addAddressToUser(principal.getName(), address);
+        if(fromCheckout){
+            return "redirect:/user/checkout";
+        }
         return "redirect:/user/profile/address";
 
     }
@@ -370,6 +378,11 @@ public class UserController {
         String email = p.getName();
         User user = userRepo.findByEmail(email);
         Product product=productRepo.getById(productId);
+        if(product.getStockQuantity()<quantity){
+            session.setAttribute("msg","Only Avilable Quantity : "+product.getStockQuantity());
+            return "redirect:/user/viewproduct/"+productId;
+        }
+
         m.addAttribute("product",product);
         m.addAttribute("coupon",couponRepo.findAll());
         m.addAttribute("user", user);
@@ -434,7 +447,7 @@ public class UserController {
             session.setAttribute("msg","PLEASE SELECT PAYMENT METHOD");
             return "redirect:/user/checkout";
         }
-        if (Optional.ofNullable(selectedAddressId).orElse((long) 0) == 0) {
+        if (selectedAddressId == null || selectedAddressId == 0) {
             session.setAttribute("msg", "PLEASE SELECT SHIPPING ADDRESS");
             return "redirect:/user/checkout";
         }
@@ -502,14 +515,16 @@ public class UserController {
                              @RequestParam("productId") Long productId,
                              @RequestParam("cartTotal") double total,
                                 @RequestParam(required = false,name = "couponId") Long couponId,
-                             Principal p,HttpSession session){
+                             Principal p,HttpSession session ,Model m,RedirectAttributes redirectAttributes){
         if(paymentMethod==null){
             session.setAttribute("msg","PLEASE SELECT PAYMENT METHOD");
-            return "redirect:/user/checkout";
+            return "redirect:/user/buyNow";
         }
-        if(selectedAddressId==null||selectedAddressId==0){
+        if(selectedAddressId==null || selectedAddressId == 0){
             session.setAttribute("msg","PLEASE SELECT SHIPPING ADDRESS");
-            return "redirect:/user/checkout";
+            redirectAttributes.addAttribute("productId",productId);
+            redirectAttributes.addAttribute("quantity",quantity);
+            return "redirect:/user/buyNow";
         }
         Address selectedAddress=addressRepo.findById(selectedAddressId).orElse(null);
         User user = userRepo.findByEmail(p.getName());
@@ -717,6 +732,12 @@ public class UserController {
 
         return "redirect:/user/viewproduct/"+productId;
 
+    }
+
+    @GetMapping("/searchproduct")
+    public String searchProduct(@RequestParam(name = "query", required = false) String query,Model model){
+            model.addAttribute("products",productService.searchProducts(query));
+            return "user/store";
     }
 
 

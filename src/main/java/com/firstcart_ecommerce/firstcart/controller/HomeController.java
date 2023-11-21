@@ -117,7 +117,7 @@ public class HomeController {
             System.out.println("something went wrong");
             session.setAttribute("msg","OOPS..! SOMETHING WENT WRONG");
         }
-        return "redirect:/register";
+        return "redirect:/login";
     }
 
 

@@ -98,7 +98,7 @@
 								<input type="hidden" id="couponId" th:if="${isCouponApplied}" th:attr="name=couponId" th:value="${selectedcouponId}">
 								<label for="savedAddresses">Select Address:</label>
 								<select id="savedAddresses" name="selectedAddressId" class="form-control">
-									<option value="">Select an Address</option>
+									<option value="0">Select an Address</option>
 									<option th:each="address : ${address}"
 											th:value="${address.id}"
 											th:text="${address.fullName + ', ' + address.mobile + ', ' + address.houseNo + ', ' + address.street + ', ' + address.city + ', ' + address.state + ', ' + address.pinCode + ', ' + address.country}"
@@ -187,8 +187,8 @@
 
 						</div>
 
-						<button type="submit"  id="placeOrderButton" class="btn btn-success order-submit" style="display:none;" >Place order w</button>
-						<button  id="paymentPlaceOrderButton" class="btn-success btn order-submit" >Place order o</button>
+						<button type="submit"  id="placeOrderButton" class="btn btn-success order-submit" style="display:none;" >Place order</button>
+						<button  id="paymentPlaceOrderButton" class="btn-success btn order-submit" >Place order</button>
 						</div>
 						</form>
 					<!-- /Order Details -->
@@ -237,7 +237,7 @@
 <div th:replace="fragments/cart_footer :: cart_footer"></div>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
 	const cashOnDeliveryRadio = document.getElementById('cashOnDelivery');
     const onlinePayRadio = document.getElementById('onlinePay');
@@ -306,6 +306,18 @@
         console.log("Payment Started...");
         let amount = $("#cartTotal").text();
         console.log(amount);
+        var savedMethodSelect = document.getElementById("savedAddresses");
+		var selectedValue = savedMethodSelect.value;
+
+		if (selectedValue === "0") {
+
+        Swal.fire({
+            title: 'Please Select Address.!',
+            text: '',
+            icon: 'error'
+        });
+        return;
+		}
 
         if(amount == "" || amount == null) {
         alert("amount is required");

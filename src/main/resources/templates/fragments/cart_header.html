@@ -10,10 +10,10 @@
             <!-- row -->
             <div class="row">
                 <!-- LOGO -->
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="header-logo">
                         <a th:href="@{/}" class="logo">
-                            <img style="max-width: 250px; max-height: 150px;" src="/img/logo2.png" alt="">
+                            <img style="max-width: 180px; max-height: 150px;margin-top:15px;" src="/img/logo2.png" alt="">
                         </a>
                     </div>
                 </div>
@@ -22,10 +22,9 @@
                 <!-- SEARCH BAR -->
                 <div class="col-md-4">
                     <div class="header-search">
-                        <form>
-
-                            <input class="input" placeholder="Search here">
-                            <button class="search-btn">Search</button>
+                        <form th:action="@{/user/searchproduct}" method="get">
+                            <input class="input" name="query" placeholder="Search here">
+                            <button type="submit" class="search-btn">Search</button>
                         </form>
                     </div>
                 </div>
@@ -33,7 +32,7 @@
 
                 <!-- ACCOUNT -->
 
-                <div class="col-md-5 clearfix">
+                <div class="col-md-6 clearfix">
 
                     <a th:href="@{/admin/adminpanel}"style="text-decoration:none;" >	<button type="button" th:action="@{/admin/adminpanel}" class="btn admin-button" sec:authorize="hasRole('ADMIN')">Admin Panel</button></a>
 
@@ -51,7 +50,7 @@
                         <!-- /Wishlist -->
 
                         <!-- Cart -->
-                        <div class="dropdown">
+                        <div class="">
                             <a th:href="@{/user/cart}">
                                 <i class="fa fa-shopping-cart"></i>
                                 <span>Your Cart</span>
@@ -59,10 +58,29 @@
                             </a>
                         </div>
 
+                        <div>
+                            <a th:href="@{/user/profile}">
+                                <i class="fa fa-user-o"></i>
+                                <span>Account</span>
+
+                            </a>
+                        </div>
+                        <!-- /Wishlist -->
+
+                        <!-- Cart -->
+                        <div class="">
+                            <a th:href="@{/logout}">
+                                <i class="fa fa-lock"></i>
+                                <span>Log Out</span>
+
+                            </a>
+                        </div>
+
 
                         <!-- /Cart -->
 
-                        <div class="dropdown">
+
+                       <!-- <div class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
                                 <i class="fa fa-user-o"></i>
                                 <span th:text="${username}">Your Account</span>
@@ -78,7 +96,7 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
 
 
                         <!-- Menu Toogle -->
