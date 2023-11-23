@@ -31,4 +31,5 @@ public class Product {
     @ManyToMany(mappedBy = "products")
     private List<WishList> wishlists;
 
+
 }

@@ -55,8 +55,11 @@ public class HomeController {
     public String log(Model model) {
 
 
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            model.addAttribute("categories",subCategoryRepo.findByIsListedTrue());
+            model.addAttribute("listedproducts",productRepo.findListedProducts());
             model.addAttribute("products",productRepo.findListedProducts());
             model.addAttribute("romance",subCategoryRepo.getById(1));
             model.addAttribute("horror",subCategoryRepo.getById(3));

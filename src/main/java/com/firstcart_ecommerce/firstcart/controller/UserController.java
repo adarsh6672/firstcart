@@ -645,10 +645,13 @@ public class UserController {
     }
 
     @GetMapping("/store/{categoryid}")
-    public String showStore(@PathVariable("categoryid")int catId,Model m){
+    public String showStore(@PathVariable("categoryid")int catId,Model m ,Principal principal){
         List<Product>products=productService.getProductsByCategory(catId);
+        User user= userRepo.findByEmail(principal.getName());
         m.addAttribute("categories",subCategoryRepo.findByIsListedTrue());
         m.addAttribute("products",products);
+        m.addAttribute("wl",wishListService.getOrCreateUserCart(user));
+        m.addAttribute("cart",userService.getUserCart(user).getId());
         m.addAttribute("pageTitle", "Store | User");
 
         return "user/store";
