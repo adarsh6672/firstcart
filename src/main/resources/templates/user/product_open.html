@@ -91,7 +91,7 @@
                             <form accept-charset="UTF-8" th:action="@{/user/product/addreview}" method="post">
 
                                 <div class="stars starrr " data-rating="0"></div>
-                                <input id="ratings-hidden" name="rating" type="hidden">
+                                <input id="ratings-hidden" value="0" name="rating" type="hidden">
                                 <input id="productid" name="productId" th:value="${product.id}" type="hidden">
                                 <textarea class="form-control animated" cols="100" id="new-review" name="comment" placeholder="Enter your review here..." rows="10"></textarea>
 

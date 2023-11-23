@@ -10,6 +10,17 @@
 <button type="button" class="btn btn-primary mt-5 mb-3" data-toggle="modal" data-target="#addCoupon">
     Add New Coupon
 </button>
+
+        <th:block th:if="${session.error}">
+            <p class="text-center text-danger">[[${session.error}]]</p>
+            <th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
+        </th:block>
+
+
+        <th:block th:if="${session.msg}">
+            <p class="text-center text-success" style="font-size: 18px;">[[${session.msg}]]</p>
+            <th:block th:text="${@userServiceImpl.removeSessionMessage()}"></th:block>
+        </th:block>
 <table class="table table-bordered border-primary table-striped table-responsive-md">
     <thead>
     <tr>

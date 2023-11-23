@@ -27,5 +27,7 @@ public class Coupon {
 
     private int discountPercentage;
 
+    private boolean isDeleted=false;
+
 
 }

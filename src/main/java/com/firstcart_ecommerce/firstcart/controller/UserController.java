@@ -728,6 +728,9 @@ public class UserController {
     public String addReview(@ModelAttribute ProductReview productReview,
                             @RequestParam ("productId")Long productId,
                             Principal principal,Model model){
+        if(productReview.getRating()==0){
+            productReview.setRating(1);
+        }
         productReview.setUser(userRepo.findByEmail(principal.getName()));
         productReview.setProduct(productRepo.getById(productId));
         productReview.setOrderDateTime(LocalDateTime.now());

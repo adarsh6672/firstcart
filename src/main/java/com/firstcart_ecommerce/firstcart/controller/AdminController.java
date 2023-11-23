@@ -530,13 +530,20 @@ public class AdminController {
     }
     @GetMapping("/coupon")
     public String coupen(Model model){
-        model.addAttribute("coupons",couponRepo.findAll());
+        model.addAttribute("coupons",couponRepo.findByIsDeletedFalse());
         model.addAttribute("pageTitle", "Coupon Management | Admin");
         return "admin/coupen";
     }
 
     @PostMapping("/coupon/add")
-    public String addCoupen(@ModelAttribute Coupon coupon){
+    public String addCoupen(@ModelAttribute Coupon coupon , Model m,HttpSession session){
+        List<Coupon>coupons=couponRepo.findAll();
+        for(Coupon coupon1:coupons){
+            if(coupon1.getCouponCode().equals(coupon.getCouponCode())){
+                session.setAttribute("error","Coupon Code Already Exist ...Try Different Code ");
+                return "redirect:/admin/coupon";
+            }
+        }
         couponRepo.save(coupon);
         return "redirect:/admin/coupon";
     }
@@ -554,7 +561,9 @@ public class AdminController {
     }
     @GetMapping("/coupon/delete/{id}")
     public String deletecoupon(@PathVariable ("id")Long id){
-        couponRepo.deleteById(id);
+        Coupon c=couponRepo.getById(id);
+        c.setDeleted(true);
+        couponRepo.save(c);
         return "redirect:/admin/coupon";
     }
 
@@ -569,13 +578,27 @@ public class AdminController {
     }
 
     @PostMapping("/offer/category/add")
-    public String categoryOfferAdd(@ModelAttribute CategoryOffer categoryOffer){
+    public String categoryOfferAdd(@ModelAttribute CategoryOffer categoryOffer,HttpSession session){
+        List<CategoryOffer> categoryOffers=categoryOfferRepo.findAll();
+        for(CategoryOffer categoryOffer1:categoryOffers){
+            if(categoryOffer.getSubCategory().getId()==categoryOffer1.getSubCategory().getId()){
+                session.setAttribute("error",categoryOffer.getSubCategory().getName()+"  Already Having an Offer..! Please Delete Existing Offer.");
+                return "redirect:/admin/offer/manage";
+            }
+        }
         categoryOfferRepo.save(categoryOffer);
         return "redirect:/admin/offer/manage";
     }
 
     @PostMapping("/offer/product/add")
-    public String productOfferAdd(@ModelAttribute ProductOffer productOffer){
+    public String productOfferAdd(@ModelAttribute ProductOffer productOffer,HttpSession session){
+        List<ProductOffer> productOffers=productOfferRepo.findAll();
+        for(ProductOffer productOffer1:productOffers){
+            if(productOffer1.getProduct().getId()==productOffer1.getProduct().getId()){
+                session.setAttribute("error",productOffer.getProduct().getName()+"  Already Having An Offer ...! Try After Deleting Existing Offer.");
+                return "redirect:/admin/offer/manage";
+            }
+        }
         productOfferRepo.save(productOffer);
         return "redirect:/admin/offer/manage";
     }
@@ -585,6 +608,19 @@ public class AdminController {
         // Call the service method to retrieve the filtered product list
         List<Product> filteredProducts = productService.searchProducts(searchQuery);
         return filteredProducts;
+    }
+
+    @GetMapping("/offer/category/delete/{id}")
+    public String deleteCatOffer(@PathVariable("id") Long id){
+        categoryOfferRepo.deleteById(id);
+        return "redirect:/admin/offer/manage";
+    }
+
+    @GetMapping("/offer/product/delete/{id}")
+    public String deleteProOffer(@PathVariable("id") Long id){
+        productOfferRepo.deleteById(id);
+        return "redirect:/admin/offer/manage";
+
     }
 
 
