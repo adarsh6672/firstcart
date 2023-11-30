@@ -14,6 +14,7 @@ import com.razorpay.Refund;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.jboss.logging.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +32,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
+
+    private static final Logger logger= Logger.getLogger(UserController.class);
+
     @Autowired
     private UserRepo userRepo;
 

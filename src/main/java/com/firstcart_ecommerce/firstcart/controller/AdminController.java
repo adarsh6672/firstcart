@@ -10,6 +10,7 @@ import com.firstcart_ecommerce.firstcart.util.InvoiceGenerator;
 import com.firstcart_ecommerce.firstcart.util.OrderStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,9 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+
+    private static final Logger logger= Logger.getLogger(AdminController.class);
+
     @Autowired
     private UserService userService;
 
